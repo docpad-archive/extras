@@ -20,7 +20,7 @@ In a template (example in Coffeekup):
 body ->
 	div class: 'example', ->
 		for image in @document.images
-			img src: document.url, -> document.title
+			img src: image
 ~~~
 
 Renders to:
