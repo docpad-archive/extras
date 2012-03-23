@@ -1,6 +1,6 @@
 # docpad-images
 
-docpad plugin
+docpad plugin to provide access to an array of paths to images associated with the current document during document rendering
 
 ## Usage
 
