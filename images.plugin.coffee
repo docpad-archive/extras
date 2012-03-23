@@ -11,7 +11,7 @@ module.exports = (BasePlugin) ->
 		render: ({inExtension, outExtension, template, file}, next) ->
 			
 			if outExtension is 'html'
-				name = file.name
+				name = file.basename
 				if name isnt undefined
 				
 					# create a folder for images if one doesn't exist
