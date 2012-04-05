@@ -1,9 +1,10 @@
 # Requires
 assert = require('assert')
 fs = require('fs')
+path = require('path')
 request = require('request')
 util = require('bal-util')
-DocPad = require("#{__dirname}/../lib/docpad.coffee")
+DocPad = require('docpad')
 
 
 # -------------------------------------
@@ -19,9 +20,14 @@ baseUrl = "http://localhost:#{port}"
 docpadConfig = 
 	port: port
 	rootPath: __dirname
-	logLevel: 5
+	pluginsPath: path.join(__dirname, '..', 'plugins')
+	logLevel: 6
+	enableUnlistedPlugins: false
 	enabledPlugins:
-		pygments: true
+		#move: true  installation currently fails
+		php: true
+		roy: true
+		ruby: true
 
 # Fail on an uncaught error
 process.on 'uncaughtException', (err) ->
@@ -65,71 +71,9 @@ describe 'core', ->
 									)
 									done()
 				testMarkup(markupName,markupFile)  for own markupName, markupFile of {
-					"coffee-parser": 'coffee-parser.html'
-					coffeekup: 'coffeekup.html'
-					eco: 'eco.html'
-					eruby: 'eruby.html'
-					haml: 'haml.html'
-					hogan: 'hogan.html'
-					jade: 'jade.html'
-					'layout (1/2)': 'layout-single.html'
-					'layout (2/2)': 'layout-double.html'
-					less: 'less.css'
-					markdown: 'markdown.html'
 					move: 'move.js'
 					php: 'php.html'
-					'pygments-html-layout': 'pygments-html-layout.html'
-					'pygments-html': 'pygments-html.html'
-					'pygments-markdown': 'pygments-markdown.html'
-					'related (1/2)': 'related-1.html'
-					'related (2/2)': 'related-2.html'
 					roy: 'roy.js'
 					ruby: 'ruby.html'
-					sass: 'sass.css'
-					stylus: 'stylus.css'
-					'stylus-nib': 'stylus-nib.css'
+					eruby: 'eruby.html'
 				}
-
-			describe 'server', ->
-				
-				it 'should serve generated documents', (done) ->
-					request "#{baseUrl}/markdown.html", (err,response,body) ->
-						throw err  if err
-						fs.readFile "#{outExpectedPath}/markdown.html", (err,actual) ->
-							throw err  if err
-							assert.equal(
-								actual.toString()
-								body
-							)
-							done()
-				
-				it 'should serve dynamic documents - part 1/2', (done) ->
-					request "#{baseUrl}/dynamic.html?name=ben", (err,response,body) ->
-						throw err  if err
-						assert.equal(
-							'hi ben'
-							body
-						)
-						done()
-					
-				it 'should serve dynamic documents - part 2/2', (done) ->
-					request "#{baseUrl}/dynamic.html?name=joe", (err,response,body) ->
-						throw err  if err
-						assert.equal(
-							'hi joe'
-							body
-						)
-						done()
-			
-			describe 'plugins', ->
-				describe 'cleanurls', ->
-					it 'should support urls without an extension', (done) ->
-						request "#{baseUrl}/markdown", (err,response,body) ->
-							throw err  if err
-							fs.readFile "#{outExpectedPath}/markdown.html", (err,actual) ->
-								throw err  if err
-								assert.equal(
-									actual.toString()
-									body
-								)
-								done()

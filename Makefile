@@ -1,18 +1,13 @@
 # If you change something here, be sure to change it in package.json's scripts as well
 
 test:
-	make clean
 	node ./node_modules/mocha/bin/mocha
 
 install:
-	coffee ./bin/docpad install
-
-clean:
-	rm -Rf node_modules/ npm-debug.log lib/exchange/skeletons lib/exchange/plugins/*/node_modules lib/exchange/plugins/*/npm-debug.log
 	npm install
 
-publish:
-	make clean
-	npm publish
+clean:
+	rm -Rf node_modules/ npm-debug.log plugins/*/node_modules plugins/*/npm-debug.log
+	make install
 
-.PHONY: test install clean publish
+.PHONY: test install clean
