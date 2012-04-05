@@ -1,6 +1,6 @@
-# DocPad Extras
+# [DocPad](https://github.com/bevry/docpad) Extras
 
-This repository contains a series of extras for DocPad
+This repository contains a series of extras for [DocPad](https://github.com/bevry/docpad)
 
 ## License
 
