@@ -1,0 +1,49 @@
+{
+    "name": "docpad-images",
+    "version": "0.1.0",
+    "description": "DocPad plugin which adds the ability to an array of images associated with a document by metada during the templating process.",
+    "homepage": "https://github.com/msutherl/docpad-images",
+    "keywords": [
+        "docpad",
+        "docpad-plugin",
+        "images"
+    ],
+    "author": {
+        "name": "Morgan Sutherland",
+        "email": "morgan@msutherl.net",
+        "url": "http://msutherl.net"
+    },
+    "maintainers": [
+        {
+			"name": "Morgan Sutherland",
+			"email": "morgan@msutherl.net",
+			"url": "http://msutherl.net"
+        }
+    ],
+    "contributors": [
+        {
+			"name": "Morgan Sutherland",
+			"email": "morgan@msutherl.net",
+			"url": "http://msutherl.net"
+        }
+    ],
+    "bugs": {
+        "url": "https://github.com/msutherl/docpad-images/issues"
+    },
+    "licenses": [
+        {
+            "type": "MIT",
+            "url": "http://creativecommons.org/licenses/MIT/"
+        }
+    ],
+    "repository" : {
+        "type": "git",
+        "url": "http://github.com/msutherl/docpad-images.git"
+    },
+    "dependencies": {
+    },
+    "engines" : {
+        "node": ">=0.4.0"
+    },
+    "main": "./images.plugin.coffee"
+}
