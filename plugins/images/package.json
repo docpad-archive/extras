@@ -28,7 +28,7 @@
         }
     ],
     "bugs": {
-        "url": "https://github.com/msutherl/docpad-images/issues"
+        "url": "https://github.com/bevry/docpad-extras/issues"
     },
     "licenses": [
         {
@@ -38,9 +38,10 @@
     ],
     "repository" : {
         "type": "git",
-        "url": "http://github.com/msutherl/docpad-images.git"
+        "url": "http://github.com/bevry/docpad-extras/"
     },
     "dependencies": {
+		"underscore": "*"
     },
     "engines" : {
         "node": ">=0.4.0"

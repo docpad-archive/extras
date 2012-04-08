@@ -1,10 +1,14 @@
-# docpad-images
+# images
 
 docpad plugin to provide access to an array of paths to images associated with the current document during document rendering
 
 ## Install
 
 Put images.plugin.coffee into /plugins/images/. Change pathnames in images.plugin.coffee if you need to and comment out automatic folder creation if you don't want that.
+
+## Dependencies
+
+images requires <code>underscore.js</code>
 
 ## Usage
 
