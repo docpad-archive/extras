@@ -1,10 +1,11 @@
 {
-	"name": "docpad-coffee",
+	"name": "docpad-plugin-coffee",
 	"version": "0.1.0",
 	"description": "Adds support for the various CoffeeScript inspired pre-processors to DocPad. Including CoffeeScript, CoffeeKup and CoffeeCSS, among others.",
 	"homepage": "https://github.com/bevry/docpad",
 	"keywords": [
 		"docpad",
+		"docpad-plugin",
 		"coffee",
 		"coffeescript",
 		"coffeekup",

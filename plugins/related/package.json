@@ -1,10 +1,11 @@
 {
-	"name": "docpad-related",
+	"name": "docpad-plugin-related",
 	"version": "0.1.0",
 	"description": "Adds support for related documents to DocPad.",
 	"homepage": "https://github.com/bevry/docpad",
 	"keywords": [
 		"docpad",
+		"docpad-plugin",
 		"related",
 		"documents",
 		"tags",

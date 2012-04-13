@@ -1,10 +1,11 @@
 {
-	"name": "docpad-sass",
+	"name": "docpad-plugin-sass",
 	"version": "0.1.0",
 	"description": "Adds support for the SASS CSS pre-processor to DocPad.",
 	"homepage": "https://github.com/bevry/docpad",
 	"keywords": [
 		"docpad",
+		"docpad-plugin",
 		"stylus",
 		"css",
 		"styles",

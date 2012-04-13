@@ -1,10 +1,11 @@
 {
-	"name": "docpad-cleanurls",
+	"name": "docpad-plugin-cleanurls",
 	"version": "0.1.0",
 	"description": "Adds support for Clean Urls to DocPad",
 	"homepage": "https://github.com/bevry/docpad",
 	"keywords": [
 		"docpad",
+		"docpad-plugin",
 		"clean urls",
 		"seo"
 	],

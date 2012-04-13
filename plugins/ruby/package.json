@@ -1,10 +1,11 @@
 {
-	"name": "docpad-ruby",
+	"name": "docpad-plugin-ruby",
 	"version": "0.1.0",
 	"description": "Adds support for the Ruby language to DocPad.",
 	"homepage": "https://github.com/bevry/docpad",
 	"keywords": [
 		"docpad",
+		"docpad-plugin",
 		"roy",
 		"altjs",
 		"javascript"

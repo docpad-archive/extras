@@ -1,10 +1,11 @@
 {
-	"name": "docpad-haml",
+	"name": "docpad-plugin-haml",
 	"version": "0.1.0",
 	"description": "Adds support for the HAML templating engine to DocPad.",
 	"homepage": "https://github.com/bevry/docpad",
 	"keywords": [
 		"docpad",
+		"docpad-plugin",
 		"haml",
 		"templating",
 		"templates",
