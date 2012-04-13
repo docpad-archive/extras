@@ -1,10 +1,11 @@
 {
-	"name": "docpad-admin",
+	"name": "docpad-plugin-admin",
 	"version": "0.1.0",
 	"description": "Adds front-end administration support to DocPad",
 	"homepage": "https://github.com/bevry/docpad",
 	"keywords": [
 		"docpad",
+		"docpad-plugin",
 		"administration",
 		"admin",
 		"contenteditable",

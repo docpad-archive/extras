@@ -1,10 +1,11 @@
 {
-	"name": "docpad-autoupdate",
+	"name": "docpad-plugin-autoupdate",
 	"version": "0.1.0",
 	"description": "Adds auto-updating the DocPad frontend",
 	"homepage": "https://github.com/bevry/docpad",
 	"keywords": [
 		"docpad",
+		"docpad-plugin",
 		"autoupdate",
 		"sync",
 		"cms"

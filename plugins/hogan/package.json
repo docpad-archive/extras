@@ -1,10 +1,11 @@
 {
-	"name": "docpad-hogan",
+	"name": "docpad-plugin-hogan",
 	"version": "0.1.0",
 	"description": "Adds support for the Hogan templating engine to DocPad.",
 	"homepage": "https://github.com/bevry/docpad",
 	"keywords": [
 		"docpad",
+		"docpad-plugin",
 		"hogan",
 		"hogan.js",
 		"moustache",

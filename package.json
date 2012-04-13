@@ -1,15 +1,8 @@
 {
-	"name": "docpad-plugin-php",
-	"version": "0.1.0",
-	"description": "Adds support for the PHP language to DocPad.",
+	"name": "docpad-extras",
+	"version": "5.0.0",
+	"description": "This repository contains the all the extras for DocPad",
 	"homepage": "https://github.com/bevry/docpad-extras",
-	"keywords": [
-		"docpad",
-		"docpad-plugin",
-		"roy",
-		"altjs",
-		"javascript"
-	],
 	"author": {
 		"name": "Bevry Pty Ltd",
 		"email": "us@bevry.me",
@@ -22,28 +15,24 @@
 			"url": "http://balupton.com"
 		}
 	],
-	"contributors": [
-		{
-			"name": "Benjamin Lupton",
-			"email": "b@lupton.cc",
-			"url": "http://balupton.com"
-		}
-	],
 	"bugs": {
 		"url": "https://github.com/bevry/docpad-extras/issues"
 	},
-	"licenses": [
-		{
-			"type": "MIT",
-			"url": "http://creativecommons.org/licenses/MIT/"
-		}
-	],
 	"repository" : {
 		"type": "git",
 		"url": "http://github.com/bevry/docpad-extras.git"
 	},
+	"devDependencies": {
+		"bal-util": "1.4.x",
+		"request": "2.9.x",
+		"mocha": "1.0.x",
+		"chai": "0.5.x",
+		"eyes": "0.1.x"
+	},
 	"engines" : {
 		"node": ">=0.4.0"
 	},
-	"main": "./php.plugin.coffee"
+	"scripts": {
+		"test": "node ./node_modules/mocha/bin/mocha"
+	}
 }

@@ -1,10 +1,11 @@
 {
-	"name": "docpad-move",
+	"name": "docpad-plugin-move",
 	"version": "0.1.0",
 	"description": "Adds support for the Move to javascript language to DocPad.",
 	"homepage": "https://github.com/bevry/docpad",
 	"keywords": [
 		"docpad",
+		"docpad-plugin",
 		"move",
 		"altjs",
 		"javascript"
