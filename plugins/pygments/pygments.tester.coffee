@@ -8,4 +8,3 @@ module.exports = (testers) ->
 				'pygments': true
 				'markdown': true
 				'eco': true
-			logLevel: 5
