@@ -42,7 +42,7 @@
 		"url": "http://github.com/bevry/docpad.git"
 	},
 	"dependencies": {
-		"bal-util": "1.2.x"
+		"bal-util": "1.4.x"
 	},
 	"engines" : {
 		"node": ">=0.4.0"
