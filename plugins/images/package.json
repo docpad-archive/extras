@@ -1,50 +1,33 @@
 {
-    "name": "docpad-images",
+    "name": "docpad-plugin-images",
     "version": "0.1.0",
     "description": "DocPad plugin which adds the ability to an array of images associated with a document by metada during the templating process.",
-    "homepage": "https://github.com/msutherl/docpad-images",
+    "homepage": "https://github.com/bevry/docpad-extras",
     "keywords": [
         "docpad",
         "docpad-plugin",
         "images"
     ],
-    "author": {
-        "name": "Morgan Sutherland",
-        "email": "morgan@msutherl.net",
-        "url": "http://msutherl.net"
-    },
+    "author": "Bevry Pty Ltd <us@bevry.me> (http://bevry.me)",
     "maintainers": [
-        {
-			"name": "Morgan Sutherland",
-			"email": "morgan@msutherl.net",
-			"url": "http://msutherl.net"
-        }
+        "Benjamin Lupton <b@lupton.cc> (http://balupton.com)"
     ],
     "contributors": [
-        {
-			"name": "Morgan Sutherland",
-			"email": "morgan@msutherl.net",
-			"url": "http://msutherl.net"
-        }
+        "Benjamin Lupton <b@lupton.cc> (http://balupton.com)"
     ],
     "bugs": {
         "url": "https://github.com/bevry/docpad-extras/issues"
     },
-    "licenses": [
-        {
-            "type": "MIT",
-            "url": "http://creativecommons.org/licenses/MIT/"
-        }
-    ],
     "repository" : {
         "type": "git",
-        "url": "http://github.com/bevry/docpad-extras/"
+        "url": "http://github.com/bevry/docpad-extras.git"
+    },
+    "engines" : {
+        "node": ">=0.4.0",
+        "docpad": "5.x"
     },
     "dependencies": {
 		"underscore": "*"
-    },
-    "engines" : {
-        "node": ">=0.4.0"
     },
     "main": "./images.plugin.coffee"
 }

@@ -1,31 +1,38 @@
+# Export Plugin
 module.exports = (BasePlugin) ->
+	# Requires
+	fs   = require('fs')
+	path = require('path')
+	_    = require('underscore')
 	
-	fs   = require 'fs'
-	path = require 'path'
-	_    = require 'underscore'
-		
+	# Define Plugin
 	class Images extends BasePlugin
-		
+		# Plugin name
 		name: 'images'
 
-		render: ({inExtension, outExtension, template, file}, next) ->
-			
+		# Render some content
+		render: (opts,next) ->
+			# Prepare
+			{inExtension,outExtension,templateData,content,file} = opts
+
+			# Check our extension
 			if outExtension is 'html'
 				name = file.basename
-				if name isnt undefined
-				
-					# create a folder for images if one doesn't exist
+				if name?
+					# Create a folder for images if one doesn't exist
 					if not path.existsSync('./src/public/images/' + name)
 						fs.mkdirSync('./src/public/images/' + name)
 				
-					# create an array of paths to images
+					# Create an array of paths to images
 					dirs = fs.readdirSync('./src/public/images/' + name)
 				
-					# filter out .DS_Store files on OS X
+					# Filter out .DS_Store files on OS X
 					if dirs[0] is '.DS_Store' then dirs = dirs.splice(1)
 					
-					# create full paths and assign to file.images
+					# Create full paths and assign to file.images
 					# this will be available as '@document.images' in templates
-					file.images = _.map(dirs, (dir) -> return '/images/' + name + '/' + dir)
+					images = _.map(dirs, (dir) -> return '/images/' + name + '/' + dir)
+					document.set({images})
 			
+			# Done, return back to DocPad
 			return next?()

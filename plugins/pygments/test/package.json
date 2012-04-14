@@ -1,6 +1,7 @@
 {
 	"name": "docpad-plugin-pygments-testsite",
 	"version": "0.1.0",
+	"private": true,
 	"dependencies": {
 		"docpad-plugin-markdown": "latest",
 		"docpad-plugin-eco": "latest"
