@@ -1,5 +1,5 @@
 {
-	"name": "docpad-plugin-pygements",
+	"name": "docpad-plugin-pygments",
 	"version": "1.0.0",
 	"description": "Adds support for Pygments Syntax Highlighting to DocPad",
 	"homepage": "https://github.com/bevry/docpad-extras",
