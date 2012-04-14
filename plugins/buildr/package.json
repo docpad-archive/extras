@@ -2,7 +2,7 @@
 	"name": "docpad-plugin-buildr",
 	"version": "0.1.0",
 	"description": "Adds support for Buildr to DocPad",
-	"homepage": "https://github.com/bevry/docpad",
+	"homepage": "https://github.com/bevry/docpad-extras",
 	"keywords": [
 		"docpad",
 		"docpad-plugin",
@@ -17,9 +17,9 @@
 		"compress"
 	],
 	"author": {
-		"name": "Benjamin Lupton",
-		"email": "b@lupton.cc",
-		"url": "http://balupton.com"
+		"name": "Bevry Pty Ltd",
+		"email": "us@bevry.me",
+		"url": "http://bevry.me"
 	},
 	"maintainers": [
 		{
@@ -36,7 +36,7 @@
 		}
 	],
 	"bugs": {
-		"url": "https://github.com/bevry/docpad/issues"
+		"url": "https://github.com/bevry/docpad-extras/issues"
 	},
 	"licenses": [
 		{
@@ -46,18 +46,10 @@
 	],
 	"repository" : {
 		"type": "git",
-		"url": "http://github.com/bevry/docpad.git"
-	},
-	"dependencies": {
+		"url": "http://github.com/bevry/docpad-extras.git"
 	},
 	"engines" : {
 		"node": ">=0.4.0"
-	},
-	"bin": {
-		"docpad": "./bin/docpad"
-	},
-	"directories": {
-		"lib": "."
 	},
 	"main": "./buildr.plugin.coffee"
 }

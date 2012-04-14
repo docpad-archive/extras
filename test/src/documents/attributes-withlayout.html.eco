@@ -1,7 +1,0 @@
----
-title: 'Attributes With Layout'
-layout: 'attributes'
-tags: ['attributes','with-layout']
----
-
-<script>var attributesWithoutLayout = <%=JSON.stringify @documentModel.getAttributes()%></script>

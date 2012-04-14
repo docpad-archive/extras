@@ -35,6 +35,7 @@ module.exports = (BasePlugin) ->
 				relatedDocuments = documents.findAll(tags: '$in': tags)
 				
 				# Check
+				document.set(relatedDocuments:[])
 				unless relatedDocuments.length
 					return tasks.complete()  
 
@@ -47,5 +48,5 @@ module.exports = (BasePlugin) ->
 					relatedDocumentsCleaned.push relatedDocument
 
 				# Save
-				document.relatedDocuments = relatedDocumentsCleaned
+				document.set(relatedDocuments:relatedDocumentsCleaned)
 				tasks.complete()
