@@ -1,7 +1,9 @@
 ---
 layout: 'layout-double'
-title: 'Pygments Layout Double Test'
+title: 'Pygments HTML Layout Test'
 ---
+
+<div class="title"><%=@document.title or 'Untitled'%></div>
 
 ## Coffeescript with html:
 

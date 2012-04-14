@@ -16,7 +16,7 @@ module.exports = (BasePlugin) ->
 			# Check our extensions
 			if inExtension in ['move'] and outExtension is 'js'
 				# Requires
-				move = require('move')
+				move = require('move-panta')
 
 				# Render
 				opts.content = move.compile(content)

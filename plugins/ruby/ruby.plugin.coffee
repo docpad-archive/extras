@@ -19,7 +19,7 @@ module.exports = (BasePlugin) ->
 				{spawn,exec} = require('child_process')
 
 				# Prepare Render
-				data = JSON.stringify file.getSimpleAttributes()
+				data = JSON.stringify file.getMeta().toJSON()
 				source = """
 					content = <<-EOF
 					#{templateData.content or ''}

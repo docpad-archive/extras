@@ -2,7 +2,7 @@
 	"name": "docpad-plugin-pygements",
 	"version": "0.2.0",
 	"description": "Adds support for Pygments Syntax Highlighting to DocPad",
-	"homepage": "https://github.com/bevry/docpad",
+	"homepage": "https://github.com/bevry/docpad-extras",
 	"keywords": [
 		"docpad",
 		"docpad-plugin",
@@ -29,7 +29,7 @@
 		}
 	],
 	"bugs": {
-		"url": "https://github.com/bevry/docpad/issues"
+		"url": "https://github.com/bevry/docpad-extras/issues"
 	},
 	"licenses": [
 		{
@@ -39,7 +39,7 @@
 	],
 	"repository" : {
 		"type": "git",
-		"url": "http://github.com/bevry/docpad.git"
+		"url": "http://github.com/bevry/docpad-extras.git"
 	},
 	"engines" : {
 		"node": ">=0.4.0"

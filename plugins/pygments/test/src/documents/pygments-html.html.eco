@@ -1,3 +1,9 @@
+---
+title: 'Pygments HTML Test'
+---
+
+<div class="title"><%=@document.title or 'Untitled'%></div>
+
 ## Coffeescript with html:
 
 <code class="highlight" lang="coffeescript">

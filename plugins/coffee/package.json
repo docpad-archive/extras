@@ -2,7 +2,7 @@
 	"name": "docpad-plugin-coffee",
 	"version": "0.1.0",
 	"description": "Adds support for the various CoffeeScript inspired pre-processors to DocPad. Including CoffeeScript, CoffeeKup and CoffeeCSS, among others.",
-	"homepage": "https://github.com/bevry/docpad",
+	"homepage": "https://github.com/bevry/docpad-extras",
 	"keywords": [
 		"docpad",
 		"docpad-plugin",
@@ -12,9 +12,9 @@
 		"coffeecss"
 	],
 	"author": {
-		"name": "Benjamin Lupton",
-		"email": "b@lupton.cc",
-		"url": "http://balupton.com"
+		"name": "Bevry Pty Ltd",
+		"email": "us@bevry.me",
+		"url": "http://bevry.me"
 	},
 	"maintainers": [
 		{
@@ -31,7 +31,7 @@
 		}
 	],
 	"bugs": {
-		"url": "https://github.com/bevry/docpad/issues"
+		"url": "https://github.com/bevry/docpad-extras/issues"
 	},
 	"licenses": [
 		{
@@ -41,29 +41,16 @@
 	],
 	"repository" : {
 		"type": "git",
-		"url": "http://github.com/bevry/docpad.git"
-	},
-	"dependencies": {
-		"coffee-script": "1.2.x",
-		"coffeekup": "0.3.x",
-		"js2coffee": "0.1.x",
-		"html2coffeekup": "1.4.x"
+		"url": "http://github.com/bevry/docpad-extras.git"
 	},
 	"engines" : {
 		"node": ">=0.4.0"
 	},
-	"bin": {
-		"docpad": "./bin/docpad"
+	"dependencies": {
+		"coffee-script": "1.3.x",
+		"coffeekup": "0.3.x",
+		"js2coffee": "0.1.x",
+		"html2coffeekup": "1.4.x"
 	},
-	"directories": {
-		"lib": "."
-	},
-	"main": "./coffee.plugin.coffee",
-	"docpad": {
-		"plugin": {
-			"coffeekup": {
-				"format": false
-			}
-		}
-	}
+	"main": "./coffee.plugin.coffee"
 }
