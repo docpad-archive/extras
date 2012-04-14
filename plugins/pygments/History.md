@@ -1,5 +1,8 @@
 ## History
 
+- v1.0.0 April 14, 2012
+	- Updated for DocPad v5.0
+
 - v0.2.0 March 18, 2012
 	- Fixed Pygments plugin highlighting the code multiple times for documents with layouts
 

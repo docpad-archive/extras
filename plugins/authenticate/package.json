@@ -1,6 +1,6 @@
 {
 	"name": "docpad-plugin-authenticate",
-	"version": "0.1.0",
+	"version": "1.0.0",
 	"description": "Adds authentication to DocPad",
 	"homepage": "https://github.com/bevry/docpad-extras",
 	"keywords": [

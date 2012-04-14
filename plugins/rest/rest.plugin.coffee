@@ -26,7 +26,7 @@ module.exports = (BasePlugin) ->
 
 					# Update it's meta data
 					for own key, value of req.body
-						document.fileMeta[key] = value  if document.fileMeta[key]?
+						document.meta.set(key:value)  if document.meta.attributes[key]?
 					
 					# Save the changes
 					document.write (err) ->
