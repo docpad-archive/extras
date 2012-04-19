@@ -11,7 +11,7 @@ module.exports = (BasePlugin) ->
 		# Render some content
 		render: (opts,next) ->
 			# Prepare
-			{inExtension,outExtension,templateData,content,file} = opts
+			{inExtension,outExtension,templateData,file} = opts
 
 			# Check our extension
 			if inExtension is 'jade'
@@ -19,8 +19,8 @@ module.exports = (BasePlugin) ->
 				jade = require('jade')
 
 				# Render
-				opts.content = jade.compile(content, {
-					filename: file.fullPath
+				opts.content = jade.compile(opts.content, {
+					filename: file.get('fullPath')
 				})(templateData)
 
 			# Done, return back to DocPad

@@ -4,23 +4,23 @@
 	"private": true,
 	"description": "This repository contains the all the extras for DocPad",
 	"homepage": "https://github.com/bevry/docpad-extras",
-    "author": "Bevry Pty Ltd <us@bevry.me> (http://bevry.me)",
-    "maintainers": [
-        "Benjamin Lupton <b@lupton.cc> (http://balupton.com)"
-    ],
-    "contributors": [
-        "Benjamin Lupton <b@lupton.cc> (http://balupton.com)"
-    ],
-    "bugs": {
-        "url": "https://github.com/bevry/docpad-extras/issues"
-    },
-    "repository" : {
-        "type": "git",
-        "url": "http://github.com/bevry/docpad-extras.git"
-    },
-    "engines" : {
-        "node": ">=0.4.0"
-    },
+	"author": "Bevry Pty Ltd <us@bevry.me> (http://bevry.me)",
+	"maintainers": [
+		"Benjamin Lupton <b@lupton.cc> (http://balupton.com)"
+	],
+	"contributors": [
+		"Benjamin Lupton <b@lupton.cc> (http://balupton.com)"
+	],
+	"bugs": {
+		"url": "https://github.com/bevry/docpad-extras/issues"
+	},
+	"repository" : {
+		"type": "git",
+		"url": "http://github.com/bevry/docpad-extras.git"
+	},
+	"engines" : {
+		"node": ">=0.4.0"
+	},
 	"devDependencies": {
 		"coffee-script": "1.3.x",
 		"bal-util": "1.4.x",

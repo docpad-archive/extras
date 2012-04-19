@@ -19,8 +19,8 @@ module.exports = (BasePlugin) ->
 				stylus = require('stylus')
 				
 				# Create our style
-				style = stylus(content)
-					.set('filename', file.fullPath)
+				style = stylus(opts.content)
+					.set('filename', file.get('fullPath'))
 					.set('compress', @config.compress)
 				
 				# Use nib if we want to

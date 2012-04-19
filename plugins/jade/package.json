@@ -1,6 +1,6 @@
 {
 	"name": "docpad-plugin-jade",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Adds support for the Jade templating engine to DocPad.",
 	"homepage": "https://github.com/bevry/docpad-extras",
 	"keywords": [
@@ -12,24 +12,24 @@
 		"render",
 		"rendering"
 	],
-    "author": "Bevry Pty Ltd <us@bevry.me> (http://bevry.me)",
-    "maintainers": [
-        "Benjamin Lupton <b@lupton.cc> (http://balupton.com)"
-    ],
-    "contributors": [
-        "Benjamin Lupton <b@lupton.cc> (http://balupton.com)"
-    ],
-    "bugs": {
-        "url": "https://github.com/bevry/docpad-extras/issues"
-    },
-    "repository" : {
-        "type": "git",
-        "url": "http://github.com/bevry/docpad-extras.git"
-    },
-    "engines" : {
-        "node": ">=0.4.0",
-        "docpad": "5.x"
-    },
+	"author": "Bevry Pty Ltd <us@bevry.me> (http://bevry.me)",
+	"maintainers": [
+		"Benjamin Lupton <b@lupton.cc> (http://balupton.com)"
+	],
+	"contributors": [
+		"Benjamin Lupton <b@lupton.cc> (http://balupton.com)"
+	],
+	"bugs": {
+		"url": "https://github.com/bevry/docpad-extras/issues"
+	},
+	"repository" : {
+		"type": "git",
+		"url": "http://github.com/bevry/docpad-extras.git"
+	},
+	"engines" : {
+		"node": ">=0.4.0",
+		"docpad": "5.x"
+	},
 	"dependencies": {
 		"jade": "0.24.x"
 	},
