@@ -68,7 +68,7 @@ module.exports = (BasePlugin) ->
 			resultElWrapper = window.document.createElement('div')
 			resultElWrapper.innerHTML = result
 			resultElInner = resultElWrapper.childNodes[0]
-			resultElInner.className += ' highlighted'
+			resultElInner.className += ' highlighted codehilite'
 			element.parentNode.replaceChild(resultElInner,element)
 			return next()
 
@@ -80,13 +80,13 @@ module.exports = (BasePlugin) ->
 		# Render the document
 		renderDocument: (opts,next) ->
 			# Prepare
-			{extension,content,file} = opts
+			{extension,file} = opts
 
 			# Handle
-			if file.type is 'document' and extension is 'html'
+			if file.type is 'document'  and  extension is 'html'
 				# Create DOM from the file content
 				jsdom.env(
-					html: "<html><body>#{content}</body></html>"
+					html: "<html><body>#{opts.content}</body></html>"
 					features:
 						QuerySelector: true
 					done: (err,window) ->
