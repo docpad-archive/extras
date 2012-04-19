@@ -11,7 +11,7 @@ module.exports = (BasePlugin) ->
 		# Render some content
 		render: (opts,next) ->
 			# Prepare
-			{inExtension,outExtension,templateData,content,file} = opts
+			{inExtension,outExtension,templateData,file} = opts
 
 			# Check extensions
 			if inExtension is 'less' and outExtension is 'css'
@@ -20,7 +20,7 @@ module.exports = (BasePlugin) ->
 				less = require('less')
 
 				# Prepare
-				srcPath = file.fullPath
+				srcPath = file.get('fullPath')
 				dirPath = path.dirname(srcPath)
 				options = 
 					paths: [dirPath]
@@ -28,7 +28,7 @@ module.exports = (BasePlugin) ->
 					compress: true
 
 				# Compile
-				new (less.Parser)(options).parse content, (err, tree) ->
+				new (less.Parser)(options).parse opts.content, (err, tree) ->
 					return next err  if err
 					opts.content = tree.toCSS(compress: options.compress)
 					next()
