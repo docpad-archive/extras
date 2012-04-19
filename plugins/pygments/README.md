@@ -39,6 +39,8 @@ This plugin enables [Pygments](http://pygments.org/) syntax highlighting for Doc
 	pip install pygments
 	```
 
+4. Include your favourite [Pygments Stylesheet](https://github.com/richleland/pygments-css) into your website
+
 
 ## Usage
 

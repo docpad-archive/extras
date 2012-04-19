@@ -1,5 +1,8 @@
 ## History
 
+- v1.0.2 April 19, 2012
+	- Added `codehilite` class to pygmentised elements to be compatible with the [Pygments Stylesheets](https://github.com/richleland/pygments-css)
+
 - v1.0.1 April 19, 2012
 	- Added missing balUtil dependency
 
