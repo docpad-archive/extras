@@ -8,11 +8,13 @@
 		"docpad-plugin",
 		"images"
 	],
-	"author": "Bevry Pty Ltd <us@bevry.me> (http://bevry.me)",
+	"author": "Morgan Sutherland <morgan@msutherl.net> http://msutherl.net",
 	"maintainers": [
+		"Morgan Sutherland <morgan@msutherl.net> http://msutherl.net",
 		"Benjamin Lupton <b@lupton.cc> (http://balupton.com)"
 	],
 	"contributors": [
+		"Morgan Sutherland <morgan@msutherl.net> http://msutherl.net",
 		"Benjamin Lupton <b@lupton.cc> (http://balupton.com)"
 	],
 	"bugs": {
