@@ -10,6 +10,11 @@
 			"branch": "docpad-5.x",
 			"repo": "git://github.com/balupton/balupton.docpad.git",
 			"description": "The personal website/blog of Benjamin Lupton, the creator of DocPad."
+		},
+		"kitchensink.docpad": {
+			"branch": "docpad-5.x",
+			"repo": "git://github.com/bevry/kitchensink.docpad.git",
+			"description": "A DocPad Skeleton useful for showcasing different features and functionality of DocPad. Implemented using Twitter Bootstrap."
 		}
 	},
 	"themes": {}
