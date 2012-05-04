@@ -110,7 +110,7 @@ module.exports = (BasePlugin) ->
 			cachr = @
 			@urlsToCache = {}
 			@urlsToCacheLength = 0
-			
+
 			# Apply
 			templateData.cachr = (sourceUrl) ->
 				return cachr.queueRemoteUrlSync(sourceUrl)
@@ -128,6 +128,7 @@ module.exports = (BasePlugin) ->
 			# Prepare
 			cachr = @
 			docpad = @docpad
+			logger = @docpad.logger
 			config = @config
 			urlsToCache = @urlsToCache
 			urlsToCacheLength = @urlsToCacheLength
@@ -138,6 +139,9 @@ module.exports = (BasePlugin) ->
 			unless urlsToCacheLength
 				return next?()
 
+			# Log
+			logger.log 'info', 'Cachr started caching...', (if failures then "with #{failures} failures" else '')
+
 			# Ensure Path
 			balUtil.ensurePath cachrPath, (err) ->
 				# Check
@@ -145,18 +149,18 @@ module.exports = (BasePlugin) ->
 
 				# Async
 				tasks = new balUtil.Group (err) =>
-					docpad.logger.log (if failures then 'warn' else 'info'), 'Cachr finished caching everything', (if failures then "with #{failures} failures" else '')
-				
+					logger.log (if failures then 'warn' else 'info'), 'Cachr finished caching', (if failures then "with #{failures} failures" else '')
+
 				# Store all our files to be cached
 				balUtil.each urlsToCache, (details,sourceUrl) ->
 					tasks.push (complete) ->
 						cachr.cacheRemoteUrl details, (err) ->
 							if err
-								docpad.logger.log 'warn', "Cachr failed to fetch [#{sourceUrl}]"
+								docpad.logger.log 'warn', "Cachr failed to fetch: #{sourceUrl}"
 								docpad.error(err)
 								++failures
 							return complete()
-				
+
 				# Fire the tasks together
 				tasks.async()
 
