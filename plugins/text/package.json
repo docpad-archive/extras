@@ -1,16 +1,16 @@
 {
-	"name": "docpad-plugin-partials",
-	"version": "1.0.1",
-	"description": "Adds support for Partials (re-usable templates) to DocPad",
+	"name": "docpad-plugin-text",
+	"version": "1.0.0",
+	"description": "Allows you to render templateData with HTML elements",
 	"homepage": "https://github.com/bevry/docpad-extras",
 	"keywords": [
 		"docpad",
 		"docpad-plugin",
-		"partials",
-		"templates",
-        "partial",
-        "templating",
-        "template"
+		"text",
+		"render",
+        "rendering",
+        "renderer",
+        "templating"
 	],
     "author": "Bevry Pty Ltd <us@bevry.me> (http://bevry.me)",
     "maintainers": [
@@ -30,8 +30,5 @@
         "node": ">=0.4.0",
         "docpad": "5.x"
     },
-    "dependencies": {
-        "bal-util": "1.4.x"
-    },
-	"main": "./partials.plugin.coffee"
+	"main": "./text.plugin.coffee"
 }
