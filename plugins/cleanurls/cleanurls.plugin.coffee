@@ -7,39 +7,29 @@ module.exports = (BasePlugin) ->
 
 		# Parsing all files has finished
 		parseAfter: (opts,next) ->
-			# Requires
-			path = require('path')
-			fs = require('fs')
-			balUtil = require('bal-util')
-
 			# Prepare
 			docpad = @docpad
 			logger = @logger
-			documents = docpad.documents
+			database = docpad.database
 			logger.log 'debug', 'Creating clean urls'
 
-			# Async
-			tasks = new balUtil.Group (err) ->
-				logger.log 'debug', 'Created clean urls'
-				next?(err)
-
-			# Check
-			unless documents.length
-				return tasks.exit()
-			
-			# Find documents
-			tasks.total = documents.length
-			documents.forEach (document) ->
+			# Find everything with a html extension
+			database.findAll(outPath: $endsWith: '.html').forEach (document) ->
 				# Prepare
 				documentUrl = document.get('url')
 
+				# Extnesionless URL
+				if /\.html$/i.test(documentUrl)
+					relativeBaseUrl = '/'+document.get('relativeBase')
+					document.addUrl(relativeBaseUrl)
+					document.set(url: relativeBaseUrl)
+
 				# Index URL
 				if /index\.html$/i.test(documentUrl)
-					document.addUrl documentUrl.replace(/index\.html$/i,'')
-				
-				# Extesionless URL
-				if /\.html$/i.test(documentUrl)
-					document.addUrl documentUrl.replace(/\.html$/i,'')
-				
-				# Complete
-				tasks.complete()
+					relativeDirUrl = '/'+document.get('relativeDirPath')
+					document.addUrl(relativeDirUrl)
+					document.set(url: relativeDirUrl)
+
+			# Done
+			logger.log 'debug', 'Created clean urls'
+			next?()
