@@ -7,7 +7,7 @@ install:
 	npm install
 
 clean:
-	rm -Rf node_modules/ npm-debug.log plugins/*/node_modules plugins/*/npm-debug.log  plugins/*/test/node_modules plugins/*/test/npm-debug.log
+	rm -Rf node_modules/ npm-debug.log plugins/*/test/out plugins/*/node_modules plugins/*/npm-debug.log  plugins/*/test/node_modules plugins/*/test/npm-debug.log
 	make install
 
 .PHONY: test install clean
