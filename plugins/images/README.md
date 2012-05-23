@@ -20,7 +20,7 @@ Running <code>docpad generate</code> with docpad-images installed will automatic
 
 ## Example
 
-Say you have two documents in your docpad installation, <code>doc1</code> and <code>doc2</code>. Installing docpad-images and running <code>docpad generate</code> will automatically create two folders: <code>/src/public/images/doc1/</code> and <code>/src/public/images/doc2/</code>. Images placed in the <code>doc1/</code> folder that was created will subsequently be accesible from <code>doc1</code>'s template by referencing <code>@document.images</code>.
+Say you have two documents in your docpad installation, <code>doc1</code> and <code>doc2</code>. Installing docpad-images and running <code>docpad generate</code> will automatically create two folders: <code>/src/public/images/doc1/</code> and <code>/src/public/images/doc2/</code>. Images placed in the <code>doc1/</code> folder that was created will subsequently be accesible from <code>doc1</code>'s template by referencing <code>@document.images</code>. In this example, we place two images in the <code>doc1/</code> folder, <code>img1.jpg</code> and <code>img2.jpg</code>.
 
 Images could be referenced from <code>doc1</code>'s template like this (example in Coffeekup):
 
@@ -36,7 +36,7 @@ Renders to:
 ~~~
 <body>
 	<div class="example">
-		<img src="/images/img1.jpg"><img src="/images/img2.jpg">< ... etc.
+		<img src="/images/doc1/img1.jpg"><img src="/images/doc1/img2.jpg">< ... etc.
 	</div>
 </body>
 ~~~
