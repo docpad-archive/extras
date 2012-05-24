@@ -5,48 +5,47 @@ module.exports = (BasePlugin) ->
 		# Plugin Name
 		name: 'relations'
 
+		# Has inside
+		howManyItemsInside: (aArray,bArray) ->
+			count = 0
+			for aItem in aArray
+				for bItem in bArray
+					if aItem is bItem
+						++count
+						break
+			return count
+
 		# Parsing all files has finished
 		parseAfter: (opts,next) ->
 			# Requires
 			balUtil = require('bal-util')
 
 			# Prepare
+			me = @
 			docpad = @docpad
 			logger = @logger
-			documents = docpad.documents
+			documents = docpad.getCollection('documents')
 			logger.log 'debug', 'Generating relations'
 
-			# Async
-			tasks = new balUtil.Group (err) ->
-				logger.log 'debug', 'Generated relations'
-				return next(err)
-
-			# Check
-			unless documents.length
-				return tasks.exit()
-
-			# Find documents
-			tasks.total = documents.length
+			# Cycle through all our documents
 			documents.forEach (document) ->
 				# Prepare
 				tags = document.get('tags') or []
 
-				# Find related documents
-				relatedDocuments = documents.findAll(tags: '$in': tags)
-				
-				# Check
-				document.set(relatedDocuments:[])
-				unless relatedDocuments.length
-					return tasks.complete()  
-
-				# Fetch
-				relatedDocumentsCleaned = []
-				relatedDocumentsArray = relatedDocuments.sortArray (a,b) ->
-					return a.tags.hasCount(tags) < b.tags.hasCount(tags)
-				relatedDocumentsArray.forEach (relatedDocument) ->
-					return null  if relatedDocument.url is document.get('url')
-					relatedDocumentsCleaned.push relatedDocument
+				# Create a live child collection of the related documents
+				relatedDocuments = documents
+					.findAll(
+						tags: '$in': tags
+						id: $ne: document.id
+					).
+					live(true)
+					.setComparator (a,b) ->
+						return me.howManyItemsInside(a,tags) < me.howManyItemsInside(b,tags)
 
 				# Save
-				document.set(relatedDocuments:relatedDocumentsCleaned)
-				tasks.complete()
+				document.relatedDocuments = relatedDocuments
+				document.set(relatedDocuments:relatedDocuments.toJSON())
+
+			# All done
+			logger.log 'debug', 'Generated relations'
+			return next()
