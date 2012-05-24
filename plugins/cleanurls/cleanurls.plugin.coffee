@@ -10,7 +10,7 @@ module.exports = (BasePlugin) ->
 			# Prepare
 			docpad = @docpad
 			logger = @logger
-			database = docpad.database
+			database = docpad.getDatabase()
 			logger.log 'debug', 'Creating clean urls'
 
 			# Find everything with a html extension
