@@ -1,10 +1,9 @@
 # Requires
 path = require('path')
 balUtil = require('bal-util')
-testers = require('docpad/lib/testers')
 
 # Configure
-pluginsPath = path.join(__dirname,'..','plugins')
+pluginsPath = path.join(__dirname, '..', 'plugins')
 
 # Fail on an uncaught error
 process.on 'uncaughtException', (err) ->
@@ -13,6 +12,7 @@ process.on 'uncaughtException', (err) ->
 # Scan Plugins
 describe 'plugins', ->
 	it 'should dance', (done) ->
+		@timeout(60*1000)
 		balUtil.scandir(
 			# Path
 			pluginsPath
@@ -24,25 +24,20 @@ describe 'plugins', ->
 			(pluginPath,pluginRelativePath,nextFile) ->
 				# Prepare
 				pluginName = path.basename(pluginPath)
-				testerPath = path.join(pluginPath,"#{pluginName}.tester.coffee")
+				testPath = path.join(pluginPath, "test/#{pluginName}.test.js")
 
-				# Check if the tester exists
-				testerExists = path.existsSync(testerPath)
+				balUtil.exec ['rm -Rf lib', 'make compile'], {cwd:pluginPath}, (err) ->
+					# Check if the tester exists
+					testPathExists = path.existsSync(testPath)
 
-				# Check if the tester exists
-				return nextFile(null,true)  unless testerExists
+					# Check if the tester exists
+					return nextFile(null,true)  unless testPathExists
 
-				# Test the plugin's tester
-				describe pluginName, ->
-					testerClass = require(testerPath)(testers)
-					testerInstance = new testerClass(
-						pluginName: pluginName
-						pluginPath: pluginPath
-					)
-					testerInstance.test()
+					# Test the plugin's tester
+					require(testPath)
 
-				# Next file
-				return nextFile(null,true)
+					# Next file
+					return nextFile(null,true)
 
 			# Finish
 			(err) ->

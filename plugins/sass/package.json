@@ -27,10 +27,17 @@
 	},
 	"engines" : {
 		"node": ">=0.4.0",
-		"docpad": "5.x"
+		"docpad": "6.x"
 	},
 	"dependencies": {
 		"sass": "0.5.x"
 	},
-	"main": "./sass.plugin.coffee"
+	"devDependencies": {
+		"coffee-script": "1.3.x",
+		"mocha": "1.1.x"
+	},
+	"main": "./out/sass.plugin.js",
+	"scripts": {
+		"test": "node ./node_modules/mocha/bin/mocha"
+	}
 }

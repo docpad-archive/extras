@@ -27,12 +27,11 @@
 	},
 	"engines" : {
 		"node": ">=0.4.0",
-		"docpad": "5.x"
+		"docpad": "6.x"
 	},
-	"main": "./admin.plugin.coffee",
-	"docpad": {
-		"plugin": {
-			"requireAuthentication": false
-		}
-	}
+	"devDependencies": {
+		"coffee-script": "1.3.x",
+		"mocha": "1.1.x"
+	},
+	"main": "./out/admin.plugin.js"
 }
