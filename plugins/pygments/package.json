@@ -44,9 +44,12 @@
 	"engines" : {
 		"node": ">=0.4.0"
 	},
-	"dependencies": {
-		"jsdom": "0.2.14",
-		"bal-util": "1.6.x"
+	"devDependencies": {
+		"coffee-script": "1.3.x",
+		"mocha": "1.1.x"
 	},
-	"main": "./pygments.plugin.coffee"
+	"main": "./out/pygments.plugin.js",
+	"scripts": {
+		"test": "node ./node_modules/mocha/bin/mocha"
+	}
 }

@@ -26,11 +26,18 @@
 	},
 	"engines" : {
 		"node": ">=0.4.0",
-		"docpad": "5.x"
+		"docpad": "6.x"
 	},
 	"dependencies": {
 		"request": "2.9.x",
 		"bal-util": "1.6.x"
 	},
-	"main": "./cachr.plugin.coffee"
+	"devDependencies": {
+		"coffee-script": "1.3.x",
+		"mocha": "1.1.x"
+	},
+	"main": "./out/cachr.plugin.js",
+	"scripts": {
+		"test": "node ./node_modules/mocha/bin/mocha"
+	}
 }

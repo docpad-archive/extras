@@ -28,12 +28,16 @@
 	},
 	"engines" : {
 		"node": ">=0.4.0",
-		"docpad": "5.x"
+		"docpad": "6.x"
 	},
 	"dependencies": {
 		"everyauth": "0.2.x"
 	},
-	"main": "./authenticate.plugin.coffee",
+	"devDependencies": {
+		"coffee-script": "1.3.x",
+		"mocha": "1.1.x"
+	},
+	"main": "./out/authenticate.plugin.js",
 	"docpad": {
 		"plugin": {
 			"appId": "11932f2b6d05d2a5fa18",
