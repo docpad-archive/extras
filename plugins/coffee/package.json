@@ -1,6 +1,6 @@
 {
 	"name": "docpad-plugin-coffee",
-	"version": "1.0.0",
+	"version": "2.0.0",
 	"description": "Adds support for the various CoffeeScript inspired pre-processors to DocPad. Including CoffeeScript, CoffeeKup and CoffeeCSS, among others.",
 	"homepage": "https://github.com/bevry/docpad-extras",
 	"keywords": [
@@ -36,11 +36,10 @@
 		"html2coffeekup": "1.4.x"
 	},
 	"devDependencies": {
-		"coffee-script": "1.3.x",
-		"mocha": "1.1.x"
+		"coffee-script": "1.3.x"
 	},
 	"main": "./out/coffee.plugin.js",
 	"scripts": {
-		"test": "node ./node_modules/mocha/bin/mocha"
+		"test": "node ./test/coffee.test.js"
 	}
 }

@@ -1,6 +1,6 @@
 {
 	"name": "docpad-plugin-less",
-	"version": "1.0.1",
+	"version": "2.0.0",
 	"description": "Adds support for the LessCSS pre-processor to DocPad.",
 	"homepage": "https://github.com/bevry/docpad-extras",
 	"keywords": [
@@ -34,11 +34,10 @@
 		"less": "1.3.x"
 	},
 	"devDependencies": {
-		"coffee-script": "1.3.x",
-		"mocha": "1.1.x"
+		"coffee-script": "1.3.x"
 	},
 	"main": "./out/less.plugin.js",
 	"scripts": {
-		"test": "node ./node_modules/mocha/bin/mocha"
+		"test": "node ./test/less.test.js"
 	}
 }

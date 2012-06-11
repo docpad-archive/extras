@@ -1,6 +1,6 @@
 {
 	"name": "docpad-plugin-sass",
-	"version": "1.0.1",
+	"version": "2.0.0",
 	"description": "Adds support for the SASS CSS pre-processor to DocPad.",
 	"homepage": "https://github.com/bevry/docpad-extras",
 	"keywords": [
@@ -33,11 +33,10 @@
 		"sass": "0.5.x"
 	},
 	"devDependencies": {
-		"coffee-script": "1.3.x",
-		"mocha": "1.1.x"
+		"coffee-script": "1.3.x"
 	},
 	"main": "./out/sass.plugin.js",
 	"scripts": {
-		"test": "node ./node_modules/mocha/bin/mocha"
+		"test": "node ./test/sass.test.js"
 	}
 }

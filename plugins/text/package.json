@@ -1,6 +1,6 @@
 {
 	"name": "docpad-plugin-text",
-	"version": "1.0.0",
+	"version": "2.0.0",
 	"description": "Allows you to render templateData with HTML elements",
 	"homepage": "https://github.com/bevry/docpad-extras",
 	"keywords": [
@@ -31,11 +31,10 @@
 		"docpad": "6.x"
 	},
 	"devDependencies": {
-		"coffee-script": "1.3.x",
-		"mocha": "1.1.x"
+		"coffee-script": "1.3.x"
 	},
 	"main": "./out/text.plugin.js",
 	"scripts": {
-		"test": "node ./node_modules/mocha/bin/mocha"
+		"test": "node ./test/text.test.js"
 	}
 }
