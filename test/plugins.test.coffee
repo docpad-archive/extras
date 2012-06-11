@@ -1,47 +1,55 @@
 # Requires
-path = require('path')
+pathUtil = require('path')
 balUtil = require('bal-util')
+joe = require('joe')
+Reporter = joe.require('reporters/console')
+joe.setReporter(new Reporter())
 
 # Configure
-pluginsPath = path.join(__dirname, '..', 'plugins')
+pluginsPath = pathUtil.join(__dirname, '..', 'plugins')
+indentResult = (result) ->
+	(result or '').replace(/\n/g,'\n\t')
 
 # Fail on an uncaught error
 process.on 'uncaughtException', (err) ->
 	throw err
 
 # Scan Plugins
-describe 'plugins', ->
-	it 'should dance', (done) ->
-		@timeout(60*1000)
-		balUtil.scandir(
-			# Path
-			pluginsPath
+balUtil.scandir(
+	# Path
+	pluginsPath
 
-			# Skip files
-			false
+	# Skip files
+	false
 
-			# Handle directories
-			(pluginPath,pluginRelativePath,nextFile) ->
-				# Prepare
-				pluginName = path.basename(pluginPath)
-				testPath = path.join(pluginPath, "test/#{pluginName}.test.js")
+	# Handle directories
+	(pluginPath,pluginRelativePath,nextFile) ->
+		# Prepare
+		pluginName = pathUtil.basename(pluginRelativePath)
 
-				balUtil.exec ['rm -Rf lib', 'make compile'], {cwd:pluginPath}, (err) ->
-					# Check if the tester exists
-					testPathExists = path.existsSync(testPath)
+		# Test the plugin
+		joe.test pluginName, (done) ->
+			# Execute the plugin's tests
+			commands = ['npm test']
+			options = {cwd:pluginPath, output:true}
+			balUtil.spawn commands, options, (err,results) ->
+				# Output the test results for the plugin
+				if results.length is commands.length
+					testResult = results[commands.length-1]
+					err = testResult[0]
+					if err
+						err = new Error('the tests failed')
+						done(err)
+					else
+						done()
+				else
+					done()
 
-					# Check if the tester exists
-					return nextFile(null,true)  unless testPathExists
+				# All done
+				nextFile(err,true)
 
-					# Test the plugin's tester
-					require(testPath)
-
-					# Next file
-					return nextFile(null,true)
-
-			# Finish
-			(err) ->
-				# Check
-				throw err  if err
-				done()
-		)
+	# Finish
+	(err) ->
+		# Check
+		throw err  if err
+)

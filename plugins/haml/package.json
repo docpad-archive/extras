@@ -1,6 +1,6 @@
 {
 	"name": "docpad-plugin-haml",
-	"version": "1.0.0",
+	"version": "2.0.0",
 	"description": "Adds support for the HAML templating engine to DocPad.",
 	"homepage": "https://github.com/bevry/docpad-extras",
 	"keywords": [
@@ -34,11 +34,10 @@
 		"haml": ">=0.4.0"
 	},
 	"devDependencies": {
-		"coffee-script": "1.3.x",
-		"mocha": "1.1.x"
+		"coffee-script": "1.3.x"
 	},
 	"main": "./out/haml.plugin.js",
 	"scripts": {
-		"test": "node ./node_modules/mocha/bin/mocha"
+		"test": "node ./test/haml.test.js"
 	}
 }

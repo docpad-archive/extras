@@ -1,6 +1,6 @@
 {
 	"name": "docpad-plugin-move",
-	"version": "1.0.0",
+	"version": "2.0.0",
 	"description": "Adds support for the Move to javascript language to DocPad.",
 	"homepage": "https://github.com/bevry/docpad-extras",
 	"keywords": [
@@ -32,11 +32,10 @@
 		"move-panta": "0.4.x"
 	},
 	"devDependencies": {
-		"coffee-script": "1.3.x",
-		"mocha": "1.1.x"
+		"coffee-script": "1.3.x"
 	},
 	"main": "./out/move.plugin.js",
 	"scripts": {
-		"test": "node ./node_modules/mocha/bin/mocha"
+		"test": "node ./test/move.test.js"
 	}
 }
