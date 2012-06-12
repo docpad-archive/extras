@@ -7,16 +7,16 @@ module.exports = (BasePlugin) ->
 		name: 'rest'
 
 		# Run when the server setup has finished
-		serverAfter: ({docpad,server},next) ->
+		serverAfter: ({docpad},next) ->
 			# Hook into all post requests
-			docpad.server.post /./, (req,res,next) =>
+			docpad.getServer().post /./, (req,res,next) =>
 				# Check is maintainer
 				if @config.requireAuthentication and @docpad.getPlugin('authenticate').isMaintainer() is false
 					res.send(405) # Not authorized
 					return next()
 
 				# Fetch the document
-				docpad.documents.findOne url: req.url, (err,document) ->
+				docpad.getCollection('documents').findOne url: req.url, (err,document) ->
 					# Error?
 					return next(err)  if err
 
