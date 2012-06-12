@@ -16,15 +16,15 @@
       RestPlugin.prototype.name = 'rest';
 
       RestPlugin.prototype.serverAfter = function(_arg, next) {
-        var docpad, server,
+        var docpad,
           _this = this;
-        docpad = _arg.docpad, server = _arg.server;
-        docpad.server.post(/./, function(req, res, next) {
+        docpad = _arg.docpad;
+        docpad.getServer().post(/./, function(req, res, next) {
           if (_this.config.requireAuthentication && _this.docpad.getPlugin('authenticate').isMaintainer() === false) {
             res.send(405);
             return next();
           }
-          return docpad.documents.findOne({
+          return docpad.getCollection('documents').findOne({
             url: req.url
           }, function(err, document) {
             var key, value, _ref;
