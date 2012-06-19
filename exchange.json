@@ -3,7 +3,7 @@
 	"skeletons": {
 		"canvas.docpad": {
 			"branch": "docpad-5.x",
-			"repo": "git://github.com/bevry/canvas.docpad.git",
+			"repo": "git://github.com/docpad/canvas.docpad.git",
 			"description": "The bare minimum to get started, with a few bundled client-side libraries to make it easier."
 		},
 		"balupton.docpad": {
@@ -13,7 +13,7 @@
 		},
 		"kitchensink.docpad": {
 			"branch": "docpad-5.x",
-			"repo": "git://github.com/bevry/kitchensink.docpad.git",
+			"repo": "git://github.com/docpad/kitchensink.docpad.git",
 			"description": "A DocPad Skeleton useful for showcasing different features and functionality of DocPad. Implemented using Twitter Bootstrap."
 		}
 	},
