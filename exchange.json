@@ -7,7 +7,7 @@
 		},
 		"Website Skeleton": {
 			"branch": "docpad-6.x",
-			"repo": "git://github.com/docpad/balupton.docpad.git",
+			"repo": "git://github.com/docpad/website.docpad.git",
 			"description": "Website skeleton for DocPad. Useful for personal websites and blogs. Pulls in social streams and github information."
 		},
 		"Kitchensink": {
