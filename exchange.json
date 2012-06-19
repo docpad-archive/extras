@@ -1,21 +1,19 @@
  {
-	"plugins": {},
 	"skeletons": {
-		"canvas.docpad": {
+		"HTML5 Boilerplate": {
 			"branch": "docpad-6.x",
-			"repo": "git://github.com/bevry/canvas.docpad.git",
-			"description": "The bare minimum to get started, with a few bundled client-side libraries to make it easier."
+			"repo": "git://github.com/docpad/html5-boilerplate.docpad.git",
+			"description": "HTML5 Boilerplate skeleton for DocPad. Bare essentials for building a modern website with best practices."
 		},
-		"balupton.docpad": {
+		"Website Skeleton": {
 			"branch": "docpad-6.x",
-			"repo": "git://github.com/balupton/balupton.docpad.git",
-			"description": "The personal website/blog of Benjamin Lupton, the creator of DocPad."
+			"repo": "git://github.com/docpad/balupton.docpad.git",
+			"description": "Website skeleton for DocPad. Useful for personal websites and blogs. Pulls in social streams and github information."
 		},
-		"kitchensink.docpad": {
+		"Kitchensink": {
 			"branch": "docpad-6.x",
-			"repo": "git://github.com/bevry/kitchensink.docpad.git",
+			"repo": "git://github.com/docpad/kitchensink.docpad.git",
 			"description": "A DocPad Skeleton useful for showcasing different features and functionality of DocPad. Implemented using Twitter Bootstrap."
 		}
-	},
-	"themes": {}
+	}
 }
