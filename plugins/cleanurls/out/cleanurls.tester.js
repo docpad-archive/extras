@@ -14,11 +14,11 @@
       }
 
       MyTester.prototype.testServer = function(next) {
-        var expect, fs, request, tester;
+        var expect, fsUtil, request, tester;
         tester = this;
         expect = testers.expect;
         request = testers.request;
-        fs = require('fs');
+        fsUtil = require('fs');
         MyTester.__super__.testServer.apply(this, arguments);
         return this.suite('cleanurls', function(suite, test) {
           var baseUrl, outExpectedPath;
@@ -26,14 +26,18 @@
           outExpectedPath = tester.config.outExpectedPath;
           return test('server should serve URLs without an extension', function(done) {
             return request("" + baseUrl + "/welcome.html", function(err, response, actual) {
+              var actualStr;
               if (err) {
-                throw err;
+                return done(err);
               }
-              return fs.readFile("" + outExpectedPath + "/welcome.html", function(err, expected) {
+              actualStr = actual.toString();
+              return fsUtil.readFile("" + outExpectedPath + "/welcome.html", function(err, expected) {
+                var expectedStr;
                 if (err) {
-                  throw err;
+                  return done(err);
                 }
-                expect(actual.toString()).to.equal(expected.toString());
+                expectedStr = expected.toString();
+                expect(actualStr, expectedStr);
                 return done();
               });
             });

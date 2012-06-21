@@ -5,30 +5,27 @@ module.exports = (BasePlugin) ->
 		# Plugin Name
 		name: 'cleanUrls'
 
-		# Parsing all files has finished
-		parseAfter: (opts,next) ->
+		# DocPad is now ready for us to do stuff
+		docpadReady: (opts) ->
 			# Prepare
 			docpad = @docpad
 			database = docpad.getDatabase()
-			docpad.log 'debug', 'Creating clean urls'
+			docpad.log 'debug', 'Applying clean urls'
 
-			# Find everything with a html extension
-			database.findAll(outPath: $endsWith: '.html').forEach (document) ->
+			# When we get a new document, update its url
+			database.on 'add change', (document) ->
 				# Prepare
 				documentUrl = document.get('url')
 
 				# Extnesionless URL
 				if /\.html$/i.test(documentUrl)
 					relativeBaseUrl = '/'+document.get('relativeBase')
-					document.addUrl(relativeBaseUrl)
-					document.set(url: relativeBaseUrl)
+					document.setUrl(relativeBaseUrl)
 
 				# Index URL
 				if /index\.html$/i.test(documentUrl)
 					relativeDirUrl = '/'+document.get('relativeDirPath')
-					document.addUrl(relativeDirUrl)
-					document.set(url: relativeDirUrl)
+					document.setUrl(relativeDirUrl)
 
-			# Done
-			docpad.log 'debug', 'Created clean urls'
-			next?()
+			# All done
+			docpad.log 'debug', 'Applied clean urls'

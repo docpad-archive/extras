@@ -1,6 +1,10 @@
 ## History
 
-- v1.1.0 Unreleased
+- v2.0.2 June 12, 2012
+	- Updated for DocPad v6.0.8
+	- Fixed
+
+- v1.1.0
 	- Updated for DocPad v5.3
 	- Now uses the clean url as the default url for the document
 
