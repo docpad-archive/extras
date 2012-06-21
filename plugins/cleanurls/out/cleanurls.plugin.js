@@ -15,35 +15,24 @@
 
       CleanUrlsPlugin.prototype.name = 'cleanUrls';
 
-      CleanUrlsPlugin.prototype.parseAfter = function(opts, next) {
+      CleanUrlsPlugin.prototype.docpadReady = function(opts) {
         var database, docpad;
         docpad = this.docpad;
         database = docpad.getDatabase();
-        docpad.log('debug', 'Creating clean urls');
-        database.findAll({
-          outPath: {
-            $endsWith: '.html'
-          }
-        }).forEach(function(document) {
+        docpad.log('debug', 'Applying clean urls');
+        database.on('add change', function(document) {
           var documentUrl, relativeBaseUrl, relativeDirUrl;
           documentUrl = document.get('url');
           if (/\.html$/i.test(documentUrl)) {
             relativeBaseUrl = '/' + document.get('relativeBase');
-            document.addUrl(relativeBaseUrl);
-            document.set({
-              url: relativeBaseUrl
-            });
+            document.setUrl(relativeBaseUrl);
           }
           if (/index\.html$/i.test(documentUrl)) {
             relativeDirUrl = '/' + document.get('relativeDirPath');
-            document.addUrl(relativeDirUrl);
-            return document.set({
-              url: relativeDirUrl
-            });
+            return document.setUrl(relativeDirUrl);
           }
         });
-        docpad.log('debug', 'Created clean urls');
-        return typeof next === "function" ? next() : void 0;
+        return docpad.log('debug', 'Applied clean urls');
       };
 
       return CleanUrlsPlugin;

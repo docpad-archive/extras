@@ -8,7 +8,7 @@ module.exports = (testers) ->
 			tester = @
 			expect = testers.expect
 			request = testers.request
-			fs = require('fs')
+			fsUtil = require('fs')
 
 			# Create the server
 			super
@@ -21,8 +21,10 @@ module.exports = (testers) ->
 
 				test 'server should serve URLs without an extension', (done) ->
 					request "#{baseUrl}/welcome.html", (err,response,actual) ->
-						throw err  if err
-						fs.readFile "#{outExpectedPath}/welcome.html", (err,expected) ->
-							throw err  if err
-							expect(actual.toString()).to.equal(expected.toString())
+						return done(err)  if err
+						actualStr = actual.toString()
+						fsUtil.readFile "#{outExpectedPath}/welcome.html", (err,expected) ->
+							return done(err)  if err
+							expectedStr = expected.toString()
+							expect(actualStr,expectedStr)
 							done()
