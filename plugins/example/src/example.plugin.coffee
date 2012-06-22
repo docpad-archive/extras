@@ -8,16 +8,16 @@ module.exports = (BasePlugin) ->
 		# Setup the Console Interface
 		consoleSetup: (opts,next) ->
 			# Prepare
-			{interface,program} = opts
+			docpadInterface = opts.interface
+			commanderInstance = opts.program
 
 			# Extend the CLI
 			program
 				.command('example-question')
 				.description("we'll ask you a question")
 				.action (command) ->
-					interface.applyConfiguration(command)
-					me.question(opts,interface.actionCompleted)
-	der(content,templateData)
+					docpadInterface.applyConfiguration(command)
+					me.question(opts,docpadInterface.actionCompleted)
 
 			# Done, return back to DocPad
 			return next()
@@ -25,7 +25,7 @@ module.exports = (BasePlugin) ->
 		# Ask the user a question
 		question: (opts,next) ->
 			# Prepare
-			{interface,program} = opts
+			{docpadInterface,program} = opts
 
 			# Get username
 			program.promptSingleLine 'Type something?\n> ',  (input) ->

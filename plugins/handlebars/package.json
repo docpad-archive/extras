@@ -12,11 +12,15 @@
 		"render",
 		"rendering"
 	],
-	"author": {
-		"name": "Mike Moulton",
-		"email": "mike@meltmedia.com",
-		"url": "http://meltmedia.com"
-	},
+	"author": "Mike Moulton <mike@meltmedia.com> (http://meltmedia.com)",
+	"maintainers": [
+		"Mike Moulton <mike@meltmedia.com> (http://meltmedia.com)",
+		"Benjamin Lupton <b@lupton.cc> (http://balupton.com)"
+	],
+	"contributors": [
+		"Mike Moulton <mike@meltmedia.com> (http://meltmedia.com)",
+		"Benjamin Lupton <b@lupton.cc> (http://balupton.com)"
+	],
 	"bugs": {
 		"url": "https://github.com/bevry/docpad-extras/issues"
 	},
@@ -24,21 +28,15 @@
 		"type": "git",
 		"url": "http://github.com/bevry/docpad-extras.git"
 	},
-	"licenses": [
-		{
-			"type": "MIT",
-			"url": "http://creativecommons.org/licenses/MIT/"
-		}
-	],
 	"dependencies": {
-		"handlebars": ">= 1.0.5beta"
+		"handlebars": "1.0.x"
 	},
 	"devDependencies": {
 		"coffee-script": "1.3.x"
 	},
 	"engines" : {
 		"node": ">=0.4.0",
-	  "docpad": "6.x"
+		"docpad": "6.x"
 	},
 	"main": "./out/handlebars.plugin.js",
 	"scripts": {

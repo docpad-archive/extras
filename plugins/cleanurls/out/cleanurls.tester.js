@@ -21,17 +21,19 @@
         fsUtil = require('fs');
         MyTester.__super__.testServer.apply(this, arguments);
         return this.suite('cleanurls', function(suite, test) {
-          var baseUrl, outExpectedPath;
+          var baseUrl, filePath, fileUrl, outExpectedPath;
           baseUrl = "http://localhost:" + tester.docpad.config.port;
           outExpectedPath = tester.config.outExpectedPath;
+          fileUrl = "" + baseUrl + "/welcome";
+          filePath = "" + outExpectedPath + "/welcome.html";
           return test('server should serve URLs without an extension', function(done) {
-            return request("" + baseUrl + "/welcome.html", function(err, response, actual) {
+            return request(fileUrl, function(err, response, actual) {
               var actualStr;
               if (err) {
                 return done(err);
               }
               actualStr = actual.toString();
-              return fsUtil.readFile("" + outExpectedPath + "/welcome.html", function(err, expected) {
+              return fsUtil.readFile(filePath, function(err, expected) {
                 var expectedStr;
                 if (err) {
                   return done(err);

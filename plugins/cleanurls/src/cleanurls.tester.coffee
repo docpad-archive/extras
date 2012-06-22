@@ -18,12 +18,14 @@ module.exports = (testers) ->
 				# Prepare
 				baseUrl = "http://localhost:#{tester.docpad.config.port}"
 				outExpectedPath = tester.config.outExpectedPath
+				fileUrl = "#{baseUrl}/welcome"
+				filePath = "#{outExpectedPath}/welcome.html"
 
 				test 'server should serve URLs without an extension', (done) ->
-					request "#{baseUrl}/welcome.html", (err,response,actual) ->
+					request fileUrl, (err,response,actual) ->
 						return done(err)  if err
 						actualStr = actual.toString()
-						fsUtil.readFile "#{outExpectedPath}/welcome.html", (err,expected) ->
+						fsUtil.readFile filePath, (err,expected) ->
 							return done(err)  if err
 							expectedStr = expected.toString()
 							expect(actualStr,expectedStr)

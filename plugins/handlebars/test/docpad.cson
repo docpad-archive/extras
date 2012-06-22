@@ -1,7 +1,7 @@
 {
-  plugins:
-    handlebars:
-      helpers:
-        helperTest: () ->
-          output = "Testing Helpers"
+	plugins:
+		handlebars:
+			helpers:
+				helperTest: () ->
+					output = "Testing Helpers"
 }
