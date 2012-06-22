@@ -10,7 +10,7 @@ This plugin enables [Pygments](http://pygments.org/) syntax highlighting for Doc
 
 	If you are on Linux or OSX, generally Python is already installed for you.
 	
-	- Via Homebrew
+	1. Installing Python via Homebrew
 
 		1. [Install Homebrew](http://mxcl.github.com/homebrew/)
 
