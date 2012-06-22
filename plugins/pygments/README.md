@@ -18,7 +18,6 @@ This plugin enables [Pygments](http://pygments.org/) syntax highlighting for Doc
 
 			``` bash
 			brew install python
-			
 			```
 		
 		3. Add the Python share directory to your path: `/usr/local/share/python`
