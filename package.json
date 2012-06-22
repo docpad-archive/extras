@@ -21,9 +21,10 @@
 	"engines" : {
 		"node": ">=0.4.0"
 	},
+	"dependencies": {},
 	"devDependencies": {
 		"coffee-script": "1.3.x",
-		"bal-util": "1.8.x",
+		"bal-util": "1.9.x",
 		"joe": "1.0.x"
 	},
 	"scripts": {

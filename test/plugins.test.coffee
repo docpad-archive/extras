@@ -30,7 +30,7 @@ balUtil.scandir(
 		# Test the plugin
 		joe.test pluginName, (done) ->
 			# Execute the plugin's tests
-			commands = ['npm test']
+			commands = ['npm install', 'make compile', 'npm test']
 			options = {cwd:pluginPath, output:true}
 			balUtil.spawn commands, options, (err,results) ->
 				# Output the test results for the plugin

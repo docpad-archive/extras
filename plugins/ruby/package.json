@@ -28,6 +28,7 @@
 		"node": ">=0.4.0",
 		"docpad": "6.x"
 	},
+	"dependencies": {},
 	"devDependencies": {
 		"coffee-script": "1.3.x"
 	},
