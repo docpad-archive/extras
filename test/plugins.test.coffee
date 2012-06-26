@@ -32,7 +32,7 @@ balUtil.scandir(
 			# Execute the plugin's tests
 			commands = ['npm install', 'make compile', 'npm test']
 			options = {cwd:pluginPath, output:true}
-			balUtil.spawn commands, options, (err,results) ->
+			balUtil.spawnMultiple commands, options, (err,results) ->
 				# Output the test results for the plugin
 				if results.length is commands.length
 					testResult = results[commands.length-1]
