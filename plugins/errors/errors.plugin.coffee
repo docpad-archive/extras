@@ -56,6 +56,12 @@ module.exports = (BasePlugin) ->
           if Number(key) == code
             break
 
+      if match == null
+        for key, value of @files
+          match = key
+        unless match
+          match = code
+
       return match
 
     generateAfter: ->
@@ -73,7 +79,7 @@ module.exports = (BasePlugin) ->
       server.use (req, res, next) ->
         code = self.findClosest(404)
         # Assume 404 for now
-        if path.existsSync self.files[code]
+        if self.files.hasOwnProperty(code) && path.existsSync self.files[code]
           data = fs.readFileSync(self.files[code], 'utf8')
           res.writeHead(code, CODE[code])
           res.write(data)
@@ -85,7 +91,7 @@ module.exports = (BasePlugin) ->
 
       server.use (err, req, res, next) ->
         code = self.findClosest(500)
-        if path.existsSync self.files[code]
+        if self.files.hasOwnProperty(code) && path.existsSync self.files[code]
           res.writeHead(code, CODE[code])
           data = fs.readFileSync(self.files[code], 'utf8')
           res.write(data)
