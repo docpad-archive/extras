@@ -5,7 +5,8 @@
   "homepage": "https://github.com/ncrohn/docpad-plugin-errors",
   "keywords": [
     "docpad",
-    "docpad-plugin"
+    "docpad-plugin",
+    "error pages"
   ],
   "author": "Nick Crohn <nick@meltmedia.com> (nickcrohn.com)",
   "bugs": {
