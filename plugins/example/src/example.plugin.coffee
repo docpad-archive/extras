@@ -8,8 +8,7 @@ module.exports = (BasePlugin) ->
 		# Setup the Console Interface
 		consoleSetup: (opts,next) ->
 			# Prepare
-			docpadInterface = opts.interface
-			commanderInstance = opts.program
+			{docpadInterface,commanderInstance} = opts
 
 			# Extend the CLI
 			program
