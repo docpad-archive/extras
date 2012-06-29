@@ -14,21 +14,19 @@ sync:
 	git checkout docpad-6.x
 	git pull origin docpad-6.x
 	git merge master
-	git push
 
 	git checkout master
 	git pull origin master
 	git merge docpad-6.x
-	git push
 
 	git checkout docpad-6.x
-	git pull origin docpad-6.x
 	git merge master
-	git push
 
 	git checkout dev
 	git pull origin dev
 	git merge master
+
+	git checkout master
 	git push
 
 .PHONY: test install clean sync
