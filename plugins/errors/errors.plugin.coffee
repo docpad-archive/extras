@@ -38,38 +38,27 @@ module.exports = (BasePlugin) ->
 
     files: {}
 
-    prefixMatch: (n1, n2) ->
-      n1 = Number(n1)
-      n2 = Number(n2)
-
-      n1 = Math.floor(n1/100)
-      n2 = Math.floor(n2/100)
-
-      return (n1 == n2)
-
     findClosest: (code) ->
+      code = code.toString()
       match = null
-      for key, value of CODE
-        if @files.hasOwnProperty(key) && code >= Number(key)
-          match = key
-          # exact match exit
-          if Number(key) == code
-            break
+      count = 2
 
-      if match == null
-        for key, value of @files
-          match = key
-        unless match
+      while match == null
+        if @files.hasOwnProperty(code)
           match = code
-
+        else
+          code = code.substr(0, count)
+          while code.length < 3
+            code += 'x'
+          count -= 1
       return match
 
     generateAfter: ->
       fileList = fs.readdirSync(@docpad.config.outPath)
 
       for file in fileList
-        if file.match /^[0-9]{3}\.html/
-          code = file.match /^([0-9]{3})\.html/
+        if file.match /^[0-9x]{3}\.html/
+          code = file.match /^([0-9x]{3})\.html/
           @files[code[1]] = path.join(@docpad.config.outPath, file)
 
     serverAfter: (opts) ->
