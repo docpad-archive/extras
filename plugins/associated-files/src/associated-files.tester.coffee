@@ -5,6 +5,5 @@ module.exports = (testers) ->
 		# Configuration
 		docpadConfig:
 			enabledPlugins:
-				'text': true
+				'associated-files': true
 				'eco': true
-				'markdown': true

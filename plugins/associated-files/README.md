@@ -1,44 +1,66 @@
-# The Images plugin
+# Associated Files Plugin
 
-This docpad plugin allows you to have per-document images easily accessible from within the document.
-It provide access to an array of paths to the images associated with the current document.
+This plugin streamlines finding associated files for a particular document, which is useful for:
+- getting images for a gallery
+- getting downloads for an article
+- etc. etc.
+
+The way it works is by looking into `src/files/associated-files/#{document.associatedFilesDirectory or document.basename}` for files. Where `associatedFilesDirectory` is set in your document's meta data, and if it doesn't exist it will use the document's basename (e.g. the basename of `my-holiday-2012.html.eco` is `my-holiday-2012`). Any files inside that path will be associated to your document, and retrieveable by `@getDocument().getAssociatedFiles()`
+
+Lets see how this works, we have the document `src/documents/my-holiday-2012.html.eco`:
+
+``` html
+---
+title: My Holiday in 2012
+---
+
+<h2>Here are some great photos from our trip</h2>
+
+<% for file in @getDocument().getAssociatedFiles(): %>
+<p>
+	<h3><%= file.title or file.name %></h3>
+	<img src="<%= file.url %>" title="<%= file.title or file.name %>" />
+</p>
+<% end %>
+```
+
+Then we will stick a few images inside our path: `src/files/associated-files/my-holiday-2012`. And we'll end up with the rendered result:
+
+``` html
+<h2>Here are some great photos from our trip</h2>
+
+<p>
+	<h3>sweet-sweet-beach.jpg</h3>
+	<img src="/associated-files/my-holiday-2012/sweet-sweet-beach.jpg" title="sweet-sweet-beach.jpg" />
+</p>
+
+<p>
+	<h3>sweet-sweet-icecream.jpg</h3>
+	<img src="/associated-files/my-holiday-2012/sweet-sweet-icecream.jpg" title="sweet-sweet-icecream.jpg" />
+</p>
+```
+
+Ins't that cool?
+
+
 
 ## Install
+Inside your DocPad project's directory, run the following:
 
-`npm install docpad-plugin-images`
+``` bash
+npm install docpad-plugin-associated-files --save
+```
 
-Change pathnames in images.plugin.coffee if you need to and comment out automatic folder creation if you don't want that.
 
-## Dependencies
 
-The Images plugin requires [underscore.js](http://documentcloud.github.com/underscore/). This dependency is automatically handled by npm.
+## History
+You can discover the history inside the `History.md` file
 
-## Usage
 
-1. Create the `src/public/images` folder
-2. For each document you see fit, create a corresponding folder in the newly create `images` directory. This folder name should be the `basename` of the document, i.e. the filename without the extensions
-3. Place the images you want to use in each folder
-4. Access these images through the `@document.images` array
+## License
+Licensed under the [MIT License](http://creativecommons.org/licenses/MIT/)
+<br/>Copyright &copy; 2012 [Bevry Pty Ltd](http://bevry.me)
 
-Images that you place in `/src/public/images/[basename]/` will subsequently be accesible to the document with that `basename` during document rendering (i.e. in a template or in a plugin that is triggered after the initial `render` pass).
-
-## Example
-
-Say you have two documents in your docpad installation, `doc1.html.coffee` and `doc2.html.coffee`. Place the `img1.jpg` and `img2.jpg` images in the `/src/public/images/doc1/` folder. These 2 images can then be referenced from `doc1.html.coffee` like this (example in Coffeekup):
-
-~~~
-body ->
-	div class: 'example', ->
-		for image in @document.images
-			img src: image
-~~~
-
-Renders to:
-
-~~~
-<body>
-	<div class="example">
-		<img src="/images/doc1/img1.jpg"><img src="/images/doc1/img2.jpg">
-	</div>
-</body>
-~~~
+## Contributors
+- [Benjamin Lupton](http://balupton.com)
+- [Morgan Sutherland](http://msutherl.net)

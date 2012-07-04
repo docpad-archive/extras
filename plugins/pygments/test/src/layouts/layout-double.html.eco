@@ -4,5 +4,7 @@ layout: 'layout-single'
 
 <div class="layout-double">
 	<div class="title"><%=@document.title or 'Untitled'%></div>
-	<div class="content"><%-@content%></div>
-</div>
+	<div class="content">
+		<%-@content%>
+	</div><!-- /.layout-double > .content -->
+</div><!-- /.layout-double > .content -->

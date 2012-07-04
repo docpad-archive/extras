@@ -5,30 +5,36 @@ module.exports = (BasePlugin) ->
 		# Plugin Name
 		name: 'associated-files'
 
-		# Template data to insert
-		getTemplateData: ->
+		# DocPad is ready now
+		# Lets use this time to extend our file model
+		docpadReady: (opts) ->
 			# Prepare
-			@associatedFilesPath ?= pathUtil.resolve(@docpad.getConfig().filesPath[0], @config.associatedFilesPath)
+			{docpad} = opts
+			{DocumentModel} = docpad
+			pathUtil = require('path')
+			fsUtil = require('fs')
 
-			# Return the templateData to apply
-			templateData =
+			# Fetch our configuration
+			associatedFilesPath = @config.associatedFilesPath
+			createAssociatedFilesPath = @config.createAssociatedFilesPath
 
-				# Fetch the live collection of associated files for the document
-				getAssociatedFilesCollection: (documentAssociatedFilesDirectory) ->
-					# Prepare
-					document = @document
-					documentAssociatedFilesDirectory or= @document.get('associatedFilesDirectory') or @document.get('basename')
-					documentAssociatedFilesPath = pathUtil.resolve(associatedFilesPath, documentAssociatedFilesDirectory)
+			# Extend our prototype
+			DocumentModel::getAssociatedFilesPath = ->
+				documentAssociatedFilesPath = @get('associatedFilesPath') or @get('basename')
+				documentAssociatedFilesPathNormalized = @getPath(documentAssociatedFilesPath, associatedFilesPath)
+				unless documentAssociatedFilesPathNormalized.slice(-1) in ['\\','/']
+					documentAssociatedFilesPathNormalized += '/'
+				return documentAssociatedFilesPathNormalized
+			DocumentModel::getAssociatedFiles = (sorting,paging) ->
+				# Prepare
+				document = @
+				documentAssociatedFilesPath = document.getAssociatedFilesPath()
 
-					# Fetch our associated files, and cache
-					associatedFilesCollection = document.associatedFilesCollection or documents.findAllLive({
-						fullPath: $startsWith: documentAssociatedFilesPath
-					})
+				# Fetch our associated files, and cache
+				associatedFilesCollection = docpad.getFilesAtPath(documentAssociatedFilesPath, sorting, paging)
 
-					# Return
-					associatedFilesCollection
+				# Return
+				return associatedFilesCollection
 
-				# Fetch the live collection of associated files for the document (as an array)
-				getAssociatedFiles: (documentAssociatedFilesDirectory) ->
-					# Return
-					@getAssociatedFilesCollection(documentAssociatedFilesDirectory).toJSON()
+			# All done
+			null
