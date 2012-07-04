@@ -1,7 +1,7 @@
 # If you change something here, be sure to change it in package.json's scripts as well
 
 test:
-	node ./node_modules/mocha/bin/mocha
+	npm test
 
 install:
 	npm install
@@ -9,6 +9,7 @@ install:
 clean:
 	rm -Rf node_modules/ npm-debug.log plugins/*/test/out plugins/*/node_modules plugins/*/npm-debug.log  plugins/*/test/node_modules plugins/*/test/npm-debug.log
 	make install
+	npm link docpad
 
 sync:
 	git checkout docpad-6.x

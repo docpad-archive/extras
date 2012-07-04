@@ -5,13 +5,10 @@ module.exports = (BasePlugin) ->
 		# Plugin name
 		name: 'eco'
 
-		# Plugin priority
-		priority: 750
-
 		# Render some content
-		render: (opts,next) ->
+		render: (opts) ->
 			# Prepare
-			{inExtension,outExtension,templateData,content} = opts
+			{inExtension,templateData,content} = opts
 
 			# Check extensions
 			if inExtension is 'eco'
@@ -20,6 +17,3 @@ module.exports = (BasePlugin) ->
 
 				# Render
 				opts.content = eco.render(content,templateData)
-			
-			# Done, return back to DocPad
-			return next()

@@ -5,21 +5,15 @@ module.exports = (BasePlugin) ->
 		# Plugin name
 		name: 'markdown'
 
-		# Plugin priority
-		priority: 700
-
 		# Render some content
-		render: (opts,next) ->
+		render: (opts) ->
 			# Prepare
-			{inExtension,outExtension,templateData,content} = opts
+			{inExtension,outExtension} = opts
 
 			# Check our extensions
-			if inExtension in ['md','markdown'] and outExtension is 'html'
+			if inExtension in ['md','markdown'] and outExtension in [null,'html']
 				# Requires
 				markdown = require('github-flavored-markdown')
 
 				# Render
-				opts.content = markdown.parse(content)
-	
-			# Done, return back to DocPad
-			return next()
+				opts.content = markdown.parse(opts.content)
