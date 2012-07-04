@@ -25,10 +25,11 @@ module.exports = (BasePlugin) ->
 			docpad = @docpad
 			logger = @logger
 			documents = docpad.getCollection('documents')
+			targetedDocuments = if @config.collectionName then docpad.getCollection(@config.collectionName) else documents
 			docpad.log 'debug', 'Generating relations'
 
 			# Cycle through all our documents
-			documents.forEach (document) ->
+			targetedDocuments.forEach (document) ->
 				# Prepare
 				tags = document.get('tags') or []
 
@@ -53,7 +54,7 @@ module.exports = (BasePlugin) ->
 		renderBefore: (opts,next) ->
 			# Prepare
 			docpad = @docpad
-			documents = docpad.getCollection('documents')
+			documents = docpad.getCollection(@config.collectionName or 'documents')
 
 			# Cycle through all our documents
 			documents.forEach (document) ->
