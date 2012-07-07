@@ -35,6 +35,7 @@ module.exports = (BasePlugin) ->
 		pygments.stdin.write(source)
 		pygments.stdin.end()
 
+
 	# Pygmentize an element
 	# next(err)
 	pygmentizeElement = (window, element, next) ->
@@ -72,6 +73,7 @@ module.exports = (BasePlugin) ->
 				resultElInner.className += ' highlighted codehilite'
 				element.parentNode.replaceChild(resultElInner,element)
 			return next()
+
 
 	# Define Plugin
 	class PygmentsPlugin extends BasePlugin

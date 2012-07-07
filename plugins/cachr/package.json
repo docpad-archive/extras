@@ -1,6 +1,6 @@
 {
 	"name": "docpad-plugin-cachr",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"description": "Caches remote resources locally",
 	"homepage": "https://github.com/bevry/docpad-extras",
 	"keywords": [

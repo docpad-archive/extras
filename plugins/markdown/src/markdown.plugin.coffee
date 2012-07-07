@@ -6,7 +6,7 @@ module.exports = (BasePlugin) ->
 		name: 'markdown'
 
 		# Render some content
-		render: (opts) ->
+		render: (opts,next) ->
 			# Prepare
 			{inExtension,outExtension} = opts
 
@@ -17,3 +17,6 @@ module.exports = (BasePlugin) ->
 
 				# Render
 				opts.content = markdown.parse(opts.content)
+
+			# Done
+			next()

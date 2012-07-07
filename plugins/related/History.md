@@ -1,6 +1,9 @@
 ## History
 
-- v1.1.0 Unreleased
+- v2.0.1 July 8, 2012
+	- Cleaned
+
+- v1.1.0
 	- Updated for DocPad v5.3
 	- Also sets `document.relatedDocuments` which is accessible via `@documentModel.relatedDocuments`
 

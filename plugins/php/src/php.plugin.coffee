@@ -5,13 +5,10 @@ module.exports = (BasePlugin) ->
 		# Plugin name
 		name: 'php'
 
-		# Plugin priority
-		priority: 700
-
 		# Render some content
 		render: (opts,next) ->
 			# Prepare
-			{inExtension,outExtension,templateData,content,file} = opts
+			{inExtension,templateData,content,file} = opts
 
 			# Check extensions
 			if inExtension in ['php','phtml']
@@ -50,11 +47,11 @@ module.exports = (BasePlugin) ->
 					opts.content = result
 					# Done, return to docpad
 					return next()
-				
+
 				# Start rendering
 				php.stdin.write(source)
 				php.stdin.end()
-			
+
 			# Some other extension
 			else
 				# Nothing to do, return back to DocPad

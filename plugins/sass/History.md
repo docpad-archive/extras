@@ -1,5 +1,8 @@
 ## History
 
+- v2.0.1 July 8, 2012
+	- Added support for null extensions
+
 - v1.0.1 April 19, 2012
 	- Fixed filename option when using DocPad v5
 
