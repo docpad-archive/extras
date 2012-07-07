@@ -93,7 +93,7 @@ module.exports = (BasePlugin) ->
 				@renderHTMLToCoffeeKup(opts,next)
 
 			# CoffeeScript to JavaScript
-			else if inExtension in ['coffeescript','coffee'] and outExtension is 'js'
+			else if inExtension in ['coffeescript','coffee'] and outExtension in ['js',null]
 				# Render and complete
 				@renderCoffeeScriptToJavaScript(opts,next)
 
