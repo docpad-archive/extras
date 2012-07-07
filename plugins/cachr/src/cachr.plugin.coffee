@@ -3,8 +3,7 @@ module.exports = (BasePlugin) ->
 	# Requires
 	balUtil = require('bal-util')
 	request = require('request')
-	path = require('path')
-	fs = require('fs')
+	pathUtil = require('path')
 
 	# Define Plugin
 	class CachrPlugin extends BasePlugin
@@ -14,7 +13,7 @@ module.exports = (BasePlugin) ->
 		# Default Configuration
 		config:
 			urlPrefix: '/_docpad/plugins/cachr'
-			pathPrefix: path.join '_docpad', 'plugins', 'cachr'
+			pathPrefix: pathUtil.join('_docpad', 'plugins', 'cachr')
 
 		# URLs to Cache
 		urlsToCache: null  # Object
@@ -33,12 +32,12 @@ module.exports = (BasePlugin) ->
 			config = @config
 
 			# Generate a path to return immediatly
-			name = path.basename(sourceUrl)
+			name = pathUtil.basename(sourceUrl)
 			details =
 				name: name
 				sourceUrl: sourceUrl
 				cacheUrl: "#{config.urlPrefix}/#{name}"
-				cachePath: path.resolve(docpad.config.outPath, config.pathPrefix, name)
+				cachePath: pathUtil.resolve(docpad.config.outPath, config.pathPrefix, name)
 
 			# Store it for saving later
 			@urlsToCache[sourceUrl] = details
@@ -70,7 +69,7 @@ module.exports = (BasePlugin) ->
 							++attempt
 							if attempt is 3
 								# give up, and delete out cachePath if it exists
-								path.exists details.cachePath, (exists) ->
+								balUtil.exists details.cachePath, (exists) ->
 									if exists
 										fs.unlink details.cachePath, (err2) ->
 											return next?(err)
@@ -132,7 +131,7 @@ module.exports = (BasePlugin) ->
 			config = @config
 			urlsToCache = @urlsToCache
 			urlsToCacheLength = @urlsToCacheLength
-			cachrPath = path.resolve(docpad.config.outPath, config.pathPrefix)
+			cachrPath = pathUtil.resolve(docpad.config.outPath, config.pathPrefix)
 			failures = 0
 
 			# Check

@@ -1,6 +1,6 @@
 {
 	"name": "docpad-plugin-pygments",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"description": "Adds support for Pygments Syntax Highlighting to DocPad",
 	"homepage": "https://github.com/bevry/docpad-extras",
 	"keywords": [
@@ -28,6 +28,7 @@
 		"docpad": "6.x"
 	},
 	"dependencies": {
+		"bal-util": "1.12.x",
 		"jsdom": "0.2.x"
 	},
 	"devDependencies": {

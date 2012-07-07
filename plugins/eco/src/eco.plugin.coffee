@@ -8,7 +8,7 @@ module.exports = (BasePlugin) ->
 		# Render some content
 		render: (opts) ->
 			# Prepare
-			{inExtension,templateData,content} = opts
+			{inExtension,templateData} = opts
 
 			# Check extensions
 			if inExtension is 'eco'
@@ -16,4 +16,4 @@ module.exports = (BasePlugin) ->
 				eco = require('eco')
 
 				# Render
-				opts.content = eco.render(content,templateData)
+				opts.content = eco.render(opts.content,templateData)

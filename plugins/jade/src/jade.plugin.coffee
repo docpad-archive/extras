@@ -5,13 +5,10 @@ module.exports = (BasePlugin) ->
 		# Plugin name
 		name: 'jade'
 
-		# Plugin priority
-		priority: 725
-
 		# Render some content
 		render: (opts,next) ->
 			# Prepare
-			{inExtension,outExtension,templateData,file} = opts
+			{inExtension,templateData,file} = opts
 
 			# Check our extension
 			if inExtension is 'jade'
