@@ -8,64 +8,50 @@ our title is this is our **document!**
 
 TITLE MARKDOWN:
 
-this is our **document!**
+<p>this is our <strong>document!</strong></p>
 
-our title is this is our **document!**
+<p>our title is this is our <strong>document!</strong></p>
 
 
 MARKDOWN:
 
-This is **amazing!**
+<p>This is <strong>amazing!</strong></p>
 
-This is **amazing!**
+<p>This is <strong>amazing!</strong></p>
 
 
 ECO:
 
-This is <%- 'eco'.toUpperCase() %>
+This is ECO
 
-This is <%- 'eco'.toUpperCase() %>
+This is ECO
 
 
 ECO IN MARKDOWN:
 
-This is **amazing!**
-This is <%- 'eco'.toUpperCase() %>
-isn't it?
+<p>This is <strong>amazing!</strong><br />This is ECO<br />isn't it?</p>
 
-This is **amazing!**
-This is <%- 'eco'.toUpperCase() %>
-isn't it?
+<p>This is <strong>amazing!</strong><br />This is ECO<br />isn't it?</p>
 
-This is **amazing!**
-This is <%- 'eco'.toUpperCase() %>
-isn't it?
+<p>This is <strong>amazing!</strong><br />This is ECO<br />isn't it?</p>
 
-This is **amazing!**
-This is <%- 'eco'.toUpperCase() %>
-isn't it?
+<p>This is <strong>amazing!</strong><br />This is ECO<br />isn't it?</p>
 
 
 ECO THEN MARKDOWN:
 
 
-This is **amazing!**
-This is <%- 'eco'.toUpperCase() %>
-isn't it?
+<p>This is <strong>amazing!</strong><br />This is ECO<br />isn't it?</p>
 
-This is **amazing!**
-This is <%- 'eco'.toUpperCase() %>
-isn't it?
+<p>This is <strong>amazing!</strong><br />This is ECO<br />isn't it?</p>
 
 
 
 ECO THEN MARKDOWN WITH META:
 
 
----
-title: "ECO THEN MARKDOWN WITH META"
----
-This is **amazing!**
-This is <%- 'eco'.toUpperCase() %>
-Our document title is <%- @document.title %>
-isn't it?
+<hr />
+
+<h2>title: "ECO THEN MARKDOWN WITH META"</h2>
+
+<p>This is <strong>amazing!</strong><br />This is ECO<br />Our document title is <br />isn't it?</p>

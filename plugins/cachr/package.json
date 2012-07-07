@@ -30,7 +30,7 @@
 	},
 	"dependencies": {
 		"request": "2.9.x",
-		"bal-util": "1.8.x"
+		"bal-util": "1.12.x"
 	},
 	"devDependencies": {
 		"coffee-script": "1.3.x"

@@ -29,6 +29,7 @@ module.exports = (BasePlugin) ->
 				# Prepare
 				document = @
 				documentAssociatedFilesPath = document.getAssociatedFilesPath()
+				sorting ?= [name:1, date:-1]
 
 				# Fetch our associated files, and cache
 				associatedFilesCollection = docpad.getFilesAtPath(documentAssociatedFilesPath, sorting, paging)
