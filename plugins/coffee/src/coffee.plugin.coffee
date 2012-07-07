@@ -29,7 +29,7 @@ module.exports = (BasePlugin) ->
 			next()
 
 		# Render HTML To CoffeeKup
-		renderHTMLToCoffeKup: (opts,next) ->
+		renderHTMLToCoffeeKup: (opts,next) ->
 			# Prepare
 			{templateData,content} = opts
 			html2ck = require('html2coffeekup')
