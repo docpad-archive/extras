@@ -1,9 +1,29 @@
 # Export Plugin
 module.exports = (BasePlugin) ->
 	# Define Plugin
-	class ExamplePlugin extends BasePlugin
+	class HerokuPlugin extends BasePlugin
 		# Plugin name
-		name: 'example'
+		name: "heroku"
+
+		# Files
+		files:
+			"config.json": """
+				{"version":"latest"}
+				"""
+
+			"Procfile": """
+				web: node server.js
+				"""
+
+			"server.js": """
+				require('docpad').createInstance(function(err,docpadInstance){
+					if (err)  return console.log(err.stack);
+					docpadInstance.action('generate server',function(err){
+						if (err)  return console.log(err.stack);
+						console.log('OK');
+					});
+				});
+				"""
 
 		# Setup the Console Interface
 		consoleSetup: (opts,next) ->
@@ -12,14 +32,15 @@ module.exports = (BasePlugin) ->
 
 			# Extend the CLI
 			program
-				.command('example-question')
-				.description("we'll ask you a question")
+				.command('heroku ')
+				.description("deploy to heroku")
 				.action (command) ->
 					docpadInterface.applyConfiguration(command)
 					me.question(opts,docpadInterface.actionCompleted)
 
 			# Done, return back to DocPad
 			return next()
+
 
 		# Ask the user a question
 		question: (opts,next) ->

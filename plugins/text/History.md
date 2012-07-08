@@ -1,5 +1,8 @@
 ## History
 
+- v2.1.1 July 8, 2012
+	- Fixed templateData not being accessible
+
 - v2.1.0 July 8, 2012
 	- Rewrote for DocPad 6.1
 	- Now supports rendering for text elements
