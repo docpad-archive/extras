@@ -63,6 +63,7 @@ module.exports = (BasePlugin) ->
 						# Prepare options
 						renderTextOpts = {
 							filename: filename
+							templateData: templateData
 							renderSingleExtensions: true
 							actions: ['renderExtensions']
 						}

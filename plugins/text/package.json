@@ -1,6 +1,6 @@
 {
 	"name": "docpad-plugin-text",
-	"version": "2.1.0",
+	"version": "2.1.1",
 	"description": "Allows you to render templateData with HTML elements",
 	"homepage": "https://github.com/bevry/docpad-extras",
 	"keywords": [
