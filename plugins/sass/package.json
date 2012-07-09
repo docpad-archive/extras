@@ -1,12 +1,17 @@
 {
 	"name": "docpad-plugin-sass",
-	"version": "2.0.1",
-	"description": "Adds support for the SASS CSS pre-processor to DocPad.",
+	"version": "2.1.0",
+	"description": "Adds support for the SASS and SCSS CSS pre-processors to DocPad. It also supports the Compass framework.",
 	"homepage": "https://github.com/bevry/docpad-extras",
 	"keywords": [
 		"docpad",
 		"docpad-plugin",
-		"stylus",
+		"render",
+		"rendering",
+		"sass",
+		"scss",
+		"compass",
+		"stylesheets",
 		"css",
 		"styles",
 		"styling"
@@ -30,7 +35,7 @@
 		"docpad": "6.x"
 	},
 	"dependencies": {
-		"sass": "0.5.x"
+		"bal-util": ">=1.12.1 <1.13.0"
 	},
 	"devDependencies": {
 		"coffee-script": "1.3.x"
