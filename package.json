@@ -19,7 +19,8 @@
 		"url": "http://github.com/bevry/docpad-extras.git"
 	},
 	"engines" : {
-		"node": ">=0.4.0"
+		"node": ">=0.6.0",
+		"npm": ">=1.1.0"
 	},
 	"dependencies": {},
 	"devDependencies": {

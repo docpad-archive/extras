@@ -1,24 +1,58 @@
 # Export Plugin
 module.exports = (BasePlugin) ->
+	# Requires
+	balUtil = require('bal-util')
+
 	# Define Plugin
 	class SassPlugin extends BasePlugin
 		# Plugin name
 		name: 'sass'
 
+		# Prevent underscore
+		docpadReady: (opts) ->
+			# Prepare
+			config = @config
+			config.renderUnderscoreStylesheets ?= false
+			{docpad} = opts
+
+			# Prevent underscore files from being written if desired
+			if config.renderUnderscoreStylesheets is false
+				@underscoreStylesheets = docpad.getDatabase().findAllLive(filename: /^_\w+\.(?:scss|sass)$/)
+				@underscoreStylesheets.on 'add', (model) ->
+					model.set({
+						render: false
+						write: false
+					})
+
 		# Render some content
 		render: (opts,next) ->
 			# Prepare
+			config = @config
 			{inExtension,outExtension,file} = opts
 
-			# Check extensions
+			# If SASS/SCSS then render
 			if inExtension in ['sass','scss'] and outExtension in ['css',null]
-				# Requires
-				sass = require('sass')
+				# Fetch useful paths
+				fullDirPath = file.get('fullDirPath')
 
-				# Render
-				opts.content = sass.render(opts.content, {
-					filename: file.get('fullPath')
-				})
+				# Prepare the command and options
+				commandOpts = {stdin:opts.content}
+				command = [inExtension, '--stdin', '--no-cache']
+				if fullDirPath
+					command.push('--load-path')
+					command.push(fullDirPath)
+				if config.compass
+					command.push('--compass')
+				if config.outputStyle
+					command.push('--style')
+					command.push(config.outputStyle)
 
-			# Done, return back to DocPad
-			return next()
+				# Spawn the appropriate process to render the content
+				balUtil.spawn command, commandOpts, (err,stdout,stderr,code,signal) ->
+					return next(err)  if err
+					opts.content = stdout
+					return next()
+
+			else
+				# Done, return back to DocPad
+				return next()

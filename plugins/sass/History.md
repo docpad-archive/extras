@@ -1,5 +1,9 @@
 ## History
 
+- v2.1.0 July 10, 2012
+	- Rewrote to use the [SASS gem](http://rubygems.org/gems/sass/) instead of the poorly compliant [sass.js](https://github.com/visionmedia/sass.js)
+		 - Also adds support for the [Compass](http://compass-style.org/) CSS authoring framework
+
 - v2.0.1 July 8, 2012
 	- Added support for null extensions
 
