@@ -1,14 +1,16 @@
 {
-	"name": "docpad-plugin-autoupdate",
+	"name": "docpad-plugin-live-reload",
 	"version": "2.0.0",
-	"description": "Adds auto-updating the DocPad frontend",
+	"description": "Automatically refreshes your website whenever a rengeration is performed",
 	"homepage": "https://github.com/bevry/docpad-extras",
 	"keywords": [
 		"docpad",
 		"docpad-plugin",
-		"autoupdate",
-		"sync",
-		"cms"
+		"auto-update",
+		"live-reload",
+		"reload",
+		"refresh",
+		"sync"
 	],
 	"author": "Bevry Pty Ltd <us@bevry.me> (http://bevry.me)",
 	"maintainers": [
@@ -28,9 +30,11 @@
 		"node": ">=0.4.0",
 		"docpad": "6.x"
 	},
-	"dependencies": {},
+	"dependencies": {
+		"socket.io": "0.9.x"
+	},
 	"devDependencies": {
 		"coffee-script": "1.3.x"
 	},
-	"main": "./out/autoupdate.plugin.js"
+	"main": "./out/live-reload.plugin.js"
 }
