@@ -5,13 +5,10 @@ module.exports = (BasePlugin) ->
 		# Plugin name
 		name: 'ruby'
 
-		# Plugin priority
-		priority: 700
-
 		# Render some content
 		render: (opts,next) ->
 			# Prepare
-			{inExtension,outExtension,templateData,content,file} = opts
+			{inExtension,templateData,content,file} = opts
 
 			# Handle
 			if inExtension in ['rb','ruby','erb']
@@ -56,7 +53,7 @@ module.exports = (BasePlugin) ->
 					return next(new Error(errors))  if errors
 					opts.content = result
 					return next()
-				
+
 				# Start rendering
 				ruby.stdin.write(source)
 				ruby.stdin.end()
