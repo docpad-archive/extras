@@ -5,13 +5,10 @@ module.exports = (BasePlugin) ->
 		# Plugin name
 		name: 'haml'
 
-		# Plugin priority
-		priority: 725
-
 		# Render some content
 		render: (opts,next) ->
 			# Prepare
-			{inExtension,outExtension,templateData,content} = opts
+			{inExtension,templateData} = opts
 
 			# Check our extensions
 			if inExtension is 'haml'
@@ -19,7 +16,7 @@ module.exports = (BasePlugin) ->
 				haml = require('haml')
 
 				# Render
-				opts.content = haml.render(content, locals:templateData)
-		
+				opts.content = haml.render(opts.content, locals:templateData)
+
 			# Done, return back to DocPad
 			return next()

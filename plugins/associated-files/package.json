@@ -1,0 +1,44 @@
+{
+	"name": "docpad-plugin-associated-files",
+	"version": "2.0.2",
+	"description": "DocPad plugin that fetches any associated files for our particular document",
+	"homepage": "https://github.com/bevry/docpad-extras",
+	"keywords": [
+		"docpad",
+		"docpad-plugin",
+		"associations",
+		"associated",
+		"files"
+	],
+	"author": "Bevry Pty Ltd <us@bevry.me> (http://bevry.me)",
+	"maintainers": [
+		"Benjamin Lupton <b@lupton.cc> (http://balupton.com)"
+	],
+	"contributors": [
+		"Morgan Sutherland <morgan@msutherl.net> http://msutherl.net",
+		"Benjamin Lupton <b@lupton.cc> (http://balupton.com)"
+	],
+	"bugs": {
+		"url": "https://github.com/bevry/docpad-extras/issues"
+	},
+	"repository" : {
+		"type": "git",
+		"url": "http://github.com/bevry/docpad-extras.git"
+	},
+	"engines" : {
+		"node": ">=0.4.0",
+		"docpad": ">=6.1.x <7.0.0"
+	},
+	"devDependencies": {
+		"coffee-script": "1.3.x"
+	},
+	"main": "./out/associated-files.plugin.js",
+	"scripts": {
+		"test": "node ./test/associated-files.test.js"
+	},
+	"docpad": {
+		"plugin": {
+			"associatedFilesPath": "associated-files"
+		}
+	}
+}

@@ -5,16 +5,13 @@ module.exports = (BasePlugin) ->
 		# Plugin name
 		name: 'less'
 
-		# Plugin priority
-		priority: 725
-
 		# Render some content
 		render: (opts,next) ->
 			# Prepare
 			{inExtension,outExtension,templateData,file} = opts
 
 			# Check extensions
-			if inExtension is 'less' and outExtension is 'css'
+			if inExtension is 'less' and outExtension in ['css',null]
 				# Requires
 				path = require('path')
 				less = require('less')
@@ -22,7 +19,7 @@ module.exports = (BasePlugin) ->
 				# Prepare
 				srcPath = file.get('fullPath')
 				dirPath = path.dirname(srcPath)
-				options = 
+				options =
 					paths: [dirPath]
 					optimization: 1
 					compress: true
@@ -32,7 +29,7 @@ module.exports = (BasePlugin) ->
 					return next err  if err
 					opts.content = tree.toCSS(compress: options.compress)
 					next()
-			
+
 			# Some other extension
 			else
 				# Nothing to do, return back to DocPad

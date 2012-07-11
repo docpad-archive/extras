@@ -5,24 +5,21 @@ module.exports = (BasePlugin) ->
 		# Plugin name
 		name: 'stylus'
 
-		# Plugin priority
-		priority: 725
-
 		# Render some content
 		render: (opts,next) ->
 			# Prepare
-			{inExtension,outExtension,templateData,content,file} = opts
+			{inExtension,outExtension,content,file} = opts
 
 			# Check extensions
-			if inExtension in ['styl','stylus'] and outExtension is 'css'
+			if inExtension in ['styl','stylus'] and outExtension in ['css',null]
 				# Load stylus
 				stylus = require('stylus')
-				
+
 				# Create our style
 				style = stylus(opts.content)
 					.set('filename', file.get('fullPath'))
 					.set('compress', @config.compress)
-				
+
 				# Use nib if we want to
 				if @config.useNib
 					nib = require('nib')
@@ -36,7 +33,7 @@ module.exports = (BasePlugin) ->
 					opts.content = output
 					# Done, return to docpad
 					return next()
-		
+
 			# Some other extension
 			else
 				# Nothing to do, return back to DocPad

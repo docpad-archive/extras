@@ -1,0 +1,12 @@
+{
+	"name": "docpad-plugin-sass-testsite",
+	"version": "0.1.0",
+	"private": true,
+	"docpad": {
+		"plugins": {
+			"sass": {
+				"compass": true
+			}
+		}
+	}
+}

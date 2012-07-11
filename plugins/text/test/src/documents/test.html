@@ -1,4 +1,118 @@
-My creator's firstname is: <t>firstname</t>
-My creator's lastname is: <t>lastname</t>
-My creator's fullname is: <t>fullname</t>
-My filename is: <t>document.filename</t>
+--- coffee
+title: """
+	this is our **document!**
+	"""
+titleEmbed: """
+	our title is <text>document.title</text>
+	"""
+ecoExample: """
+	<text render="eco">
+	This is <%- 'eco'.toUpperCase() %>
+	</text>
+	"""
+markdownExample: """
+	<text render="markdown">
+	This is **amazing!**
+	</text>
+	"""
+ecoInMarkdownExample: """
+	<t render="markdown">
+	This is **amazing!**
+	<text>document.ecoExample</text>
+	isn't it?
+	</t>
+	"""
+ecoThenMarkdownExample: """
+	<text render="html.md.eco">
+	This is **amazing!**
+	This is <%- 'eco'.toUpperCase() %>
+	isn't it?
+	</text>
+	"""
+---
+
+TITLE:
+<t>document.title</t>
+
+<text>document.title</text>
+
+<text>document.titleEmbed</text>
+
+
+TITLE MARKDOWN:
+
+<text render="markdown">document.title</text>
+
+<text render="markdown">document.titleEmbed</text>
+
+
+MARKDOWN:
+
+<text>document.markdownExample</text>
+
+<text render="markdown">
+This is **amazing!**
+</text>
+
+
+ECO:
+
+<text>document.ecoExample</text>
+
+<text render="eco">
+This is <%- 'eco'.toUpperCase() %>
+</text>
+
+
+ECO IN MARKDOWN:
+
+<text>document.ecoInMarkdownExample</text>
+
+<t render="markdown">
+This is **amazing!**
+<text>document.ecoExample</text>
+isn't it?
+</t>
+
+<t render="markdown">
+This is **amazing!**
+<text render="eco">
+This is <%- 'eco'.toUpperCase() %>
+</text>
+isn't it?
+</t>
+
+<text:one render="markdown">
+This is **amazing!**
+<text:2 render="eco">
+This is <%- 'eco'.toUpperCase() %>
+</text:2>
+isn't it?
+</text:one>
+
+
+ECO THEN MARKDOWN:
+
+
+<text>document.ecoThenMarkdownExample</text>
+
+<text render="html.md.eco">
+This is **amazing!**
+This is <%- 'eco'.toUpperCase() %>
+isn't it?
+</text>
+
+
+
+ECO THEN MARKDOWN WITH META:
+
+
+<text render="html.md.eco">
+---
+title: "ECO THEN MARKDOWN WITH META"
+---
+This is **amazing!**
+This is <%- 'eco'.toUpperCase() %>
+Our document title is <%- @document.title %>
+isn't it?
+</text>
