@@ -3,6 +3,7 @@ module.exports = (BasePlugin) ->
 
   request = require('request')
   urlUtil = require('url')
+  _ = require('underscore')
 
   class ProxyPlugin extends BasePlugin
 
@@ -15,10 +16,19 @@ module.exports = (BasePlugin) ->
 
       for key, value of proxy.config.proxies
         server.all value.path, (req, res) ->
+
           proxyUrl = urlUtil.parse(value.domain)
           proxyUrl.path = proxyUrl.pathname = req.url
           newUrl = urlUtil.format(proxyUrl)
 
-          req.pipe(request(newUrl).pipe(res))
+          options =
+            url: newUrl
+            method: req.method
+            headers: req.headers
+
+          unless _.isEmpty(req.body)
+            options.body = JSON.stringify(req.body)
+
+          request(options).pipe(res)
 
 
