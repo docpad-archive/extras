@@ -2,7 +2,8 @@
 module.exports = (testers) ->
 	# Define My Tester
 	class MyTester extends testers.ServerTester
-
+		
+		# Custom test for the server
 		testServer: (next) ->
 			# Prepare
 			tester = @
