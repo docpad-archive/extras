@@ -5,16 +5,13 @@ module.exports = (BasePlugin) ->
 		# Plugin name
 		name: 'html2jade'
 
-		# Plugin priority
-		priority: 725
-
 		# Render some content
 		render: (opts,next) ->
 			# Prepare
 			{inExtension,outExtension,templateData,content} = opts
 
 			# Check our extensions
-			if outExtension is 'jade' and inExtension is 'html'
+			if inExtension is 'html' and outExtension is 'jade'
 
 				# Requires
 				path = require('path')

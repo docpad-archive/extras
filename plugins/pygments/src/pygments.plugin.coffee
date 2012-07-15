@@ -4,7 +4,7 @@ module.exports = (BasePlugin) ->
 	balUtil = require('bal-util')
 	jsdom = require('jsdom')
 	{spawn,exec} = require('child_process')
-	
+
 
 	# Pygmentize some source code
 	# next(err,result)
@@ -35,6 +35,7 @@ module.exports = (BasePlugin) ->
 		pygments.stdin.write(source)
 		pygments.stdin.end()
 
+
 	# Pygmentize an element
 	# next(err)
 	pygmentizeElement = (window, element, next) ->
@@ -49,7 +50,7 @@ module.exports = (BasePlugin) ->
 			childNode = element.childNodes[0]
 
 		# Is our code wrapped in a parentNode?
-		else if element.parentNode.tagName in ['pre','code']
+		else if element.parentNode.tagName.toLowerCase() in ['pre','code']
 			parentNode = element.parentNode
 
 		# Check if we are already highlighted
@@ -65,18 +66,20 @@ module.exports = (BasePlugin) ->
 		# Pygmentize
 		pygmentizeSource source, language, (err,result) ->
 			return next(err)  if err
-			resultElWrapper = window.document.createElement('div')
-			resultElWrapper.innerHTML = result
-			resultElInner = resultElWrapper.childNodes[0]
-			resultElInner.className += ' highlighted codehilite'
-			element.parentNode.replaceChild(resultElInner,element)
+			if result
+				resultElWrapper = window.document.createElement('div')
+				resultElWrapper.innerHTML = result
+				resultElInner = resultElWrapper.childNodes[0]
+				resultElInner.className += ' highlighted codehilite'
+				element.parentNode.replaceChild(resultElInner,element)
 			return next()
+
 
 	# Define Plugin
 	class PygmentsPlugin extends BasePlugin
 		# Plugin Name
 		name: 'pygments'
-		
+
 		# Render the document
 		renderDocument: (opts,next) ->
 			# Prepare

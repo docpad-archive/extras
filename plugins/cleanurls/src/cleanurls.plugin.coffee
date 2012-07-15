@@ -15,7 +15,7 @@ module.exports = (BasePlugin) ->
 		docpadReady: (opts) ->
 			# Prepare
 			docpad = @docpad
-			database = docpad.getDatabase()
+			database = docpad.getCollection('html')
 			docpad.log 'debug', 'Applying clean urls'
 
 			# When we get a new document, update its url

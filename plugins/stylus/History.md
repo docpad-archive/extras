@@ -1,5 +1,8 @@
 ## History
 
+- v2.0.2 July 8, 2012
+	- Added support for null extensions
+
 - v2.0.1 June 26, 2012
 	- Updated nib from 0.4 to 0.5
 	- Updated stylus from 0.25 to 0.27

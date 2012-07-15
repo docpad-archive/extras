@@ -6,9 +6,6 @@ module.exports = (BasePlugin) ->
 		# Plugin name
 		name: 'handlebars'
 
-		# Plugin priority
-		priority: 725
-
 		# Handlebars
 		handlebars: null
 
@@ -28,8 +25,8 @@ module.exports = (BasePlugin) ->
 		# Render some content
 		render: (opts) ->
 			# Prepare
-			{inExtension,outExtension,templateData,file,content} = opts
+			{inExtension,templateData,content} = opts
 			handlebars = @handlebars
 
 			if inExtension in ['hb', 'hbs', 'handlebars']
-				opts.content = handlebars.compile(content)(templateData)
+				opts.content = handlebars.compile(opts.content)(templateData)

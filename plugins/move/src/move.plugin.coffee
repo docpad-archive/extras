@@ -11,15 +11,15 @@ module.exports = (BasePlugin) ->
 		# Render some content
 		render: (opts,next) ->
 			# Prepare
-			{inExtension,outExtension,templateData,content} = opts
+			{inExtension,outExtension} = opts
 
 			# Check our extensions
-			if inExtension in ['move'] and outExtension is 'js'
+			if inExtension in ['move'] and outExtension in ['js',null]
 				# Requires
 				move = require('move-panta')
 
 				# Render
-				opts.content = move.compile(content)
-		
+				opts.content = move.compile(opts.content)
+
 			# Done, return back to DocPad
 			return next()
