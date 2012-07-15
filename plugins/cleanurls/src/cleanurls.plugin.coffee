@@ -5,6 +5,12 @@ module.exports = (BasePlugin) ->
 		# Plugin Name
 		name: 'cleanUrls'
 
+		# Plugin Configuration
+		config:
+			environments:
+				static:
+					enabled: false
+
 		# DocPad is now ready for us to do stuff
 		docpadReady: (opts) ->
 			# Prepare
