@@ -26,8 +26,9 @@ module.exports = (testers) ->
 					request fileUrl, (err,response,actual) ->
 						return done(err)  if err
 						actualStr = actual.toString()
+
 						fsUtil.readFile filePath, (err,expected) ->
 							return done(err)  if err
 							expectedStr = expected.toString()
-							expect(actualStr,expectedStr)
+							expect(actualStr).to.equal(expectedStr)
 							done()

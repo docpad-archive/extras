@@ -29,7 +29,7 @@ module.exports = (BasePlugin) ->
 			next()
 
 		# Render HTML To CoffeeKup
-		renderHTMLToCoffeKup: (opts,next) ->
+		renderHTMLToCoffeeKup: (opts,next) ->
 			# Prepare
 			{templateData,content} = opts
 			html2ck = require('html2coffeekup')
@@ -93,12 +93,12 @@ module.exports = (BasePlugin) ->
 				@renderHTMLToCoffeeKup(opts,next)
 
 			# CoffeeScript to JavaScript
-			else if inExtension is 'coffee' and outExtension is 'js'
+			else if inExtension in ['coffeescript','coffee'] and outExtension in ['js',null]
 				# Render and complete
 				@renderCoffeeScriptToJavaScript(opts,next)
 
 			# JavaScript to CoffeeScript
-			else if inExtension is 'js' and outExtension is 'coffee'
+			else if inExtension is 'js' and outExtension in ['coffee','coffeescript']
 				# Render and complete
 				@renderJavaScriptToCoffeeScript(opts,next)
 

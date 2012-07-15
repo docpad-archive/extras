@@ -14,6 +14,20 @@ indentResult = (result) ->
 process.on 'uncaughtException', (err) ->
 	throw err
 
+# Should we skip any plugins?
+skip = null
+for arg in process.argv
+	value = arg.replace(/^--skip=/,'')
+	if value isnt arg
+		skip = value.split(',')
+		break
+only = null
+for arg in process.argv
+	value = arg.replace(/^--only=/,'')
+	if value isnt arg
+		only = value.split(',')
+		break
+
 # Scan Plugins
 balUtil.scandir(
 	# Path
@@ -26,6 +40,14 @@ balUtil.scandir(
 	(pluginPath,pluginRelativePath,nextFile) ->
 		# Prepare
 		pluginName = pathUtil.basename(pluginRelativePath)
+
+		# Skip
+		if skip and (pluginName in skip)
+			console.log("Skipping #{pluginName}")
+			return
+		if only and (pluginName in only) is false
+			console.log("Skipping #{pluginName}")
+			return
 
 		# Test the plugin
 		joe.test pluginName, (done) ->
