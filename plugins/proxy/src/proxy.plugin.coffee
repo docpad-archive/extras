@@ -26,6 +26,8 @@ module.exports = (BasePlugin) ->
             method: req.method
             headers: req.headers
 
+          options.headers.host = proxyUrl.host
+
           unless _.isEmpty(req.body)
             options.body = JSON.stringify(req.body)
 
