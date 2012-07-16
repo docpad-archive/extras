@@ -8,12 +8,19 @@ module.exports = (BasePlugin) ->
 		# Plugin name
 		name: 'sass'
 
+		# Plugin config
+		config:
+			outputStyle: 'expanded'
+			environments:
+				production:
+					outputStyle: 'compressed'
+
 		# Prevent underscore
-		docpadReady: (opts) ->
+		extendCollections: (opts) ->
 			# Prepare
 			config = @config
 			config.renderUnderscoreStylesheets ?= false
-			{docpad} = opts
+			docpad = @docpad
 
 			# Prevent underscore files from being written if desired
 			if config.renderUnderscoreStylesheets is false

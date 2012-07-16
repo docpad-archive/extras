@@ -23,7 +23,7 @@ For information on customising your plugin configuration you can refer to the [D
 You can add support for compass by setting the `compass` property to `true` in the plugin's configuration. By default, we do not add this support.
 
 ### Output Style
-You can set the `outputStyle` property to any of the supported [output styles](http://sass-lang.com/docs/yardoc/file.SASS_REFERENCE.html#output_style). Those being `"nested"`, `"expanded"`, `"compact"`, and `"compressed"`. By default, we do not specify any output style.
+You can set the `outputStyle` property to any of the supported [output styles](http://sass-lang.com/docs/yardoc/file.SASS_REFERENCE.html#output_style). Those being `nested`, `expanded`, `compact`, and `compressed`. By default, we use the `expanded` mode.
 
 ### Render Underscore Stylesheets
 By default we prevent any SASS/SCSS stylesheets that filename starts with underscore character from being rendered and written to the output directory. This is to follow SASS/SCSS convention that such files are just intended to be included inside out stylesheets, and that they are not meant to be rendered by themselves. If you really want to, you can render the underscore stylesheets by setting the `renderUnderscoreStylesheets` property to `true` in your plugin's configuration.

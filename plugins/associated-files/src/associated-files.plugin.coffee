@@ -2,12 +2,16 @@
 module.exports = (BasePlugin) ->
 	# Define Associated Files Plugin
 	class AssociatedFilesPlugin extends BasePlugin
-		# Plugin Name
+		# Plugin name
 		name: 'associated-files'
+
+		# Plugin config
+		config:
+			associatedFilesPath: 'associated-files'
 
 		# DocPad is ready now
 		# Lets use this time to extend our file model
-		docpadReady: (opts) ->
+		docpadReady: (opts,next) ->
 			# Prepare
 			{docpad} = opts
 			{DocumentModel} = docpad
@@ -37,5 +41,5 @@ module.exports = (BasePlugin) ->
 				# Return
 				return associatedFilesCollection
 
-			# All done
-			null
+			# Done
+			next()

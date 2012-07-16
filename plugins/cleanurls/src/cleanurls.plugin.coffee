@@ -2,17 +2,17 @@
 module.exports = (BasePlugin) ->
 	# Define Plugin
 	class CleanUrlsPlugin extends BasePlugin
-		# Plugin Name
+		# Plugin name
 		name: 'cleanUrls'
 
-		# Plugin Configuration
+		# Plugin configuration
 		config:
 			environments:
 				static:
 					enabled: false
 
-		# DocPad is now ready for us to do stuff
-		docpadReady: (opts) ->
+		# Collections have been created, so listen for html files to update the urls
+		extendCollections: (opts) ->
 			# Prepare
 			docpad = @docpad
 			database = docpad.getCollection('html')
