@@ -39,11 +39,5 @@
 	"main": "./out/stylus.plugin.js",
 	"scripts": {
 		"test": "node ./test/stylus.test.js"
-	},
-	"docpad": {
-		"plugin": {
-			"useNib": true,
-			"compress": true
-		}
 	}
 }

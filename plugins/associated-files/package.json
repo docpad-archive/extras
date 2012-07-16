@@ -35,10 +35,5 @@
 	"main": "./out/associated-files.plugin.js",
 	"scripts": {
 		"test": "node ./test/associated-files.test.js"
-	},
-	"docpad": {
-		"plugin": {
-			"associatedFilesPath": "associated-files"
-		}
 	}
 }

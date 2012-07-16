@@ -5,8 +5,13 @@ module.exports = (BasePlugin) ->
 		# Plugin name
 		name: 'coffee'
 
-		# Plugin priority
-		priority: 700
+		# Plugin config
+		config:
+			coffeecup:
+				format: true
+			environments:
+				production:
+					format: false
 
 
 		# =============================
@@ -17,12 +22,13 @@ module.exports = (BasePlugin) ->
 			# Prepare
 			{templateData,content} = opts
 			ck = require('coffeecup')
+			ckOptions = require('bal-util').deepExtendPlainObjects({}, @config.coffeekup, @config.coffeecup)
 
 			# Render
 			opts.content = ck.render(
 				content,
 				templateData,
-				(@config.coffeekup or @config.coffeecup or {})
+				ckOptions
 			)
 
 			# Done

@@ -17,9 +17,9 @@ module.exports = (BasePlugin) ->
 			else
 				return true
 
-		# Extend Collections
+		# Populate Collections
 		# Used to inject our scripts block with our socket.io regenerate listener
-		extendCollections: (opts) ->
+		populateCollections: (opts) ->
 			# Prepare
 			return @  unless @isEnabled()
 			docpad = @docpad

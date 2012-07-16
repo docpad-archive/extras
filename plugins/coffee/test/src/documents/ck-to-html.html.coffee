@@ -1,1 +1,2 @@
-h1 'Hello'
+article ->
+	h1 'Hello'

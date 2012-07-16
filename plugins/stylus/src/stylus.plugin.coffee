@@ -5,6 +5,14 @@ module.exports = (BasePlugin) ->
 		# Plugin name
 		name: 'stylus'
 
+		# Plugin config
+		config:
+			useNib: true
+			compress: false
+			environments:
+				production:
+					compress: true
+
 		# Render some content
 		render: (opts,next) ->
 			# Prepare

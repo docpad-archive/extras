@@ -30,6 +30,7 @@
 		"docpad": "6.x"
 	},
 	"dependencies": {
+		"bal-util": "1.12.x",
 		"coffee-script": "1.3.x",
 		"coffeecup": "0.3.x",
 		"js2coffee": "0.1.x",
