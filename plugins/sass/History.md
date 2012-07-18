@@ -1,5 +1,8 @@
 ## History
 
+- v2.2.0 July 18, 2012
+	- Updated for DocPad v6.3.0
+
 - v2.1.0 July 10, 2012
 	- Rewrote to use the [SASS gem](http://rubygems.org/gems/sass/) instead of the poorly compliant [sass.js](https://github.com/visionmedia/sass.js)
 		 - Also adds support for the [Compass](http://compass-style.org/) CSS authoring framework

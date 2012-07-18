@@ -1,9 +1,9 @@
 # Export Plugin
 module.exports = (BasePlugin) ->
 	# Define Plugin
-	class LiveReloadPlugin extends BasePlugin
+	class LivereloadPlugin extends BasePlugin
 		# Plugin configuration
-		name: 'live-reload'
+		name: 'livereload'
 
 		# Plugin configuration
 		# Only enable us on the development environment

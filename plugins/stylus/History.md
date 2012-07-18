@@ -1,5 +1,8 @@
 ## History
 
+- v2.1.0 July 18, 2012
+	- Updated for DocPad v6.3.0
+
 - v2.0.2 July 8, 2012
 	- Added support for null extensions
 
