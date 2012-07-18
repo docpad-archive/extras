@@ -5,6 +5,13 @@ module.exports = (BasePlugin) ->
 		# Plugin name
 		name: 'less'
 
+		# Plugin config
+		config:
+			compress: true
+			environments:
+				development:
+					compress: false
+
 		# Render some content
 		render: (opts,next) ->
 			# Prepare
@@ -21,8 +28,7 @@ module.exports = (BasePlugin) ->
 				dirPath = path.dirname(srcPath)
 				options =
 					paths: [dirPath]
-					optimization: 1
-					compress: true
+					compress: @config.compress
 
 				# Compile
 				new (less.Parser)(options).parse opts.content, (err, tree) ->

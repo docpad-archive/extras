@@ -1,7 +1,7 @@
 # Export Plugin
 module.exports = (BasePlugin) ->
 	# Define Plugin
-	class Html2JadePlugin extends BasePlugin
+	class Html2jadePlugin extends BasePlugin
 		# Plugin name
 		name: 'html2jade'
 

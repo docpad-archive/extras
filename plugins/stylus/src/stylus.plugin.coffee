@@ -8,10 +8,10 @@ module.exports = (BasePlugin) ->
 		# Plugin config
 		config:
 			useNib: true
-			compress: false
+			compress: true
 			environments:
-				production:
-					compress: true
+				development:
+					compress: false
 
 		# Render some content
 		render: (opts,next) ->
