@@ -6,6 +6,7 @@ module.exports = (BasePlugin) ->
 		name: 'cleanUrls'
 
 		# Plugin configuration
+		# Do not enable us on the static environment
 		config:
 			environments:
 				static:

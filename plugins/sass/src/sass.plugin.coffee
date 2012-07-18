@@ -9,11 +9,12 @@ module.exports = (BasePlugin) ->
 		name: 'sass'
 
 		# Plugin config
+		# Only on the development environment use expanded, otherwise use compressed
 		config:
-			outputStyle: 'expanded'
+			outputStyle: 'compressed'
 			environments:
-				production:
-					outputStyle: 'compressed'
+				development:
+					outputStyle: 'expanded'
 
 		# Prevent underscore
 		extendCollections: (opts) ->

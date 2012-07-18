@@ -1,7 +1,7 @@
 {
 	"name": "docpad-plugin-markdown",
 	"version": "2.0.1",
-	"description": "Adds support for the Markdown markup language to DocPad.",
+	"description": "Adds support for the Markdown markup language to DocPad",
 	"homepage": "https://github.com/bevry/docpad-extras",
 	"keywords": [
 		"docpad",

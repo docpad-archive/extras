@@ -1,7 +1,7 @@
 {
 	"name": "docpad-plugin-less",
 	"version": "2.0.1",
-	"description": "Adds support for the LessCSS pre-processor to DocPad.",
+	"description": "Adds support for the LESS CSS pre-processor to DocPad",
 	"homepage": "https://github.com/bevry/docpad-extras",
 	"keywords": [
 		"docpad",

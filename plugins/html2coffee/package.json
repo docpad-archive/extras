@@ -1,0 +1,44 @@
+{
+	"name": "docpad-plugin-html2coffee",
+	"version": "2.1.0",
+	"description": "Adds support for HTML to Coffee(Kup) compilation to DocPad",
+	"homepage": "https://github.com/bevry/docpad-extras",
+	"keywords": [
+		"docpad",
+		"docpad-plugin",
+		"coffee",
+		"coffeekup",
+		"coffeecup",
+		"html2coffeecup",
+		"html2coffeekup",
+		"html2coffee"
+	],
+	"author": "Bevry Pty Ltd <us@bevry.me> (http://bevry.me)",
+	"maintainers": [
+		"Benjamin Lupton <b@lupton.cc> (http://balupton.com)"
+	],
+	"contributors": [
+		"Benjamin Lupton <b@lupton.cc> (http://balupton.com)"
+	],
+	"bugs": {
+		"url": "https://github.com/bevry/docpad-extras/issues"
+	},
+	"repository" : {
+		"type": "git",
+		"url": "http://github.com/bevry/docpad-extras.git"
+	},
+	"engines" : {
+		"node": ">=0.4.0",
+		"docpad": "6.x"
+	},
+	"dependencies": {
+		"html2coffeekup": "1.4.x"
+	},
+	"devDependencies": {
+		"coffee-script": "1.3.x"
+	},
+	"main": "./out/html2coffee.plugin.js",
+	"scripts": {
+		"test": "node ./test/html2coffee.test.js"
+	}
+}
