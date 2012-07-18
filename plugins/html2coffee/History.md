@@ -1,6 +1,6 @@
 ## History
 
-- v2.1.0 July 17, 2012
+- v2.1.1 July 17, 2012
 	- Split into its own plugin
 
 - v2.0.2 July 8, 2012

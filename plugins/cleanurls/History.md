@@ -1,5 +1,8 @@
 ## History
 
+- v2.2.0 July 18, 2012
+	- Updated for DocPad v6.3.0
+
 - v2.1.0 July 8, 2012
 	- Updated for DocPad v6.1.1
 	- Fixed unit tests again

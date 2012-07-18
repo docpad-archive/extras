@@ -1,5 +1,8 @@
 ## History
 
+- v2.1.0 July 18, 2012
+	- Added `compress` option
+
 - v2.0.1 July 8, 2012
 	- Added support for null extensions
 

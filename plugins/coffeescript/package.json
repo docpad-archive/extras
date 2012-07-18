@@ -8,8 +8,7 @@
 		"docpad-plugin",
 		"coffee",
 		"coffeescript",
-		"coffeekup",
-		"coffeecss"
+		"coffee-script"
 	],
 	"author": "Bevry Pty Ltd <us@bevry.me> (http://bevry.me)",
 	"maintainers": [
