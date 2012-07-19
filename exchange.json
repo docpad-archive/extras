@@ -5,20 +5,25 @@
 			"repo": "git://github.com/docpad/html5-boilerplate.docpad.git",
 			"description": "HTML5 Boilerplate skeleton for DocPad. Bare essentials for building a modern website with best practices."
 		},
-		"Website": {
+		"Twitter Bootstrap": {
 			"branch": "docpad-6.x",
-			"repo": "git://github.com/docpad/website.docpad.git",
-			"description": "Website skeleton for DocPad. Useful for personal websites and blogs. Pulls in social streams and github information."
+			"repo": "git://github.com/docpad/twitter-bootstrap.docpad.git",
+			"description": "Simple and flexible HTML, CSS, and Javascript for popular user interface components and interactions."
 		},
 		"Kitchensink": {
 			"branch": "docpad-6.x",
 			"repo": "git://github.com/docpad/kitchensink.docpad.git",
 			"description": "A DocPad Skeleton useful for showcasing different features and functionality of DocPad. Implemented using Twitter Bootstrap."
 		},
+		"Website": {
+			"branch": "docpad-6.x",
+			"repo": "git://github.com/docpad/website.docpad.git",
+			"description": "Website skeleton for DocPad. Useful for personal websites and blogs. Pulls in social streams and github information."
+		},
 		"Hogan": {
 			"branch": "docpad-6.x",
 			"repo": "git://github.com/docpad/hogan.docpad.git",
-			"description": "A DocPad Skeleton based off Twitter's Hogan.js Project Page"
+			"description": "A DocPad Skeleton based off Twitter's Hogan.js Project Page."
 		}
 	}
 }
