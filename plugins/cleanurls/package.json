@@ -1,6 +1,6 @@
 {
 	"name": "docpad-plugin-cleanurls",
-	"version": "2.2.1",
+	"version": "2.2.2",
 	"description": "Adds support for clean urls to DocPad",
 	"homepage": "https://github.com/bevry/docpad-extras",
 	"keywords": [

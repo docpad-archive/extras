@@ -32,7 +32,6 @@ module.exports = (BasePlugin) ->
 
 		# Collections have been created, so listen for html files to update the urls
 		extendCollections: (opts) ->
-			console.log('asdasd')
 			# Prepare
 			docpad = @docpad
 			database = docpad.getCollection('html')
