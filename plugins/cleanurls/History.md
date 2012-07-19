@@ -1,5 +1,8 @@
 ## History
 
+- v2.2.2 July 19, 2012
+	- Removed a `console.log` left from debugging
+
 - v2.2.1 July 18, 2012
 	- Minor cleanup
 
