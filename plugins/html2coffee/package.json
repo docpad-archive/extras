@@ -1,6 +1,6 @@
 {
 	"name": "docpad-plugin-html2coffee",
-	"version": "2.1.1",
+	"version": "2.1.2",
 	"description": "Adds support for HTML to Coffee(Kup) compilation to DocPad",
 	"homepage": "https://github.com/bevry/docpad-extras",
 	"keywords": [

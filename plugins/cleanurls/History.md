@@ -1,5 +1,8 @@
 ## History
 
+- v2.2.3 August 10, 2012
+	- Re-added markdown files to npm distribution as they are required for the npm website
+
 - v2.2.2 July 19, 2012
 	- Removed a `console.log` left from debugging
 

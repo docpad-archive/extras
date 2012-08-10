@@ -1,6 +1,6 @@
 {
 	"name": "docpad-plugin-js2coffee",
-	"version": "2.1.0",
+	"version": "2.1.1",
 	"description": "Adds support for JavaScript to CoffeeScript compilation to DocPad",
 	"homepage": "https://github.com/bevry/docpad-extras",
 	"keywords": [

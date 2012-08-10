@@ -1,5 +1,9 @@
 ## History
 
+- v2.1.1 August 10, 2012
+	- Re-added markdown files to npm distribution as they are required for the npm website
+	- Updated stylus from 0.27 to 0.28
+
 - v2.1.0 July 18, 2012
 	- Updated for DocPad v6.3.0
 
