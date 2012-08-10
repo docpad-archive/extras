@@ -1,6 +1,6 @@
 {
 	"name": "docpad-plugin-cachr",
-	"version": "2.0.1",
+	"version": "2.0.2",
 	"description": "Caches remote resources locally",
 	"homepage": "https://github.com/bevry/docpad-extras",
 	"keywords": [
@@ -30,7 +30,7 @@
 	},
 	"dependencies": {
 		"request": "2.9.x",
-		"bal-util": "1.12.x"
+		"bal-util": "1.13.x"
 	},
 	"devDependencies": {
 		"coffee-script": "1.3.x"

@@ -1,6 +1,6 @@
 {
 	"name": "docpad-plugin-associatedfiles",
-	"version": "2.1.1",
+	"version": "2.1.2",
 	"description": "DocPad plugin that fetches any associated files for our particular document",
 	"homepage": "https://github.com/bevry/docpad-extras",
 	"keywords": [

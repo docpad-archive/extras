@@ -24,6 +24,11 @@
 			"branch": "docpad-6.x",
 			"repo": "git://github.com/docpad/hogan.docpad.git",
 			"description": "A DocPad Skeleton based off Twitter's Hogan.js Project Page."
+		},
+		"SlidePad": {
+			"branch": "master",
+			"repo": "git://github.com/georgeOsdDev/slidepad.git",
+			"description": "Create HTML5 Presentations easily with DocPad"
 		}
 	}
 }

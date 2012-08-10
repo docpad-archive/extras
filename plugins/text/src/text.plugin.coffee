@@ -54,7 +54,7 @@ module.exports = (BasePlugin) ->
 					replaceElementTasks.push (complete) ->
 						# Generate filename
 						filename = 'docpad-text-plugin'
-						parentExtension = file.get('extensionRendered')
+						parentExtension = file.get('outExtension') or file.get('extensionRendered') # b/c
 						parentFilename = file.get('filename')
 						if extensions.indexOf('.') is -1 and (parentExtension or parentFilename)
 							filename += '.'+(parentExtension or parentFilename)
@@ -64,7 +64,7 @@ module.exports = (BasePlugin) ->
 						renderTextOpts = {
 							filename: filename
 							templateData: templateData
-							renderSingleExtensions: true
+							renderSingleExtensions: 'auto'
 							actions: ['renderExtensions']
 						}
 

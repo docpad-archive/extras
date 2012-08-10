@@ -1,5 +1,9 @@
 ## History
 
+- v2.1.2 August 10, 2012
+	- Re-added markdown files to npm distribution as they are required for the npm website
+	- Updated for DocPad v6.5.4
+
 - v2.1.1 July 8, 2012
 	- Fixed templateData not being accessible
 

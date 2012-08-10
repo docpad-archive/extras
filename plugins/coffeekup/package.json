@@ -1,6 +1,6 @@
 {
 	"name": "docpad-plugin-coffeekup",
-	"version": "2.1.1",
+	"version": "2.1.2",
 	"description": "Adds support for CoffeeKup compilation to DocPad",
 	"homepage": "https://github.com/bevry/docpad-extras",
 	"keywords": [
@@ -30,7 +30,7 @@
 		"docpad": "6.x"
 	},
 	"dependencies": {
-		"bal-util": "1.12.x",
+		"bal-util": "1.13.x",
 		"coffeecup": "0.3.x"
 	},
 	"devDependencies": {
