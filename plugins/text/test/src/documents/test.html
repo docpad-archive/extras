@@ -1,4 +1,5 @@
 --- coffee
+layout: "default"
 title: """
 	this is our **document!**
 	"""
@@ -6,24 +7,24 @@ titleEmbed: """
 	our title is <text>document.title</text>
 	"""
 ecoExample: """
-	<text render="eco">
+	<text format="eco">
 	This is <%- 'eco'.toUpperCase() %>
 	</text>
 	"""
 markdownExample: """
-	<text render="markdown">
+	<text format="markdown">
 	This is **amazing!**
 	</text>
 	"""
 ecoInMarkdownExample: """
-	<t render="markdown">
+	<t format="markdown">
 	This is **amazing!**
 	<text>document.ecoExample</text>
 	isn't it?
 	</t>
 	"""
 ecoThenMarkdownExample: """
-	<text render="html.md.eco">
+	<text format="html.md.eco">
 	This is **amazing!**
 	This is <%- 'eco'.toUpperCase() %>
 	isn't it?
@@ -31,7 +32,9 @@ ecoThenMarkdownExample: """
 	"""
 ---
 
-TITLE:
+
+DOCUMENT TITLE:
+
 <t>document.title</t>
 
 <text>document.title</text>
@@ -39,18 +42,34 @@ TITLE:
 <text>document.titleEmbed</text>
 
 
-TITLE MARKDOWN:
+DOCUMENT TITLE MARKDOWN:
 
-<text render="markdown">document.title</text>
+<text format="markdown">document.title</text>
 
-<text render="markdown">document.titleEmbed</text>
+<text format="markdown">document.titleEmbed</text>
+
+
+TEMPLATE DATA TITLE:
+
+<t>title</t>
+
+<text>title</text>
+
+<text>titleEmbed</text>
+
+
+TEMPLATE DATA TITLE MARKDOWN:
+
+<text format="markdown">title</text>
+
+<text format="markdown">titleEmbed</text>
 
 
 MARKDOWN:
 
 <text>document.markdownExample</text>
 
-<text render="markdown">
+<text format="markdown">
 This is **amazing!**
 </text>
 
@@ -59,7 +78,7 @@ ECO:
 
 <text>document.ecoExample</text>
 
-<text render="eco">
+<text format="eco">
 This is <%- 'eco'.toUpperCase() %>
 </text>
 
@@ -68,23 +87,23 @@ ECO IN MARKDOWN:
 
 <text>document.ecoInMarkdownExample</text>
 
-<t render="markdown">
+<t format="markdown">
 This is **amazing!**
 <text>document.ecoExample</text>
 isn't it?
 </t>
 
-<t render="markdown">
+<t format="markdown">
 This is **amazing!**
-<text render="eco">
+<text format="eco">
 This is <%- 'eco'.toUpperCase() %>
 </text>
 isn't it?
 </t>
 
-<text:one render="markdown">
+<text:one format="markdown">
 This is **amazing!**
-<text:2 render="eco">
+<text:2 format="eco">
 This is <%- 'eco'.toUpperCase() %>
 </text:2>
 isn't it?
@@ -96,7 +115,7 @@ ECO THEN MARKDOWN:
 
 <text>document.ecoThenMarkdownExample</text>
 
-<text render="html.md.eco">
+<text format="html.md.eco">
 This is **amazing!**
 This is <%- 'eco'.toUpperCase() %>
 isn't it?
@@ -107,7 +126,7 @@ isn't it?
 ECO THEN MARKDOWN WITH META:
 
 
-<text render="html.md.eco">
+<text format="html.md.eco">
 ---
 title: "ECO THEN MARKDOWN WITH META"
 ---

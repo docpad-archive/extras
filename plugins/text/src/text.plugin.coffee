@@ -5,6 +5,10 @@ module.exports = (BasePlugin) ->
 		# Plugin name
 		name: 'text'
 
+		# Plugin config
+		config:
+			semanticWrap: true
+
 		# Get the text
 		getText: (opts) ->
 			# Prepare
@@ -35,6 +39,27 @@ module.exports = (BasePlugin) ->
 				# Grab the value
 				result = me.getText({source:innerHTML,store:templateData})
 
+				# Grab the type/render attribute
+				format = balUtil.getAttribute(attributes,'format') or balUtil.getAttribute(attributes,'render') or balUtil.getAttribute(attributes,'type') or ''
+				# ^ render and type are deprecated
+
+				# Wrap it in a special element
+				if me.config.semanticWrap
+					formatAttr = if format then ' format="'+format+'"' else ''
+					propertyValue = innerHTML.replace('"','\\"')
+					if innerHTML is result
+						# no replace was done from the store, must be inline
+						sourceAttr   = ' about="inline"'
+						propertyAttr = ''
+						formatAttr = ''
+					else if /^document\./.test(innerHTML) is true
+						sourceAttr   = ' about="'+templateData.document.url+'"'
+						propertyAttr = ' property="'+propertyValue.replace(/^document\./,'')+'"'
+					else
+						sourceAttr   = ' about="templateData"'
+						propertyAttr = ' property="'+propertyValue+'"'
+					result = "<span#{sourceAttr}#{propertyAttr}#{formatAttr}>#{result}</span>"
+					
 				# Prepare replace element tasks
 				replaceElementTasks = new balUtil.Group (err) ->
 					return replaceElementCompleteCallback(err,result)
@@ -48,17 +73,16 @@ module.exports = (BasePlugin) ->
 						return complete()
 
 				# If we have a type attribute, then perform a render
-				extensions = balUtil.getAttribute(attributes,'type') or balUtil.getAttribute(attributes,'render') or ''
-				if extensions
+				if format
 					# Render the text as a document with extensions
 					replaceElementTasks.push (complete) ->
 						# Generate filename
 						filename = 'docpad-text-plugin'
 						parentExtension = file.get('extensionRendered')
 						parentFilename = file.get('filename')
-						if extensions.indexOf('.') is -1 and (parentExtension or parentFilename)
+						if format.indexOf('.') is -1 and (parentExtension or parentFilename)
 							filename += '.'+(parentExtension or parentFilename)
-						filename += '.'+extensions
+						filename += '.'+format
 
 						# Prepare options
 						renderTextOpts = {
