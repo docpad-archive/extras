@@ -32,7 +32,7 @@ module.exports = (BasePlugin) ->
 			config = @config
 
 			# Generate a path to return immediatly
-			name = pathUtil.basename(sourceUrl)
+			name = require('crypto').createHash('md5').update(sourceUrl).digest('hex')+pathUtil.extname(sourceUrl).replace(/[\?\#].*$/,'')
 			details =
 				name: name
 				sourceUrl: sourceUrl
@@ -57,7 +57,7 @@ module.exports = (BasePlugin) ->
 
 			# Get the file
 			viaRequest = ->
-				docpad.logger.log 'debug', "Cachr is fetching [#{details.sourceUrl}] to [#{details.cachePath}]"
+				docpad.log 'debug', "Cachr is fetching [#{details.sourceUrl}] to [#{details.cachePath}]"
 				# Fetch and Save
 				writeStream = fs.createWriteStream(details.cachePath)
 				request(
@@ -127,7 +127,6 @@ module.exports = (BasePlugin) ->
 			# Prepare
 			cachr = @
 			docpad = @docpad
-			logger = @docpad.logger
 			config = @config
 			urlsToCache = @urlsToCache
 			urlsToCacheLength = @urlsToCacheLength
@@ -139,7 +138,7 @@ module.exports = (BasePlugin) ->
 				return next?()
 
 			# Log
-			logger.log 'info', 'Cachr started caching...', (if failures then "with #{failures} failures" else '')
+			docpad.log 'info', 'Cachr started caching...', (if failures then "with #{failures} failures" else '')
 
 			# Ensure Path
 			balUtil.ensurePath cachrPath, (err) ->
@@ -148,14 +147,14 @@ module.exports = (BasePlugin) ->
 
 				# Async
 				tasks = new balUtil.Group (err) =>
-					logger.log (if failures then 'warn' else 'info'), 'Cachr finished caching', (if failures then "with #{failures} failures" else '')
+					docpad.log (if failures then 'warn' else 'info'), 'Cachr finished caching', (if failures then "with #{failures} failures" else '')
 
 				# Store all our files to be cached
 				balUtil.each urlsToCache, (details,sourceUrl) ->
 					tasks.push (complete) ->
 						cachr.cacheRemoteUrl details, (err) ->
 							if err
-								docpad.logger.log 'warn', "Cachr failed to fetch: #{sourceUrl}"
+								docpad.log 'warn', "Cachr failed to fetch: #{sourceUrl}"
 								docpad.error(err)
 								++failures
 							return complete()
