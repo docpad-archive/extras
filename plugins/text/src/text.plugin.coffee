@@ -41,7 +41,7 @@ module.exports = (BasePlugin) ->
 
 				# Facilate deep elements
 				replaceElementTasks.push (complete) ->
-					# Populate the valuecd  te
+					# Populate the value
 					me.populateText {file,templateData,source:result}, (err,populateTextResult) ->
 						return complete(err)  if err
 						result = populateTextResult
@@ -79,6 +79,20 @@ module.exports = (BasePlugin) ->
 
 			# Render the elements
 			balUtil.replaceElementAsync(source, 't(?:ext)?', replaceElementCallback, next)
+
+			# Chain
+			@
+
+		# Extend the Template Data
+		extendTemplateData: (opts) ->
+			# Prepare
+			me = @
+			{templateData} = opts
+
+			# Apply
+			templateData.t = (text) ->
+				random = String(Math.random()).replace('.','')
+				return "<t:#{random}>#{text}</t:#{random}>"
 
 			# Chain
 			@

@@ -23,7 +23,6 @@ module.exports = (BasePlugin) ->
 			# Prepare
 			me = @
 			docpad = @docpad
-			logger = @logger
 			documents = docpad.getCollection('documents')
 			docpad.log 'debug', 'Generating relations'
 
