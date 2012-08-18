@@ -1,0 +1,1 @@
+<img src="<%- @cachr('http://en.gravatar.com/userimage/2212518/c2b8b77f92d958505dc7a75c0549eed3.jpeg') %>" />

@@ -4,6 +4,7 @@ module.exports = (BasePlugin) ->
 	balUtil = require('bal-util')
 	request = require('request')
 	pathUtil = require('path')
+	fsUtil = require('fs')
 
 	# Define Plugin
 	class CachrPlugin extends BasePlugin
@@ -12,6 +13,7 @@ module.exports = (BasePlugin) ->
 
 		# Default Configuration
 		config:
+			refreshCache: false
 			urlPrefix: '/_docpad/plugins/cachr'
 			pathPrefix: pathUtil.join('_docpad', 'plugins', 'cachr')
 
@@ -57,43 +59,48 @@ module.exports = (BasePlugin) ->
 
 			# Get the file
 			viaRequest = ->
+				# Log
 				docpad.log 'debug', "Cachr is fetching [#{details.sourceUrl}] to [#{details.cachePath}]"
+
 				# Fetch and Save
-				writeStream = fs.createWriteStream(details.cachePath)
-				request(
-					{
-						uri: details.sourceUrl
-					},
-					(err) ->
-						if err
-							++attempt
-							if attempt is 3
-								# give up, and delete out cachePath if it exists
-								balUtil.exists details.cachePath, (exists) ->
-									if exists
-										fs.unlink details.cachePath, (err2) ->
-											return next?(err)
-									else
-										return next?(err)
-							else
-								return viaRequest()  # try again
+				request {uri:details.sourceUrl, encoding:null}, (err, response, body) ->
+					if err
+						++attempt
+						if attempt is 3
+							# give up, and delete out cachePath if it exists
+							docpad.log 'debug', "Cachr is gave up fetching [#{details.sourceUrl}] to [#{details.cachePath}]"
+							balUtil.exists details.cachePath, (exists) ->
+								if exists
+									balUtil.unlink details.cachePath, (err2) ->
+										return next(err)
+								else
+									return next(err)
 						else
-							return next?()  # success
-				).pipe(writeStream)
+							return viaRequest()  # try again
+					else
+						# success
+						docpad.log 'debug', "Cachr fetched [#{details.sourceUrl}] to [#{details.cachePath}]"
+						# write
+						balUtil.writeFile details.cachePath, body, (err) ->
+							return next(err)  # forward
 
 			# Check if we should get the data from the cache or do a new request
-			balUtil.isPathOlderThan details.cachePath, 1000*60*5, (err,older) ->
-				# Check
-				return next?(err)  if err
+			if @config.refreshCache
+				viaRequest()
+			else
+				# Check if we should get the data from the cache or do a new request
+				balUtil.isPathOlderThan details.cachePath, 1000*60*5, (err,older) ->
+					# Check
+					return next(err)  if err
 
-				# The file doesn't exist, or exists and is old
-				if older is null or older is true
-					# Refresh
-					viaRequest()
-				# The file exists and relatively new
-				else
-					# So we don't care
-					next?()
+					# The file doesn't exist, or exists and is old
+					if older is null or older is true
+						# Refresh
+						return viaRequest()
+					# The file exists and relatively new
+					else
+						# So we don't care
+						return next()
 
 			# Chain
 			@
@@ -115,7 +122,7 @@ module.exports = (BasePlugin) ->
 				return cachr.queueRemoteUrlSync(sourceUrl)
 
 			# Next
-			next?()
+			next()
 
 			# Chain
 			@
@@ -135,19 +142,20 @@ module.exports = (BasePlugin) ->
 
 			# Check
 			unless urlsToCacheLength
-				return next?()
+				return next()
 
 			# Log
-			docpad.log 'info', 'Cachr started caching...', (if failures then "with #{failures} failures" else '')
+			docpad.log 'debug', "Cachr is caching #{urlsToCacheLength} files..."
 
 			# Ensure Path
 			balUtil.ensurePath cachrPath, (err) ->
 				# Check
-				return next?(err)  if err
+				return next(err)  if err
 
 				# Async
 				tasks = new balUtil.Group (err) =>
-					docpad.log (if failures then 'warn' else 'info'), 'Cachr finished caching', (if failures then "with #{failures} failures" else '')
+					docpad.log (if failures then 'warn' else 'debug'), 'Cachr finished caching', (if failures then "with #{failures} failures" else '')
+					return next()
 
 				# Store all our files to be cached
 				balUtil.each urlsToCache, (details,sourceUrl) ->
@@ -162,8 +170,8 @@ module.exports = (BasePlugin) ->
 				# Fire the tasks together
 				tasks.async()
 
-				# Continue with DocPad flow as we cache the files
-				return next?()
+				# Chain
+				@
 
 			# Chain
 			@
