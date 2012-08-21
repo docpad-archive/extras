@@ -54,6 +54,11 @@ module.exports = (BasePlugin) ->
 				if config.outputStyle
 					command.push('--style')
 					command.push(config.outputStyle)
+				if config.requireLibraries
+					for name in config.requireLibraries
+						if (typeof name == 'function') continue
+						command.push('--require');
+						command.push(name);
 
 				# Spawn the appropriate process to render the content
 				balUtil.spawn command, commandOpts, (err,stdout,stderr,code,signal) ->
