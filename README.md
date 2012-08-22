@@ -8,15 +8,16 @@ npm install --save docpad-plugin-highlightjs
 ```
 
 ## Configure
-### Disabled by Default
-Like the [Pygments Plugin for DocPad](https://github.com/bevry/docpad-extras/tree/master/plugins/pygments) this plugin is disabled by default. (not everyone automatically wants syntax highlighting, or they aren't sure if they prefer [Pygments](http://pygments.org/)); to enable it, add the following to your website's `package.json` file:
-      ``` javascript
-      "docpad": {
-              "enabledPlugins": {
-                      "highlightjs": true
-              }
-      }
-      ```
+### Replacing Tabs
+By default, this plugin does not expand `\t` characters to any number of spaces, etc.
+This can be changed in a website's `docpad.conf` by adding something similar to the following:
+``` coffeescript
+plugins:
+      highlightjs:
+		replaceTab: '    '
+}
+```
+This will replace all `\t` characters to 4 spaces.
 
 ## History
 You can discover the histroy inside the `History.md` file
