@@ -13,10 +13,17 @@ module.exports = (BasePlugin) ->
 			# Check our extensions
 			if inExtension in ['md','markdown'] and outExtension in [null,'html']
 				# Requires
-				markdown = require('github-flavored-markdown')
+				marked = require 'marked'
+
+				marked.setOptions({
+					gfm: true
+					pedantic: false
+					sanitize: true
+					highlight: null
+				})
 
 				# Render
-				opts.content = markdown.parse(opts.content)
+				opts.content = marked(opts.content)
 
 			# Done
 			next()
