@@ -1,0 +1,10 @@
+<html>
+<head>
+<title><%=@document.title or 'Untitled'%></title>
+</head>
+<body>
+<div>
+<%-@content%>
+</div>
+</body>
+</html>

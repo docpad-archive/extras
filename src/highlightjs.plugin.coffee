@@ -1,24 +1,28 @@
 module.exports = (BasePlugin) ->
 
+    html5 = require 'html5'
     jsdom = require 'jsdom'
     balUtil = require 'bal-util'
     hljs = require 'highlight.js'
 
-    highlight = (window, el, replaceTab, next) ->
-        preOrCode = ['pre', 'code']
+    highlight = (doc, el, replaceTab, next) ->
         parentEl = el
         childEl = el
         language = null
 
+        elIsPreOrCode = el.tagName.toLowerCase() in ['pre', 'code']
+
         # In a child element?
-        if el.childElementCount and
-            tag = (el.firstElementChild.tagName.toLowerCase()) in preOrCode
-                childEl = el.firstElementChild
+        if el.hasChildNodes() and
+            el.childNodes[0].tagName and
+            el.childNodes[0].tagName.toLowerCase() in ['pre', 'code']
+                childEl = el.childNodes[0]
 
         # In a parent element?
-        else if el.parentElement and
-            tag = (el.parentElement.tagName.toLowerCase()) in preOrCode
-                parentEl = el.parentElement
+        else if el.parentNode and
+            el.parentNode.tagName and
+            el.parentNode.tagName.toLowerCase() in ['pre', 'code']
+                parentEl = el.parentNode
 
         # Next if already highlighted
         return next() if /highlighted/.test(parentEl.className)
@@ -26,7 +30,8 @@ module.exports = (BasePlugin) ->
 
         # Try to convert the language to a class name
         language = childEl.getAttribute('lang') or
-            parentEl.getAttribute('lang')
+            parentEl.getAttribute('lang') or
+            el.getAttribute('lang')
 
         childEl.removeAttribute('lang')
         parentEl.removeAttribute('lang')
@@ -36,16 +41,28 @@ module.exports = (BasePlugin) ->
             # Trim language
             language = language.replace(/^\s+|\s+$/g, '')
 
-            if el.className
-                el.className += " language-#{language}"
-            else
-                el.className = "language-#{language}"
+            if hljs.LANGUAGES[language]
+                if elIsPreOrCode
+                    if childEl.className
+                        childEl.className += " language-#{language}"
+                    else
+                        childEl.className = "language-#{language}"
+                else
+                    if el.className
+                        el.className += " language-#{language}"
+                    else
+                        el.className = "language-#{language}"
+
 
         # Unfortunately, Highlight.js uses the document global in a closure
         _document = global.document
-        global.document = window.document
+        global.document = doc
 
-        hljs.highlightBlock(childEl, replaceTab)
+        hljs.highlightBlock(`elIsPreOrCode ? childEl : el`, replaceTab)
+
+        childEl.removeAttribute('lang')
+        parentEl.removeAttribute('lang')
+        el.removeAttribute('lang')
 
         # Restore the document global
         global.document = _document
@@ -72,38 +89,33 @@ module.exports = (BasePlugin) ->
             if file.type is 'document' and extension is 'html'
                 # Create DOM from content
 
-                jsdom.env(
-                    html: "<html><body>#{opts.content}</body></html>"
-                    features:
-                        QuerySelector: true
-                    done: (err, window) ->
-                        return next(err) if err
+                doc = jsdom.jsdom(
+                    opts.content, null,
+                    {
+                        parser: html5
+                        features:
+                            QuerySelector: true
+                            MutationEvents: false
+                    })
 
-                        el = window.document.querySelectorAll(
-                            'code pre, pre code, .highlight'
-                        )
+                el = doc.querySelectorAll 'code pre, pre code, .highlight'
 
-                        return next() if el.length is 0
+                return if el.length is 0
 
-                        tasks = new balUtil.Group (err) ->
-                            return next(err) if err
+                tasks = new balUtil.Group (err) ->
+                    return next(err) if err
 
-                            opts.content = window.document.body.innerHTML
+                    opts.content = doc.innerHTML
 
-                            return next()
 
-                        tasks.total = el.length
+                    return next()
 
-                        for element in el
-                            highlight(
-                                window,
-                                element,
-                                replaceTab,
-                                tasks.completer()
-                            )
+                tasks.total = el.length
 
-                        # Success
-                        true
-                )
+                for element in el
+                    highlight doc, element, replaceTab, tasks.completer()
+
+                # Success
+                true
             else
                 return next()

@@ -20,7 +20,11 @@ plugins:
 This will replace all `\t` characters to 4 spaces.
 
 ## History
-You can discover the histroy inside the `History.md` file
+You can discover the history inside the `History.md` file
+
+## Special Thanks to
+- Benjamin Lupton for [DocPad](https://github.com/bevry/docpad) and the [Pygments plugin](https://github.com/bevry/docpad-extras/tree/master/plugins/pygments), after which the code for this plugin is modeled
+- Ivan Sagalaev and contributors for [Highlight.js](https://github.com/isagalaev/highlight.js), which this plugin relies on for syntax highlighting
 
 ## License
 Licensed under the [MIT License](http://creativecommons.org/licenses/MIT)
