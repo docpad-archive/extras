@@ -24,17 +24,27 @@ module.exports = (BasePlugin) ->
 
 			# Check our extensions
 			if inExtension in ['md','markdown'] and outExtension in [null,'html']
+				# Default options
+				options =
+					gfm: true
+					pedantic: false
+					sanitize: true
+					highlight: null
+
+				# Merge options
 				if @config.highlight
-					marked.setOptions
-						gfm: true
-						pedantic: false
-						sanitize: true
+					options = _.extend options, @config,
 						highlight: (code, language) ->
 							lang = makesure language
 							if lang
 								return hl.highlight(lang, code).value
 							else
 								return hl.highlightAuto(code).value
+				else
+					options = _.extend options, @config
+
+
+				marked.setOptions options
 
 				# Render
 				opts.content = marked opts.content
