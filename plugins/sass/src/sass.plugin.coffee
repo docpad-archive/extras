@@ -11,7 +11,10 @@ module.exports = (BasePlugin) ->
 		# Plugin config
 		# Only on the development environment use expanded, otherwise use compressed
 		config:
+			compass: false
 			outputStyle: 'compressed'
+			requireLibraries: null
+			renderUnderscoreStylesheets: false
 			environments:
 				development:
 					outputStyle: 'expanded'
@@ -20,7 +23,6 @@ module.exports = (BasePlugin) ->
 		extendCollections: (opts) ->
 			# Prepare
 			config = @config
-			config.renderUnderscoreStylesheets ?= false
 			docpad = @docpad
 
 			# Prevent underscore files from being written if desired
@@ -56,9 +58,8 @@ module.exports = (BasePlugin) ->
 					command.push(config.outputStyle)
 				if config.requireLibraries
 					for name in config.requireLibraries
-						if (typeof name == 'function') continue
-						command.push('--require');
-						command.push(name);
+						command.push('--require')
+						command.push(name)
 
 				# Spawn the appropriate process to render the content
 				balUtil.spawn command, commandOpts, (err,stdout,stderr,code,signal) ->
