@@ -1,5 +1,9 @@
 ## History
 
+- v2.3.0 September 1, 2012
+	- Use the `requireLibraries` option to require sass libaries
+		- Thanks to [Jan Jolkmeier](https://github.com/jouz) for [pull request #14](https://github.com/bevry/docpad-extras/pull/14)
+
 - v2.2.1 August 10, 2012
 	- Re-added markdown files to npm distribution as they are required for the npm website
 
