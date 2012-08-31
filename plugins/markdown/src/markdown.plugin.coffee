@@ -1,5 +1,17 @@
 # Export Plugin
 module.exports = (BasePlugin) ->
+	# Requires
+	marked = require 'marked'
+	hl = require 'highlight.js'
+	_ = require 'underscore'
+
+	makesure = (name) ->
+		if _.isString name
+			ret = name.trim()
+			return ret if _(hl.LANGUAGES).has ret
+
+		null
+
 	# Define Plugin
 	class MarkdownPlugin extends BasePlugin
 		# Plugin name
@@ -12,11 +24,30 @@ module.exports = (BasePlugin) ->
 
 			# Check our extensions
 			if inExtension in ['md','markdown'] and outExtension in [null,'html']
-				# Requires
-				markdown = require('github-flavored-markdown')
+				# Default options
+				options =
+					gfm: true
+					pedantic: false
+					sanitize: true
+					highlight: null
+
+				# Merge options
+				if @config.highlight
+					options = _.extend options, @config,
+						highlight: (code, language) ->
+							lang = makesure language
+							if lang
+								return hl.highlight(lang, code).value
+							else
+								return hl.highlightAuto(code).value
+				else
+					options = _.extend options, @config
+
+
+				marked.setOptions options
 
 				# Render
-				opts.content = markdown.parse(opts.content)
+				opts.content = marked opts.content
 
 			# Done
 			next()
