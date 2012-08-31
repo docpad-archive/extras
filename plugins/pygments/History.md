@@ -1,5 +1,12 @@
 ## History
 
+- v2.0.3 September 1, 2012
+	- Better support for unknown languages
+	- Trims any initial indentation for code blocks
+	- Adds support for the [marked](https://github.com/chjj/marked) markdown renderer
+	- If a highlight fails, we'll try again a max of 3 times
+		- Pygments is very sporadic with it's success rates, so this actually helps!
+
 - v2.0.2 August 10, 2012
 	- Re-added markdown files to npm distribution as they are required for the npm website
 

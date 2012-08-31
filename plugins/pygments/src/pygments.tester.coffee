@@ -6,5 +6,5 @@ module.exports = (testers) ->
 		docpadConfig:
 			enabledPlugins:
 				'pygments': true
-				'markdown': true
+				'marked': true
 				'eco': true
