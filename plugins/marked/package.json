@@ -1,7 +1,7 @@
 {
-	"name": "docpad-plugin-markdown",
-	"version": "2.0.2",
-	"description": "Adds support for the Markdown markup language to DocPad",
+	"name": "docpad-plugin-marked",
+	"version": "2.0.0",
+	"description": "Markdown rendering for DocPad, using Marked",
 	"homepage": "https://github.com/bevry/docpad-extras",
 	"keywords": [
 		"docpad",
@@ -14,7 +14,8 @@
 		"Benjamin Lupton <b@lupton.cc> (http://balupton.com)"
 	],
 	"contributors": [
-		"Benjamin Lupton <b@lupton.cc> (http://balupton.com)"
+		"Benjamin Lupton <b@lupton.cc> (http://balupton.com)",
+		"Chase Colman <chase@infinityatlas.com> (https://github.com/chase)"
 	],
 	"bugs": {
 		"url": "https://github.com/bevry/docpad-extras/issues"
@@ -28,13 +29,13 @@
 		"docpad": "6.x"
 	},
 	"dependencies": {
-        "marked": ">=0.2.5"
+        "marked": "0.2.x"
 	},
 	"devDependencies": {
 		"coffee-script": "1.3.x"
 	},
-	"main": "./out/markdown.plugin.js",
+	"main": "./out/marked.plugin.js",
 	"scripts": {
-		"test": "node ./test/markdown.test.js"
+		"test": "node ./test/marked.test.js"
 	}
 }

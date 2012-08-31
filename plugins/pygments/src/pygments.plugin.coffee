@@ -8,8 +8,9 @@ module.exports = (BasePlugin) ->
 
 	# Pygmentize some source code
 	# next(err,result)
-	pygmentizeSource = (source, language, next) ->
+	pygmentizeSource = (source, language, next, attempt) ->
 		# Prepare
+		attempt ?= 0
 		result = ''
 		errors = ''
 		args = ['-f', 'html', '-O', 'encoding=utf-8']
@@ -22,18 +23,28 @@ module.exports = (BasePlugin) ->
 			args.unshift('-g')
 
 		# Spawn Pygments
-		pygments = spawn 'pygmentize', args
+		pygments = spawn('pygmentize', args)
 		pygments.stdout.on 'data', (data) ->
 			result += data.toString()
 		pygments.stderr.on 'data', (data) ->
 			errors += data.toString()
 		pygments.on 'exit', ->
+			# Error?
 			return next(new Error(errors))  if errors
+
+			# Render failed
+			# This happens sometimes, it seems when guessing the language pygments is every sporadic
+			return pygmentizeSource(source,language,next,attempt+1)  if result is '' and attempt < 3
+
+			# All good, return
 			return next(null,result)
 
 		# Start highlighting
 		pygments.stdin.write(source)
 		pygments.stdin.end()
+
+		# Chain
+		@
 
 
 	# Pygmentize an element
@@ -57,7 +68,7 @@ module.exports = (BasePlugin) ->
 		return next()  if /highlighted/.test(parentNode.className)
 
 		# Grab the source
-		source = childNode.innerHTML
+		source = balUtil.removeIndentation(childNode.innerHTML)
 		language = childNode.getAttribute('lang') or parentNode.getAttribute('lang')
 
 		# Trim language
@@ -73,6 +84,9 @@ module.exports = (BasePlugin) ->
 				resultElInner.className += ' highlighted codehilite'
 				element.parentNode.replaceChild(resultElInner,element)
 			return next()
+
+		# Chain
+		@
 
 
 	# Define Plugin
