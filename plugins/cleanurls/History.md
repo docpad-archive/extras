@@ -1,5 +1,8 @@
 ## History
 
+- v2.2.4 September 5, 2012
+	- Fixed windows support
+
 - v2.2.3 August 10, 2012
 	- Re-added markdown files to npm distribution as they are required for the npm website
 

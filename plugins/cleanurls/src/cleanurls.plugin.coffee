@@ -16,15 +16,16 @@ module.exports = (BasePlugin) ->
 		cleanURLize: (document) ->
 			# Prepare
 			documentUrl = document.get('url')
+			slashRegex = /\\/g
 
 			# Extnesionless URL
 			if /\.html$/i.test(documentUrl)
-				relativeBaseUrl = '/'+document.get('relativeBase')
+				relativeBaseUrl = '/'+document.get('relativeBase').replace(slashRegex,'/')
 				document.setUrl(relativeBaseUrl)
 
 			# Index URL
 			if /index\.html$/i.test(documentUrl)
-				relativeDirUrl = '/'+document.get('relativeDirPath')
+				relativeDirUrl = '/'+document.get('relativeDirPath').replace(slashRegex,'/')
 				document.setUrl(relativeDirUrl)
 
 			# Done
