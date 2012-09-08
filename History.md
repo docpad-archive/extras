@@ -1,4 +1,9 @@
 ## History
+- v0.1.3 September 8, 2012
+  - Fixed the document loop error which occurred when processing documents not
+    containing code
+  - Fixed the handling of [the new default Marked plugin](https://github.com/bevry/docpad-extras/tree/master/plugins/markdown)
+
 - v0.1.2 August 25, 2012
   - Changed to the HTML5 parser because jsdom's default HTML parser occasionally failed on the provided tests
   - Better handle [the default Markdown plugin](https://github.com/bevry/docpad-extras/tree/master/plugins/markdown)'s HTML output

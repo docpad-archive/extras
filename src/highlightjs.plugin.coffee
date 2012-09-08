@@ -27,6 +27,21 @@ module.exports = (BasePlugin) ->
         # Next if already highlighted
         return next() if /highlighted/.test(parentEl.className)
 
+        # Try to convert Marked-style class names
+        if childEl.className
+            childEl.className =
+                childEl.className.replace(/(\s*)lang-(\S+)(\s*)/,
+                                          "$1language-$2$3")
+
+        if parentEl.className
+            parentEl.className =
+                parentEl.className.replace(/(\s*)lang-(\S+)(\s*)/,
+                                          "$1language-$2$3")
+
+        if el.className
+            el.className =
+                el.className.replace(/(\s*)lang-(\S+)(\s*)/,
+                                          "$1language-$2$3")
 
         # Try to convert the language to a class name
         language = childEl.getAttribute('lang') or
@@ -100,7 +115,7 @@ module.exports = (BasePlugin) ->
 
                 el = doc.querySelectorAll 'code pre, pre code, .highlight'
 
-                return if el.length is 0
+                return next() if el.length is 0
 
                 tasks = new balUtil.Group (err) ->
                     return next(err) if err

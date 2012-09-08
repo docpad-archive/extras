@@ -1,6 +1,6 @@
 {
 	"name": "docpad-plugin-highlightjs",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"description": "Adds support for Highlight.js syntax highlighting to DocPad",
 	"homepage": "https://github.com/chase/docpad-plugin-highlightjs",
 	"keywords": [
