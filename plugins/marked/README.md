@@ -22,6 +22,34 @@ You can customise the [Marked](https://github.com/chjj/marked) [options](https:/
 	sanitize: true
 	highlight: null
 
+An example in docpad.coffee:
+
+```coffeescript
+  ...
+  plugins:
+    marked:
+      markedOptions:
+        pedantic: false
+        gfm: true
+        sanitize: true
+        highlight: null
+  ...
+```
+
+An example using [hightlight.js](https://github.com/isagalaev/highlight.js):
+
+```coffeescript
+  ...
+  plugins:
+    marked:
+      markedOptions:
+        highlight: (code, lang)->
+          hl = require 'highlight.js'
+          has = lang && hl.LANGUAGES.hasOwnProperty(lang.trim())
+          return hl.highlight(lang, code).value if has
+          return hl.highlightAuto(code).value
+  ...
+```
 
 ## History
 You can discover the history inside the `History.md` file
