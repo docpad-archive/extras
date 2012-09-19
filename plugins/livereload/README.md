@@ -14,7 +14,15 @@ npm install --save docpad-plugin-live-reload
 
 ### Enabled
 By default this plugin is disabled for all environments except the development environment. To enable on more environments set the `enabled` option to `true` inside your environments configuration.
-
+The plugins section in your `docpad.coffee` file should look something like this:
+```
+plugins:
+    livereload:
+        enabled: true
+        environments:
+            production: #this obviously has to be the env in which you want to enable the plugin 
+                enabled: true
+```
 
 ## History
 You can discover the history inside the `History.md` file
