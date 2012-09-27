@@ -1,0 +1,3 @@
+[submodule "plugins/highlightjs"]
+	path = plugins/highlightjs
+	url = https://chase@github.com/chase/docpad-plugin-highlightjs.git
