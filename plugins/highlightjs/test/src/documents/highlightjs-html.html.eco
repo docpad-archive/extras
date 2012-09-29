@@ -1,0 +1,34 @@
+---
+layout: 'layout'
+title: 'Highlight HTML Test'
+---
+
+<h3>Coffescript - Lang tag</h3>
+<pre><code lang="coffeescript">
+if true
+    func = ->
+        alert "hello world"
+   
+    func()
+</code></pre>
+
+<h3>Coffescript - no-highlight class</h3>
+<pre><code class="no-highlight">
+if true
+    func = ->
+        alert "hello world"
+   
+    func()
+</code></pre>
+
+<h3>Coffeescript - Guessing</h3>
+<code><pre>
+if true
+    func = ->
+        alert "hello world"
+   
+    func()
+</pre></code>
+
+<code>></code>
+<pre>></pre>
