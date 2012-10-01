@@ -7,9 +7,9 @@ title: 'Highlight Markdown Test'
 
 ``` coffeescript
 if true
-    func = ->
-        alert 'hello world'        
-    func()
+	func = ->
+		alert 'hello world'
+	func()
 ```
 
 
@@ -17,13 +17,13 @@ if true
 
 ```
 if true
-    func = ->
-        alert 'hello world'        
-    func()
+	func = ->
+		alert 'hello world'
+	func()
 ```
 
 ### Guessing with standard markdown
 	if true
-	    func = ->
-	        alert 'hello world'        
-	    func()
+		func = ->
+			alert 'hello world'
+		func()
