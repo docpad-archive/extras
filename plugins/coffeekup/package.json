@@ -2,7 +2,7 @@
 	"name": "docpad-plugin-coffeekup",
 	"version": "2.1.2",
 	"description": "Adds support for CoffeeKup compilation to DocPad",
-	"homepage": "https://github.com/bevry/docpad-extras",
+	"homepage": "http://docpad.org/plugin/coffeekup",
 	"keywords": [
 		"docpad",
 		"docpad-plugin",

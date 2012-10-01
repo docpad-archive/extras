@@ -1,5 +1,5 @@
 # HTML2Coffee Plugin for DocPad
-Adds support for HTML to [Coffee](http://coffeescript.org/)[(Kup)](http://coffeekup.org/) compilation to [DocPad](https://github.com/bevry/docpad)
+Adds support for HTML to [Coffee](http://coffeescript.org/)[(Kup)](http://coffeekup.org/) compilation to [DocPad](https://docpad.org)
 
 Convention:  `.coffee.html`
 

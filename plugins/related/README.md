@@ -1,5 +1,5 @@
 # Related Plugin for DocPad
-Adds support for related documents to [DocPad](https://github.com/bevry/docpad)
+Adds support for related documents to [DocPad](https://docpad.org)
 
 
 ## Install

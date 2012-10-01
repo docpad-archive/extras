@@ -2,7 +2,7 @@
 	"name": "docpad-plugin-ruby",
 	"version": "2.0.1",
 	"description": "Adds support for the Ruby language to DocPad.",
-	"homepage": "https://github.com/bevry/docpad-extras",
+	"homepage": "http://docpad.org/plugin/ruby",
 	"keywords": [
 		"docpad",
 		"docpad-plugin",

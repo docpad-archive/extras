@@ -1,5 +1,5 @@
 # HAML Plugin for DocPad
-Adds support for the [HAML](http://haml.info/) templating engine to [DocPad](https://github.com/bevry/docpad)
+Adds support for the [HAML](http://haml.info/) templating engine to [DocPad](https://docpad.org)
 
 Convention:  `.anything.haml`
 

@@ -1,5 +1,5 @@
 # Stylus Plugin for DocPad
-Adds support for the [Stylus](http://learnboost.github.com/stylus/) CSS pre-processor to [DocPad](https://github.com/bevry/docpad)
+Adds support for the [Stylus](http://learnboost.github.com/stylus/) CSS pre-processor to [DocPad](https://docpad.org)
 
 Convention:  `.css.styl|stylus`
 

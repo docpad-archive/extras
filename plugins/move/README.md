@@ -1,5 +1,5 @@
 # Move Plugin for DocPad
-Adds support for [Move](http://movelang.org/) to JavaScript compilation to [DocPad](https://github.com/bevry/docpad)
+Adds support for [Move](http://movelang.org/) to JavaScript compilation to [DocPad](https://docpad.org)
 
 Convention:  `.js.move`
 

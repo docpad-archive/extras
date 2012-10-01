@@ -1,5 +1,5 @@
 # CoffeeKup Plugin for DocPad
-Adds support for [CoffeeKup](http://coffeekup.org/) to HTML compilation to [DocPad](https://github.com/bevry/docpad)
+Adds support for [CoffeeKup](http://coffeekup.org/) to HTML compilation to [DocPad](https://docpad.org)
 
 Convention:  `.html.coffee`
 

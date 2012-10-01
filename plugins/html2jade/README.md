@@ -1,5 +1,5 @@
 # HTML2Jade Plugin for DocPad
-Adds support for HTML to [Jade](http://jade-lang.com/) compilation to [DocPad](https://github.com/bevry/docpad)
+Adds support for HTML to [Jade](http://jade-lang.com/) compilation to [DocPad](https://docpad.org)
 
 Convention:  `.jade.html`
 

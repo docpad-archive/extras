@@ -1,5 +1,5 @@
 # Live Reload Plugin for DocPad
-Automatically refreshes your [DocPad](https://github.com/bevry/docpad) built website whenever a rengeration is performed
+Automatically refreshes your [DocPad](https://docpad.org) built website whenever a rengeration is performed
 
 
 

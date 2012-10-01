@@ -1,5 +1,5 @@
 # Pygments Plugin for DocPad
-This plugin enables [Pygments](http://pygments.org/) syntax highlighting for [DocPad](https://github.com/bevry/docpad)
+This plugin enables [Pygments](http://pygments.org/) syntax highlighting for [DocPad](https://docpad.org)
 
 
 ## Install

@@ -1,8 +1,8 @@
 {
 	"name": "docpad-plugin-highlightjs",
-	"version": "0.1.3",
+	"version": "2.0.0",
 	"description": "Adds support for Highlight.js syntax highlighting to DocPad",
-	"homepage": "https://github.com/chase/docpad-plugin-highlightjs",
+	"homepage": "http://docpad.org/plugin/highlightjs",
 	"keywords": [
 		"docpad",
 		"docpad-plugin",
@@ -13,17 +13,18 @@
 	],
 	"author": "Chase Colman <chase@infinityatlas.com> (http://thedev.infinityatlas.com)",
 	"maintainers": [
-		"Chase Colman <chase@infinityatlas.com> (http://thedev.infinityatlas.com)"
+		"Chase Colman <chase@infinityatlas.com> (http://thedev.infinityatlas.com)",
+		"Benjamin Lupton <b@lupton.cc> (http://balupton.com)"
 	],
 	"contributors": [
 		"Chase Colman <chase@infinityatlas.com> (http://thedev.infinityatlas.com)"
 	],
 	"bugs": {
-		"url": "https://githb.com/chase/docpad-plugin-highlightjs/issues"
+		"url": "https://github.com/bevry/docpad-extras/issues"
 	},
 	"repository" : {
 		"type": "git",
-		"url": "http://github.com/chase/docpad-plugin-highlightjs.git"
+		"url": "http://github.com/bevry/docpad-extras.git"
 	},
 	"engines" : {
 		"node" : ">=0.4.0",
@@ -32,7 +33,7 @@
 	"dependencies": {
 		"bal-util": "1.13.x",
 		"jsdom": "0.2.x",
-        "html5": ">=0.3.8",
+		"html5": ">=0.3.8",
 		"highlight.js": "7.1.x"
 	},
 	"devDependencies": {
