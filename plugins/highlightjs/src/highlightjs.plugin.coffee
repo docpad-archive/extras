@@ -1,136 +1,153 @@
 module.exports = (BasePlugin) ->
+	# Requires
+	html5 = require('html5')
+	jsdom = require('jsdom')
+	balUtil = require('bal-util')
+	hljs = require('highlight.js')
 
-    html5 = require 'html5'
-    jsdom = require 'jsdom'
-    balUtil = require 'bal-util'
-    hljs = require 'highlight.js'
+	# Highlight an element
+	# next(err)
+	highlightElement = (opts) ->
+		# Prepare
+		{window,element,escape,replaceTab,next} = opts
+		parentNode = element
+		childNode = element
+		source = false
+		language = false
 
-    highlight = (doc, el, replaceTab, next) ->
-        parentEl = el
-        childEl = el
-        language = null
+		# Is our code wrapped  inside a child node?
+		childNode = element
+		while childNode.childNodes.length and String(childNode.childNodes[0].tagName).toLowerCase() in ['pre','code']
+			childNode = childNode.childNodes[0]
 
-        elIsPreOrCode = el.tagName.toLowerCase() in ['pre', 'code']
+		# Is our code wrapped in a parentNode?
+		parentNode = element
+		while parentNode.parentNode.tagName.toLowerCase() in ['pre','code']
+			parentNode = parentNode.parentNode
 
-        # In a child element?
-        if el.hasChildNodes() and
-            el.childNodes[0].tagName and
-            el.childNodes[0].tagName.toLowerCase() in ['pre', 'code']
-                childEl = el.childNodes[0]
+		# Check if we are already highlighted
+		return next()  if /highlighted/.test(parentNode.className)
 
-        # In a parent element?
-        else if el.parentNode and
-            el.parentNode.tagName and
-            el.parentNode.tagName.toLowerCase() in ['pre', 'code']
-                parentEl = el.parentNode
+		# Grab the source
+		source = balUtil.removeIndentation(childNode.innerHTML)
+		language = childNode.getAttribute('lang') or parentNode.getAttribute('lang')
 
-        # Next if already highlighted
-        return next() if /highlighted/.test(parentEl.className)
+		# Trim language
+		language = language.replace(/^\s+|\s+$/g,'')
+		unless language
+			if childNode.className.indexOf('no-highlight') isnt -1
+				language = false
+			else
+				matches = childNode.className.match(/lang-(\w+)/)
+				if matches and matches.length is 2
+					language = matches[1]
+				else
+					if parentNode.className.indexOf('no-highlight') isnt -1
+						language = false
+					else
+						matches = parentNode.className.match(/lang-(\w+)/)
+						if matches and matches.length is 2
+							language = matches[1]
 
-        # Try to convert Marked-style class names
-        if childEl.className
-            childEl.className =
-                childEl.className.replace(/(\s*)lang-(\S+)(\s*)/,
-                                          "$1language-$2$3")
+		# Highlight
+		if language isnt false
+			# Correctly escape the source
+			if escape isnt true
+				# Unescape the output as highlightjs always escape
+				source = source.replace(/&amp;/gm, '&').replace(/&lt;/gm, '<')
 
-        if parentEl.className
-            parentEl.className =
-                parentEl.className.replace(/(\s*)lang-(\S+)(\s*)/,
-                                          "$1language-$2$3")
+			# Highlight
+			language = String(language or '').toLowerCase()
+			try
+				hljs.tabReplace = replaceTab  if replaceTab
+				if language and hljs.LANGUAGES[language]?
+					result = hljs.highlight(language, source)
+				else
+					result = hljs.highlightAuto(source)
+				language = result.language
+				result = result.value
+			catch err
+				return next(err)  if err
 
-        if el.className
-            el.className =
-                el.className.replace(/(\s*)lang-(\S+)(\s*)/,
-                                          "$1language-$2$3")
+			# Correctly escape the result
+			if escape isnt true
+				# Unescape the output as highlightjs always escape
+				result = result.replace(/&amp;gt;/gm, '&gt;')
 
-        # Try to convert the language to a class name
-        language = childEl.getAttribute('lang') or
-            parentEl.getAttribute('lang') or
-            el.getAttribute('lang')
+		else
+			language = 'no-highlight'
+			result = source
 
-        childEl.removeAttribute('lang')
-        parentEl.removeAttribute('lang')
-        el.removeAttribute('lang')
+		# Handle
+		resultElWrapper = window.document.createElement('div')
+		resultElWrapper.innerHTML = """
+			<pre class="highlighted"><code class="#{language}">#{result}</code></pre>
+			"""
+		resultElInner = resultElWrapper.childNodes[0]
+		parentNode.parentNode.replaceChild(resultElInner,parentNode)
+		next()
 
-        if language
-            # Trim language
-            language = language.replace(/^\s+|\s+$/g, '')
-
-            if hljs.LANGUAGES[language]
-                if elIsPreOrCode
-                    if childEl.className
-                        childEl.className += " language-#{language}"
-                    else
-                        childEl.className = "language-#{language}"
-                else
-                    if el.className
-                        el.className += " language-#{language}"
-                    else
-                        el.className = "language-#{language}"
-
-
-        # Unfortunately, Highlight.js uses the document global in a closure
-        _document = global.document
-        global.document = doc
-
-        hljs.highlightBlock(`elIsPreOrCode ? childEl : el`, replaceTab)
-
-        childEl.removeAttribute('lang')
-        parentEl.removeAttribute('lang')
-        el.removeAttribute('lang')
-
-        # Restore the document global
-        global.document = _document
-
-
-        if parentEl.className
-            parentEl.className += " highlighted"
-        else
-            parentEl.className = "highlighted"
-
-        return next()
-
-
-    class HighlightjsPlugin extends BasePlugin
-        name: 'highlightjs'
-
-        config:
-            replaceTab: null
-
-        renderDocument: (opts, next) ->
-            {extension, file} = opts
-            replaceTab = @config.replaceTab
-
-            if file.type is 'document' and extension is 'html'
-                # Create DOM from content
-
-                doc = jsdom.jsdom(
-                    opts.content, null,
-                    {
-                        parser: html5
-                        features:
-                            QuerySelector: true
-                            MutationEvents: false
-                    })
-
-                el = doc.querySelectorAll 'code pre, pre code, .highlight'
-
-                return next() if el.length is 0
-
-                tasks = new balUtil.Group (err) ->
-                    return next(err) if err
-
-                    opts.content = doc.innerHTML
+		# Chain
+		@
 
 
-                    return next()
+	# Define Plugin
+	class HighlightjsPlugin extends BasePlugin
+		# Plugin name
+		name: 'highlightjs'
 
-                tasks.total = el.length
+		# Plugin configuration
+		config:
+			replaceTab: null
 
-                for element in el
-                    highlight doc, element, replaceTab, tasks.completer()
+		# Render the document
+		renderDocument: (opts, next) ->
+			{extension,file} = opts
+			replaceTab = @config.replaceTab
 
-                # Success
-                true
-            else
-                return next()
+			# Handle
+			if file.type is 'document' and extension is 'html'
+				# Create DOM from content
+				jsdom.env(
+					html: "<html><body>#{opts.content}</body></html>"
+					#parser: html5
+					features:
+						QuerySelector: true
+						MutationEvents: false
+					done: (err,window) ->
+						# Check
+						return next(err)  if err
+
+						# Find highlightable elements
+						elements = window.document.querySelectorAll(
+							'code pre, pre code, .highlight'
+						)
+
+						# Check
+						if elements.length is 0
+							return next()
+
+						# Tasks
+						tasks = new balUtil.Group (err) ->
+							return next(err)  if err
+							# Apply the content
+							opts.content = window.document.body.innerHTML
+							# Completed
+							return next()
+						tasks.total = elements.length
+
+						# Syntax highlight those elements
+						for value,key in elements
+							element = elements.item(key)
+							highlightElement({
+								window: window
+								element: element
+								replaceTab: replaceTab
+								next: tasks.completer()
+							})
+
+						# Done
+						true
+				)
+			else
+				return next()
