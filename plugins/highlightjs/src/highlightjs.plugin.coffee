@@ -54,7 +54,7 @@ module.exports = (BasePlugin) ->
 			# Correctly escape the source
 			if escape isnt true
 				# Unescape the output as highlightjs always escape
-				source = source.replace(/&amp;/gm, '&').replace(/&lt;/gm, '<')
+				source = source.replace(/&amp;/gm, '&').replace(/&lt;/gm, '<').replace(/&gt;/gm, '>')
 
 			# Highlight
 			language = String(language or '').toLowerCase()
@@ -68,12 +68,6 @@ module.exports = (BasePlugin) ->
 				result = result.value
 			catch err
 				return next(err)  if err
-
-			# Correctly escape the result
-			if escape isnt true
-				# Unescape the output as highlightjs always escape
-				result = result.replace(/&amp;gt;/gm, '&gt;')
-
 		else
 			language = 'no-highlight'
 			result = source
