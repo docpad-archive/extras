@@ -5,6 +5,10 @@ module.exports = (BasePlugin) ->
 	jsdom = require('jsdom')
 	{spawn,exec} = require('child_process')
 
+	# Group
+	spawnTasks = new balUtil.Group 'async', (err) ->
+		# ignore the error
+	spawnTasks.autoClear = true
 
 	# Pygmentize some source code
 	# next(err,result)
@@ -23,25 +27,30 @@ module.exports = (BasePlugin) ->
 			args.unshift('-g')
 
 		# Spawn Pygments
-		pygments = spawn('pygmentize', args)
-		pygments.stdout.on 'data', (data) ->
-			result += data.toString()
-		pygments.stderr.on 'data', (data) ->
-			errors += data.toString()
-		pygments.on 'exit', ->
-			# Error?
-			return next(new Error(errors))  if errors
+		spawnTasks.pushAndRun (complete) ->
+			pygments = spawn('pygmentize', args)
 
-			# Render failed
-			# This happens sometimes, it seems when guessing the language pygments is every sporadic
-			return pygmentizeSource(source,language,next,attempt+1)  if result is '' and attempt < 3
+			pygments.stdout.on 'data', (data) ->
+				result += data.toString()
+			pygments.stderr.on 'data', (data) ->
+				errors += data.toString()
+			pygments.on 'exit', ->
+				# Complete
+				complete()
 
-			# All good, return
-			return next(null,result)
+				# Error?
+				return next(null,null)  if errors
 
-		# Start highlighting
-		pygments.stdin.write(source)
-		pygments.stdin.end()
+				# Render failed
+				# This happens sometimes, it seems when guessing the language pygments is every sporadic
+				return pygmentizeSource(source,language,next,attempt+1)  if result is '' and attempt < 3
+
+				# All good, return
+				return next(null,result)
+
+			# Start highlighting
+			pygments.stdin.write(source)
+			pygments.stdin.end()
 
 		# Chain
 		@
@@ -91,7 +100,7 @@ module.exports = (BasePlugin) ->
 
 	# Define Plugin
 	class PygmentsPlugin extends BasePlugin
-		# Plugin Name
+		# Plugin name
 		name: 'pygments'
 
 		# Render the document
