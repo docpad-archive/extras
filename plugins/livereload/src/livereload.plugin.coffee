@@ -43,10 +43,10 @@ module.exports = (BasePlugin) ->
 		# Start our socket.io
 		serverAfter: (opts) ->
 			# Prepare
-			{server} = opts
+			{server,serverHttp} = opts
 
 			# Initialise Now
-			@socketApp = require('socket.io').listen(server).of('/docpad-live-reload')
+			@socketApp = require('socket.io').listen(serverHttp or server).of('/docpad-live-reload')
 
 			# Chain
 			@
