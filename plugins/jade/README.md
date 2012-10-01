@@ -1,5 +1,5 @@
 # JAde Plugin for DocPad
-Adds support for the [Jade](http://jade-lang.com/) templating engine to [DocPad](https://github.com/bevry/docpad)
+Adds support for the [Jade](http://jade-lang.com/) templating engine to [DocPad](https://docpad.org)
 
 Convention:  `.anything.jade`
 

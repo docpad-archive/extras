@@ -1,6 +1,6 @@
 ## History
 
-v2.1.1 August 19, 2012
+- v2.1.1 August 19, 2012
 	- Degraded status messages to debug level
 
 - v2.1.0 August 17, 2012

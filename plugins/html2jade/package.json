@@ -2,7 +2,7 @@
 	"name": "docpad-plugin-html2jade",
 	"version": "2.0.1",
 	"description": "Adds support for HTML to the Jade templating engine in DocPad.",
-	"homepage": "https://github.com/bevry/docpad-extras",
+	"homepage": "http://docpad.org/plugin/html2jade",
 	"keywords": [
 		"docpad",
 		"docpad-plugin",

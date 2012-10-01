@@ -1,5 +1,5 @@
 # Clean URLs Plugin for DocPad
-Adds support for clean URLs to [DocPad](https://github.com/bevry/docpad)
+Adds support for clean URLs to [DocPad](https://docpad.org)
 
 
 ## Install

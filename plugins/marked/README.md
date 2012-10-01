@@ -1,5 +1,5 @@
 # Marked Plugin for DocPad
-[Markdown](http://daringfireball.net/projects/markdown/) rendering for [DocPad](https://github.com/bevry/docpad), using [Marked](https://github.com/chjj/marked)
+[Markdown](http://daringfireball.net/projects/markdown/) rendering for [DocPad](https://docpad.org), using [Marked](https://github.com/chjj/marked)
 
 Convention:  `.html.md|markdown`
 

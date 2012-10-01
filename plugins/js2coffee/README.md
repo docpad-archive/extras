@@ -1,5 +1,5 @@
 # JS2Coffee Plugin for DocPad
-Adds support for JavaScript to [CoffeeScript](http://coffeescript.org/) compilation to [DocPad](https://github.com/bevry/docpad)
+Adds support for JavaScript to [CoffeeScript](http://coffeescript.org/) compilation to [DocPad](https://docpad.org)
 
 Convention:  `.coffee.js`
 

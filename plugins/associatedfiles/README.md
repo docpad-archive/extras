@@ -1,5 +1,5 @@
 # Associated Files Plugin for DocPad
-This plugin streamlines finding associated files for a particular document in [DocPad](https://github.com/bevry/docpad), which is useful for:
+This plugin streamlines finding associated files for a particular document in [DocPad](https://docpad.org), which is useful for:
 - getting images for a gallery
 - getting downloads for an article
 - etc. etc.

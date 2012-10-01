@@ -2,7 +2,7 @@
 	"name": "docpad-plugin-marked",
 	"version": "2.0.0",
 	"description": "Markdown rendering for DocPad, using Marked",
-	"homepage": "https://github.com/bevry/docpad-extras",
+	"homepage": "http://docpad.org/plugin/marked",
 	"keywords": [
 		"docpad",
 		"docpad-plugin",

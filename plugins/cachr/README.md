@@ -1,5 +1,5 @@
 # Cachr Plugin for DocPad
-This [DocPad](https://github.com/bevry/docpad) plugin provides a template helper that will take in a remote URL, download it, and provide the local URL for you.
+This [DocPad](https://docpad.org) plugin provides a template helper that will take in a remote URL, download it, and provide the local URL for you.
 
 
 ## Install

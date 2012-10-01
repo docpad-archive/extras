@@ -2,7 +2,7 @@
 	"name": "docpad-plugin-livereload",
 	"version": "2.1.1",
 	"description": "Automatically refreshes your website whenever a rengeration is performed",
-	"homepage": "https://github.com/bevry/docpad-extras",
+	"homepage": "http://docpad.org/plugin/livereload",
 	"keywords": [
 		"docpad",
 		"docpad-plugin",

@@ -2,7 +2,7 @@
 	"name": "docpad-plugin-coffeescript",
 	"version": "2.1.1",
 	"description": "Adds support for CoffeeScript to JavaScript compilation to DocPad",
-	"homepage": "https://github.com/bevry/docpad-extras",
+	"homepage": "http://docpad.org/plugin/coffeescript",
 	"keywords": [
 		"docpad",
 		"docpad-plugin",

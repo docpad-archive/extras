@@ -1,5 +1,5 @@
 # Handlebars Plugin for DocPad
-Adds support for the [Handlebars](http://handlebarsjs.com/) templating engine to [DocPad](https://github.com/bevry/docpad)
+Adds support for the [Handlebars](http://handlebarsjs.com/) templating engine to [DocPad](https://docpad.org)
 
 Convention:  `.anything.handlebars|hbs|hb`
 

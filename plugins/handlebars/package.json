@@ -2,7 +2,7 @@
 	"name": "docpad-plugin-handlebars",
 	"version": "2.0.1",
 	"description": "Adds support for the Handlebars templating engine to DocPad.",
-	"homepage": "https://github.com/bevry/docpad-extras",
+	"homepage": "http://docpad.org/plugin/handlebars",
 	"keywords": [
 		"docpad",
 		"docpad-plugin",

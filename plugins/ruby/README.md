@@ -1,5 +1,5 @@
 # Ruby Plugin for DocPad
-Adds support to [DocPad](https://github.com/bevry/docpad) for writing your templates using [Ruby](http://en.wikipedia.org/wiki/ERuby)
+Adds support to [DocPad](https://docpad.org) for writing your templates using [Ruby](http://en.wikipedia.org/wiki/ERuby)
 
 Convention:  `.anything.rb|ruby|erb`
 

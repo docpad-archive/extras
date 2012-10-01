@@ -1,5 +1,5 @@
 # SASS/SCSS Plugin for DocPad with Compass support
-Adds support for the [SASS and SCSS](http://sass-lang.com/) CSS pre-processors to [DocPad](https://github.com/bevry/docpad). It also supports the [Compass](http://compass-style.org/) framework.
+Adds support for the [SASS and SCSS](http://sass-lang.com/) CSS pre-processors to [DocPad](https://docpad.org). It also supports the [Compass](http://compass-style.org/) framework.
 
 Convention:  `.css.sass|scss`
 

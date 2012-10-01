@@ -1,5 +1,5 @@
 # PHP Plugin for DocPad
-Adds support to [DocPad](https://github.com/bevry/docpad) for writing your templates using [PHP](http://www.php.net/manual/en/language.basic-syntax.phpmode.php)
+Adds support to [DocPad](https://docpad.org) for writing your templates using [PHP](http://www.php.net/manual/en/language.basic-syntax.phpmode.php)
 
 Convention:  `.anything.php|phtml`
 
