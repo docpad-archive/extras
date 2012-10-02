@@ -1,5 +1,9 @@
 ## History
 
+- v2.0.4 October 2, 2012
+	- Fixed `EMFILE` errors
+	- Fixed incorrect output being produced sometimes (especially with markdown produced code blocks)
+
 - v2.0.3 September 1, 2012
 	- Better support for unknown languages
 	- Trims any initial indentation for code blocks
