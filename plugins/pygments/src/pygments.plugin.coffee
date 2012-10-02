@@ -3,12 +3,6 @@ module.exports = (BasePlugin) ->
 	# Requires
 	balUtil = require('bal-util')
 	jsdom = require('jsdom')
-	{spawn,exec} = require('child_process')
-
-	# Group
-	spawnTasks = new balUtil.Group 'async', (err) ->
-		# ignore the error
-	spawnTasks.autoClear = true
 
 	# Pygmentize some source code
 	# next(err,result)
@@ -17,81 +11,90 @@ module.exports = (BasePlugin) ->
 		attempt ?= 0
 		result = ''
 		errors = ''
-		args = ['-f', 'html', '-O', 'encoding=utf-8']
+		command = ['-f', 'html', '-O', 'encoding=utf-8']
 
 		# Language
 		if language
-			args.unshift(language)
-			args.unshift('-l')
+			command.unshift(language)
+			command.unshift('-l')
 		else
-			args.unshift('-g')
+			command.unshift('-g')
 
-		# Spawn Pygments
-		spawnTasks.pushAndRun (complete) ->
-			pygments = spawn('pygmentize', args)
+		# Process
+		command.unshift('pygmentize')
 
-			pygments.stdout.on 'data', (data) ->
-				result += data.toString()
-			pygments.stderr.on 'data', (data) ->
-				errors += data.toString()
-			pygments.on 'exit', ->
-				# Complete
-				complete()
+		# Fire process
+		balUtil.spawn command, {stdin:source}, (err,stdout,stderr) ->
+			# Error?
+			return next(null,err)  if err
 
-				# Error?
-				return next(null,null)  if errors
+			# Prepare
+			result = stdout or ''
 
-				# Render failed
-				# This happens sometimes, it seems when guessing the language pygments is every sporadic
-				return pygmentizeSource(source,language,next,attempt+1)  if result is '' and attempt < 3
+			# Render failed
+			# This happens sometimes, it seems when guessing the language pygments is every sporadic
+			if result is '' and attempt < 3
+				return pygmentizeSource(source,language,next,attempt+1)
 
-				# All good, return
-				return next(null,result)
-
-			# Start highlighting
-			pygments.stdin.write(source)
-			pygments.stdin.end()
+			# All good, return
+			return next(null,result)
 
 		# Chain
 		@
 
 
-	# Pygmentize an element
+	# Highlight an element
 	# next(err)
-	pygmentizeElement = (window, element, next) ->
+	highlightElement = (window, element, next) ->
 		# Prepare
-		parentNode = element
-		childNode = element
+		topNode = element
+		bottomNode = element
 		source = false
 		language = false
 
 		# Is our code wrapped  inside a child node?
-		if element.childNodes.length and String(element.childNodes[0].tagName).toLowerCase() in ['pre','code']
-			childNode = element.childNodes[0]
+		bottomNode = element
+		while bottomNode.childNodes.length and String(bottomNode.childNodes[0].tagName).toLowerCase() in ['pre','code']
+			bottomNode = bottomNode.childNodes[0]
 
 		# Is our code wrapped in a parentNode?
-		else if element.parentNode.tagName.toLowerCase() in ['pre','code']
-			parentNode = element.parentNode
+		topNode = element
+		while topNode.parentNode.tagName.toLowerCase() in ['pre','code']
+			topNode = topNode.parentNode
 
 		# Check if we are already highlighted
-		return next()  if /highlighted/.test(parentNode.className)
+		if /highlighted/.test(topNode.className)
+			next()
+			return @
 
-		# Grab the source
-		source = balUtil.removeIndentation(childNode.innerHTML)
-		language = childNode.getAttribute('lang') or parentNode.getAttribute('lang')
-
-		# Trim language
-		language = language.replace(/^\s+|\s+$/g,'')
+		# Grab the source and language
+		source = balUtil.removeIndentation(bottomNode.innerHTML)
+		language = String(bottomNode.getAttribute('lang') or topNode.getAttribute('lang')).replace(/^\s+|\s+$/g,'')
+		unless language
+			if bottomNode.className.indexOf('no-highlight') isnt -1
+				language = false
+			else
+				matches = bottomNode.className.match(/lang(?:uage)?-(\w+)/)
+				if matches and matches.length is 2
+					language = matches[1]
+				else
+					if topNode.className.indexOf('no-highlight') isnt -1
+						language = false
+					else
+						matches = topNode.className.match(/lang(?:uage)?-(\w+)/)
+						if matches and matches.length is 2
+							language = matches[1]
 
 		# Pygmentize
 		pygmentizeSource source, language, (err,result) ->
 			return next(err)  if err
 			if result
+				# Handle
 				resultElWrapper = window.document.createElement('div')
 				resultElWrapper.innerHTML = result
 				resultElInner = resultElWrapper.childNodes[0]
 				resultElInner.className += ' highlighted codehilite'
-				element.parentNode.replaceChild(resultElInner,element)
+				topNode.parentNode.replaceChild(resultElInner,topNode)
 			return next()
 
 		# Chain
@@ -140,7 +143,7 @@ module.exports = (BasePlugin) ->
 						# Syntax highlight those elements
 						for value,key in elements
 							element = elements.item(key)
-							pygmentizeElement window, element, tasks.completer()
+							highlightElement window, element, tasks.completer()
 
 						# Done
 						true

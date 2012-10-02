@@ -28,24 +28,21 @@ module.exports = (BasePlugin) ->
 		# Check if we are already highlighted
 		return next()  if /highlighted/.test(parentNode.className)
 
-		# Grab the source
+		# Grab the source and language
 		source = balUtil.removeIndentation(childNode.innerHTML)
-		language = childNode.getAttribute('lang') or parentNode.getAttribute('lang')
-
-		# Trim language
-		language = language.replace(/^\s+|\s+$/g,'')
+		language = String(childNode.getAttribute('lang') or parentNode.getAttribute('lang')).replace(/^\s+|\s+$/g,'')
 		unless language
 			if childNode.className.indexOf('no-highlight') isnt -1
 				language = false
 			else
-				matches = childNode.className.match(/lang-(\w+)/)
+				matches = childNode.className.match(/lang(?:uage)?-(\w+)/)
 				if matches and matches.length is 2
 					language = matches[1]
 				else
 					if parentNode.className.indexOf('no-highlight') isnt -1
 						language = false
 					else
-						matches = parentNode.className.match(/lang-(\w+)/)
+						matches = parentNode.className.match(/lang(?:uage)?-(\w+)/)
 						if matches and matches.length is 2
 							language = matches[1]
 
