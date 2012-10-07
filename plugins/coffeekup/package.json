@@ -1,6 +1,6 @@
 {
 	"name": "docpad-plugin-coffeekup",
-	"version": "2.1.2",
+	"version": "2.1.3",
 	"description": "Adds support for CoffeeKup compilation to DocPad",
 	"homepage": "http://docpad.org/plugin/coffeekup",
 	"keywords": [
