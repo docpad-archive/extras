@@ -4,7 +4,6 @@ module.exports = (testers) ->
 	class MyTester extends testers.RendererTester
 		# Configuration
 		docpadConfig:
-			logLevel: 7
 			enabledPlugins:
 				'cachr': true
 				'eco': true
