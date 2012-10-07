@@ -1,9 +1,9 @@
 # Export Plugin
 module.exports = (BasePlugin) ->
 	# Define Plugin
-	class CoffeePlugin extends BasePlugin
+	class CoffeekupPlugin extends BasePlugin
 		# Plugin name
-		name: 'coffee'
+		name: 'coffeekup'
 
 		# Plugin config
 		# Only on the development environment, should we format the coffeecup output
