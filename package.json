@@ -29,6 +29,6 @@
 		"joe": "1.0.x"
 	},
 	"scripts": {
-		"test": "coffee ./test/plugins.test.coffee --joe-reporter=list --skip=pygments"
+		"test": "coffee ./test/plugins.test.coffee --joe-reporter=list --skip=pygments,highlightjs"
 	}
 }
