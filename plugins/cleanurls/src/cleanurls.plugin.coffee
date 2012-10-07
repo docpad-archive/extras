@@ -3,7 +3,7 @@ module.exports = (BasePlugin) ->
 	# Define Plugin
 	class CleanUrlsPlugin extends BasePlugin
 		# Plugin name
-		name: 'cleanUrls'
+		name: 'cleanurls'
 
 		# Plugin configuration
 		# Do not enable us on the static environment

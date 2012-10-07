@@ -1,6 +1,6 @@
 {
 	"name": "docpad-plugin-cleanurls",
-	"version": "2.2.4",
+	"version": "2.2.5",
 	"description": "Adds support for clean urls to DocPad",
 	"homepage": "http://docpad.org/plugin/cleanurls",
 	"keywords": [

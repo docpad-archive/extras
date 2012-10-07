@@ -1,5 +1,8 @@
 ## History
 
+- v2.2.5 October 8, 2012
+	- Fixed plugin name (`cleanUrls` to `cleanurls`)
+
 - v2.2.4 September 5, 2012
 	- Fixed windows support
 
