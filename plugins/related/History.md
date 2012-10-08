@@ -1,5 +1,8 @@
 ## History
 
+- v2.0.3 October 8, 2012
+	- Fixed plugin name (`relations` to `related`)
+
 - v2.0.2 August 10, 2012
 	- Re-added markdown files to npm distribution as they are required for the npm website
 

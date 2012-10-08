@@ -1,9 +1,9 @@
 # Export Plugin
 module.exports = (BasePlugin) ->
 	# Define Relations Plugin
-	class RelationsPlugin extends BasePlugin
+	class RelatedPlugin extends BasePlugin
 		# Plugin Name
-		name: 'relations'
+		name: 'related'
 
 		# Has inside
 		howManyItemsInside: (aArray,bArray) ->

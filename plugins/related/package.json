@@ -1,6 +1,6 @@
 {
 	"name": "docpad-plugin-related",
-	"version": "2.0.2",
+	"version": "2.0.3",
 	"description": "Adds support for related documents to DocPad",
 	"homepage": "http://docpad.org/plugin/related",
 	"keywords": [
