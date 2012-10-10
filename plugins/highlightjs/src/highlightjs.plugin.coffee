@@ -55,7 +55,7 @@ module.exports = (BasePlugin) ->
 			if sourceFilter?
 				if sourceFilter instanceof Function
 					# sourceFilter = (source) ->
-					source = sourceFilter(source)
+					source = sourceFilter(source, language)
 				else if sourceFilter instanceof Array and sourceFilter.length is 2
 					# sourceFilter = ['find' or RegExp, 'replace']
 					source = source.replace(sourceFilter[0], sourceFilter[1])
@@ -108,7 +108,6 @@ module.exports = (BasePlugin) ->
 
 			# Handle
 			if file.type is 'document' and extension is 'html'
-				console.time(file.id)
 				# Create DOM from content
 				jsdom.env(
 					html: "<html><body>#{opts.content}</body></html>"
@@ -149,6 +148,5 @@ module.exports = (BasePlugin) ->
 						# Done
 						true
 				)
-				console.timeEnd(file.id)
 			else
 				return next()
