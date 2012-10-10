@@ -1,6 +1,6 @@
 {
 	"name": "docpad-plugin-highlightjs",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"description": "Adds support for Highlight.js syntax highlighting to DocPad",
 	"homepage": "http://docpad.org/plugin/highlightjs",
 	"keywords": [
@@ -33,8 +33,7 @@
 	"dependencies": {
 		"bal-util": "1.13.x",
 		"jsdom": "0.2.x",
-		"html5": ">=0.3.8",
-		"highlight.js": "7.1.x"
+		"highlight.js": ">7.2.0"
 	},
 	"devDependencies": {
 		"coffee-script": "1.3.x"
