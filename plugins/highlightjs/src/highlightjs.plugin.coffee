@@ -4,6 +4,23 @@ module.exports = (BasePlugin) ->
 	balUtil = require('bal-util')
 	hljs = require('highlight.js')
 
+	isPreOrCode = (element) ->
+		return false  unless element.tagName
+		element.tagName in ['PRE','CODE']
+	
+	findLanguage = (element) ->
+		classes = element.className
+		# No highlighting
+		return false  if classes.indexOf('no-highlight') isnt -1
+
+		# Get all of the matching classes
+		matches = classes.match(/lang(?:uage)?-\w+/g)
+		# Return the last listed language class
+		return matches.pop().match(/lang(?:uage)?-(\w+)/)[1] if matches
+
+		# Auto-highlighting
+		''	
+
 	# Define Plugin
 	class HighlightjsPlugin extends BasePlugin
 		# Plugin name
@@ -12,53 +29,40 @@ module.exports = (BasePlugin) ->
 		# Plugin configuration
 		config:
 			replaceTab: null
+			sourceFilter: null
 			aliases:
 				coffee: 'coffeescript'
 				rb: 'ruby'
 				js: 'javascript'
 
 		# Highlight an element
-		# next(err)
 		highlightElement: (opts) ->
 			# Prepare
-			{window,element,escape,next} = opts
+			{window,element,replaceTab,sourceFilter,next} = opts
 			replaceTab = @config.replaceTab
 			aliases = @config.aliases
-			parentNode = element
-			childNode = element
-			source = false
-			language = false
+			sourceFilter = @config.sourceFilter
 
-			# Is our code wrapped  inside a child node?
+			# Is the element's code wrapped inside a child node?
 			childNode = element
-			while childNode.childNodes.length and String(childNode.childNodes[0].tagName).toLowerCase() in ['pre','code']
+			while childNode.hasChildNodes() and isPreOrCode(childNode.childNodes[0])
 				childNode = childNode.childNodes[0]
 
-			# Is our code wrapped in a parentNode?
+			# Is the element's code wrapped in a parent node?
 			parentNode = element
-			while parentNode.parentNode.tagName.toLowerCase() in ['pre','code']
+			while isPreOrCode(parentNode.parentNode)
 				parentNode = parentNode.parentNode
 
-			# Check if we are already highlighted
-			return next()  if /highlighted/.test(parentNode.className)
+			# Skip if the element is already highlighted
+			return next()  if parentNode.className.indexOf('highlighted') isnt -1
 
-			# Grab the source and language
-			source = balUtil.removeIndentation(childNode.innerHTML)
-			language = String(childNode.getAttribute('lang') or parentNode.getAttribute('lang')).replace(/^\s+|\s+$/g,'')
-			unless language
-				if childNode.className.indexOf('no-highlight') isnt -1
-					language = false
-				else
-					matches = childNode.className.match(/lang(?:uage)?-(\w+)/)
-					if matches and matches.length is 2
-						language = matches[1]
-					else
-						if parentNode.className.indexOf('no-highlight') isnt -1
-							language = false
-						else
-							matches = parentNode.className.match(/lang(?:uage)?-(\w+)/)
-							if matches and matches.length is 2
-								language = matches[1]
+			# Grab the source code
+			source = childNode.innerHTML
+
+			# Discover the language
+			language = childNode.getAttribute('lang') or parentNode.getAttribute('lang')
+
+			language = language.trim() or findLanguage(childNode) or findLanguage(parentNode)
 
 			# Highlight
 			if language isnt false
@@ -67,12 +71,20 @@ module.exports = (BasePlugin) ->
 					# Unescape the output as highlightjs always escape
 					source = source.replace(/&amp;/gm, '&').replace(/&lt;/gm, '<').replace(/&gt;/gm, '>')
 
-				# Highlight
-				language = String(language or '').toLowerCase()
-				try
-					# Apply tab replace
-					hljs.tabReplace = replaceTab  if replaceTab
+				# If a source filter is configured, run it
+				if sourceFilter?
+					if sourceFilter instanceof Function
+						# sourceFilter = (source) ->
+						source = sourceFilter(source, language)
+					else if sourceFilter instanceof Array and sourceFilter.length is 2
+						# sourceFilter = ['find' or RegExp, 'replace']
+						source = source.replace(sourceFilter[0], sourceFilter[1])
 
+				hljs.fixMarkup(source, replaceTab)  if replaceTab
+
+				# Highlight
+				language = language.toLowerCase()
+				try
 					# Correct aliases
 					if language and aliases[language]
 						language = aliases[language]
@@ -127,8 +139,7 @@ module.exports = (BasePlugin) ->
 						)
 
 						# Check
-						if elements.length is 0
-							return next()
+						return next()  if elements.length is 0
 
 						# Tasks
 						tasks = new balUtil.Group (err) ->
@@ -140,11 +151,11 @@ module.exports = (BasePlugin) ->
 						tasks.total = elements.length
 
 						# Syntax highlight those elements
-						for value,key in elements
-							element = elements.item(key)
+						for element in elements
 							plugin.highlightElement({
 								window: window
 								element: element
+								sourceFilter: sourceFilter
 								next: tasks.completer()
 							})
 
