@@ -1,7 +1,9 @@
 ## History
 
-- v2.0.0 October 1, 2012
-	-
+- v2.0.0 October 12, 2012
+	- Cleaned
+	- Added aliases
+
 - v0.1.3 September 8, 2012
 	- Fixed the document loop error which occurred when processing documents not
 		containing code
