@@ -1,0 +1,41 @@
+{
+	"name": "docpad-plugin-sundown",
+	"version": "1.0.0",
+	"description": "Markdown rendering for DocPad, using Sundown(Robotskirt)",
+	"homepage": "https://github.com/bevry/docpad-extras",
+	"keywords": [
+		"docpad",
+		"docpad-plugin",
+		"markup",
+		"markdown"
+	],
+	"author": "Bevry Pty Ltd <us@bevry.me> (http://bevry.me)",
+	"maintainers": [
+		"Benjamin Lupton <b@lupton.cc> (http://balupton.com)"
+	],
+	"contributors": [
+		"Benjamin Lupton <b@lupton.cc> (http://balupton.com)",
+		"Changwoo Park <pismute@gmail.com> (https://github.com/pismute)"
+	],
+	"bugs": {
+		"url": "https://github.com/bevry/docpad-extras/issues"
+	},
+	"repository" : {
+		"type": "git",
+		"url": "http://github.com/bevry/docpad-extras.git"
+	},
+	"engines" : {
+		"node": ">=0.4.0",
+		"docpad": "6.x"
+	},
+	"dependencies": {
+		"robotskirt": "2.6.x"
+	},
+	"devDependencies": {
+		"coffee-script": "1.3.x"
+	},
+	"main": "./out/sundown.plugin.js",
+	"scripts": {
+		"test": "node ./test/sundown.test.js"
+	}
+}
