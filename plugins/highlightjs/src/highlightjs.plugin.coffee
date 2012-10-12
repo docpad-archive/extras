@@ -11,7 +11,7 @@ module.exports = (BasePlugin) ->
 	findLanguage = (element) ->
 		classes = element.className
 		# No highlighting
-		return false  if classes.indexOf('no-highlight') isnt -1
+		return 'no-highlight'  if /no[-]?highlight/i.test(classes)
 
 		# Get all of the matching classes
 		matches = classes.match(/lang(?:uage)?-\w+/g)
@@ -30,6 +30,7 @@ module.exports = (BasePlugin) ->
 		config:
 			replaceTab: null
 			sourceFilter: null
+			escape: false
 			aliases:
 				coffee: 'coffeescript'
 				rb: 'ruby'
@@ -38,7 +39,8 @@ module.exports = (BasePlugin) ->
 		# Highlight an element
 		highlightElement: (opts) ->
 			# Prepare
-			{window,element,replaceTab,sourceFilter,next} = opts
+			{window,element,next} = opts
+			escape = @config.escape
 			replaceTab = @config.replaceTab
 			aliases = @config.aliases
 			sourceFilter = @config.sourceFilter
@@ -65,7 +67,7 @@ module.exports = (BasePlugin) ->
 			language = language.trim() or findLanguage(childNode) or findLanguage(parentNode)
 
 			# Highlight
-			if language isnt false
+			if language isnt 'no-highlight'
 				# Correctly escape the source
 				if escape isnt true
 					# Unescape the output as highlightjs always escape
@@ -101,7 +103,6 @@ module.exports = (BasePlugin) ->
 				catch err
 					return next(err)  if err
 			else
-				language = 'no-highlight'
 				result = source
 
 			# Handle
@@ -155,7 +156,6 @@ module.exports = (BasePlugin) ->
 							plugin.highlightElement({
 								window: window
 								element: element
-								sourceFilter: sourceFilter
 								next: tasks.completer()
 							})
 
