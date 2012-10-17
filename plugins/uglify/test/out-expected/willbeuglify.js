@@ -1,1 +1,0 @@
-function greeting(e){console.log("Hello"+e)}

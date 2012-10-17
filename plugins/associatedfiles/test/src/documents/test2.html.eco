@@ -1,5 +1,0 @@
----
-associatedFilesPath: './test2'
----
-
-<%- JSON.stringify @getDocument().getAssociatedFiles().pluck('filename') %>

@@ -1,7 +1,0 @@
-{
-	templateData:
-		creator:
-			firstname: "Benjamin"
-			lastname: "Lupton"
-			fullname: "<t>creator.firstname</t> <t>creator.lastname</t>"
-}
