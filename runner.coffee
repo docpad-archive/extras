@@ -7,11 +7,6 @@ joe = require('joe')
 Reporter = joe.require('reporters/console')
 joe.setReporter(new Reporter())
 
-# Configure
-pluginsPath = pathUtil.join(__dirname, '..', 'plugins')
-indentResult = (result) ->
-	(result or '').replace(/\n/g,'\n\t')
-
 # Fail on an uncaught error
 process.on 'uncaughtException', (err) ->
 	throw err
@@ -27,13 +22,14 @@ class App
 			throw err	if err
 		@runner.total = Infinity
 
-	ensure: (next) ->
+	ensure: (opts,next) ->
+		{pluginsPath} = @config
 		@runner.pushAndRun (complete) ->
 			balUtil.ensurePath pluginsPath, (err) ->
 				return (complete(err); next?(err))
 		@
 
-	clone: (next) ->
+	clone: (opts,next) ->
 		@runner.pushAndRun (complete) ->
 			clonePage = (page) ->
 				requestOptions =
@@ -65,22 +61,10 @@ class App
 
 		@
 
-	test: (next) ->
+	test: (opts,next) ->
+		{pluginsPath} = @config
+		{skip,only} = (opts or {skip:null,only:null})
 		@runner.pushAndRun (complete) ->
-			# Should we skip any plugins?
-			skip = null
-			for arg in process.argv
-				value = arg.replace(/^--skip=/,'')
-				if value isnt arg
-					skip = value.split(',')
-					break
-			only = null
-			for arg in process.argv
-				value = arg.replace(/^--only=/,'')
-				if value isnt arg
-					only = value.split(',')
-					break
-
 			# Scan Plugins
 			balUtil.scandir(
 				# Path
@@ -124,12 +108,36 @@ class App
 							nextFile(err,true)
 
 				# Finish
-				(err) ->
+				(err,list,tree) ->
 					return (complete(err); next?(err))
 			)
 
 		@
 
+
+# Should we skip any plugins?
+extractArgument = (name) ->
+	result = null
+	for arg in process.argv
+		value = arg.replace(new RegExp("^--#{name}="),'')
+		if value isnt arg
+			result = value
+			break
+	return result
+extractCsvArgument = (name) ->
+	result = extractArgument(name)
+	result = result.split(',')  if result
+	return result
+
 # Run
-app = new App()
-app.ensure().clone().test()
+app = new App({
+	pluginsPath: pathUtil.join(__dirname, 'plugins')
+})
+app.ensure()
+if extractArgument('clone') is 'yes'
+	app.clone()
+if extractArgument('test') is 'yes'
+	app.test({
+		skip: extractCsvArgument('skip')
+		only: extractCsvArgument('only')
+	})

@@ -1,15 +1,15 @@
 # If you change something here, be sure to change it in package.json's scripts as well
 
-test:
-	npm test
-
-install:
-	npm install
-
 clean:
 	rm -Rf node_modules/ npm-debug.log plugins/*/test/out plugins/*/node_modules plugins/*/npm-debug.log  plugins/*/test/node_modules plugins/*/test/npm-debug.log
 	make install
 	npm link docpad
+
+clone:
+	coffee ./runner.coffee --clone=yes
+
+install:
+	npm install
 
 sync:
 	git checkout docpad-6.x
@@ -30,4 +30,7 @@ sync:
 	git checkout master
 	git push
 
-.PHONY: test install clean sync
+test:
+	coffee ./runner.coffee --test=yes --joe-reporter=list --skip=pygments,highlightjs
+
+.PHONY: clean clone install sync test
