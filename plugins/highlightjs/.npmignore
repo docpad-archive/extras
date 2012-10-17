@@ -1,8 +1,0 @@
-.DS_Store
-.gitignore
-.travis*
-Makefile
-
-src/
-out/test/
-test/
