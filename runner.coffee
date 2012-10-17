@@ -30,6 +30,7 @@ class App
 		@
 
 	clone: (opts,next) ->
+		{pluginsPath} = @config
 		@runner.pushAndRun (complete) ->
 			clonePage = (page) ->
 				requestOptions =
