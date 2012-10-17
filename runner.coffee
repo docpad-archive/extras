@@ -3,9 +3,6 @@ request = require('request')
 pathUtil = require('path')
 fsUtil = require('fs')
 balUtil = require('bal-util')
-joe = require('joe')
-Reporter = joe.require('reporters/console')
-joe.setReporter(new Reporter())
 
 # Fail on an uncaught error
 process.on 'uncaughtException', (err) ->
@@ -66,6 +63,11 @@ class App
 		{pluginsPath} = @config
 		{skip,only} = (opts or {skip:null,only:null})
 		@runner.pushAndRun (complete) ->
+			# Require Joe Testing Framework
+			joe = require('joe')
+			Reporter = joe.require('reporters/console')
+			joe.setReporter(new Reporter())
+
 			# Scan Plugins
 			balUtil.scandir(
 				# Path
