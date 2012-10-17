@@ -88,6 +88,9 @@ class App
 					if only and (pluginName in only) is false
 						console.log("Skipping #{pluginName}")
 						return
+					if fsUtil.existsSync(pluginPath+'/test') is false
+						console.log("Skipping #{pluginName}")
+						return
 
 					# Test the plugin
 					joe.test pluginName, (done) ->
