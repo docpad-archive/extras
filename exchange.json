@@ -15,25 +15,20 @@
 			"repo": "git://github.com/docpad/kitchensink.docpad.git",
 			"description": "A DocPad Skeleton useful for showcasing different features and functionality of DocPad. Implemented using Twitter Bootstrap."
 		},
-		"Website": {
+		"Hogan": {
 			"branch": "docpad-6.x",
-			"repo": "git://github.com/docpad/website.docpad.git",
-			"description": "EXPIREMENTAL: Website skeleton for DocPad. Useful for personal websites and blogs. Pulls in social streams and github information."
+			"repo": "git://github.com/docpad/hogan.docpad.git",
+			"description": "A DocPad Skeleton based off Twitter's Hogan.js Project Page."
 		},
 		"Benjamin Lupton's Website": {
 			"branch": "master",
 			"repo": "git://github.com/balupton/balupton.docpad.git",
 			"description": "Use Benjamin Lupton's website - http://balupton.com - as the base for your own :)"
 		},
-		"Syte": {
+		"NodeChat": {
 			"branch": "master",
-			"repo": "git://github.com/docpad/syte.docpad.git",
-			"description": "EXPIREMENTAL: A simple pre-made personal website with blogging and social integrations."
-		},
-		"Hogan": {
-			"branch": "docpad-6.x",
-			"repo": "git://github.com/docpad/hogan.docpad.git",
-			"description": "A DocPad Skeleton based off Twitter's Hogan.js Project Page."
+			"repo": "git://github.com/balupton/nodechat.docpad.git",
+			"description": "Node Chat, built using Socket.io, DocPad, Backbone.js and Twitter Bootstrap"
 		},
 		"SlidePad": {
 			"branch": "master",
