@@ -18,7 +18,17 @@
 		"Website": {
 			"branch": "docpad-6.x",
 			"repo": "git://github.com/docpad/website.docpad.git",
-			"description": "Website skeleton for DocPad. Useful for personal websites and blogs. Pulls in social streams and github information."
+			"description": "EXPIREMENTAL: Website skeleton for DocPad. Useful for personal websites and blogs. Pulls in social streams and github information."
+		},
+		"Benjamin Lupton's Website": {
+			"branch": "master",
+			"repo": "git://github.com/balupton/balupton.docpad.git",
+			"description": "Use Benjamin Lupton's website - http://balupton.com - as the base for your own :)"
+		},
+		"Syte": {
+			"branch": "master",
+			"repo": "git://github.com/docpad/syte.docpad.git",
+			"description": "EXPIREMENTAL: A simple pre-made personal website with blogging and social integrations."
 		},
 		"Hogan": {
 			"branch": "docpad-6.x",
@@ -29,6 +39,16 @@
 			"branch": "master",
 			"repo": "git://github.com/georgeOsdDev/slidepad.git",
 			"description": "Create HTML5 Presentations easily with DocPad"
+		},
+		"Reveal.js": {
+			"branch": "master",
+			"repo": "git://github.com/DjebbZ/revealjs-docpad.git",
+			"description": "Create Reveal.js presentations easily with DocPad"
+		},
+		"Conference Boilerplate": {
+			"branch": "master",
+			"repo": "git://github.com/braziljs/conf-boilerplate.git",
+			"description": "A kickstart to create websites for conference/events"
 		}
 	}
 }
