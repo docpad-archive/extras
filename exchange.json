@@ -5,10 +5,20 @@
 			"repo": "git://github.com/docpad/html5-boilerplate.docpad.git",
 			"description": "HTML5 Boilerplate skeleton for DocPad. Bare essentials for building a modern website with best practices."
 		},
+		"HTML5 Boilerplate with Grunt": {
+			"branch": "master",
+			"repo": "git://github.com/lukekarrys/html5-boilerplate.docpad.git",
+			"description": "The HTML5 Boilerplate skeleton with Grunt for concatenation and minification of assets."
+		},
 		"Twitter Bootstrap": {
 			"branch": "docpad-6.x",
 			"repo": "git://github.com/docpad/twitter-bootstrap.docpad.git",
 			"description": "Simple and flexible HTML, CSS, and Javascript for popular user interface components and interactions."
+		},
+		"Twitter Bootstrap with Jade": {
+			"branch": "master",
+			"repo": "git://github.com/docpad/twitter-bootstrap-jade.docpad.git",
+			"description": "Twitter Bootstrap skeleton for DocPad developed using Jade (a HAML alternative for Node.js)."
 		},
 		"Kitchensink": {
 			"branch": "docpad-6.x",
@@ -24,6 +34,11 @@
 			"branch": "master",
 			"repo": "git://github.com/balupton/balupton.docpad.git",
 			"description": "Use Benjamin Lupton's website - http://balupton.com - as the base for your own :)"
+		},
+		"DocPad's Website": {
+			"branch": "master",
+			"repo": "git://github.com/bevry/docpad-website.git",
+			"description": "The DocPad Website. Open-Sourced for your Educational Pleasure. All rights still reserved at this point in time."
 		},
 		"NodeChat": {
 			"branch": "master",
