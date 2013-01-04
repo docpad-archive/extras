@@ -5,8 +5,11 @@ clean:
 	make install
 	npm link docpad
 
+outdated:
+	node_modules/.bin/coffee ./runner.coffee --outdated=yes
+
 clone:
-	coffee ./runner.coffee --clone=yes
+	node_modules/.bin/coffee ./runner.coffee --clone=yes
 
 install:
 	npm install
@@ -31,6 +34,6 @@ sync:
 	git push
 
 test:
-	coffee ./runner.coffee --test=yes --joe-reporter=list --skip=pygments,highlightjs
+	node_modules/.bin/coffee ./runner.coffee --test=yes --joe-reporter=list --skip=pygments,concatmin
 
 .PHONY: clean clone install sync test

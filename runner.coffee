@@ -59,6 +59,51 @@ class App
 
 		@
 
+	outdated: (opts,next) ->
+		{pluginsPath} = @config
+		{skip,only} = (opts or {skip:null,only:null})
+		@runner.pushAndRun (complete) ->
+			# Require Joe Testing Framework
+			joe = require('joe')
+			Reporter = joe.require('reporters/console')
+			joe.setReporter(new Reporter())
+
+			# Scan Plugins
+			balUtil.scandir(
+				# Path
+				pluginsPath
+
+				# Skip files
+				false
+
+				# Handle directories
+				(pluginPath,pluginRelativePath,nextFile) ->
+					# Prepare
+					pluginName = pathUtil.basename(pluginRelativePath)
+
+					# Skip
+					if skip and (pluginName in skip)
+						console.log("Skipping #{pluginName}")
+						return
+					if only and (pluginName in only) is false
+						console.log("Skipping #{pluginName}")
+						return
+
+					# Execute the plugin's tests
+					command = 'npm outdated'
+					options = {cwd:pluginPath, output:true}
+					balUtil.spawn command, options, (err,results) ->
+						# Done
+						nextFile(err,true)
+
+				# Finish
+				(err,list,tree) ->
+					return (complete(err); next?(err))
+			)
+
+		@
+
+
 	test: (opts,next) ->
 		{pluginsPath} = @config
 		{skip,only} = (opts or {skip:null,only:null})
@@ -140,6 +185,8 @@ app = new App({
 	pluginsPath: pathUtil.join(__dirname, 'plugins')
 })
 app.ensure()
+if extractArgument('outdated') is 'yes'
+	app.outdated()
 if extractArgument('clone') is 'yes'
 	app.clone()
 if extractArgument('test') is 'yes'
