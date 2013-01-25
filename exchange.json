@@ -25,11 +25,6 @@
 			"repo": "git://github.com/docpad/kitchensink.docpad.git",
 			"description": "A DocPad Skeleton useful for showcasing different features and functionality of DocPad. Implemented using Twitter Bootstrap."
 		},
-		"Hogan": {
-			"branch": "docpad-6.x",
-			"repo": "git://github.com/docpad/hogan.docpad.git",
-			"description": "A DocPad Skeleton based off Twitter's Hogan.js Project Page."
-		},
 		"Benjamin Lupton's Website": {
 			"branch": "master",
 			"repo": "git://github.com/balupton/balupton.docpad.git",
