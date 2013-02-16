@@ -4,18 +4,17 @@ pathUtil = require('path')
 fsUtil = require('fs')
 balUtil = require('bal-util')
 
-# Fail on an uncaught error
-process.on 'uncaughtException', (err) ->
-	throw err
 
-# Prepare
+# -----------------
+# App
+
 class App
 	runner: null
 	config: null
 
 	constructor: (@config) ->
 		# Runner
-		@runner = new balUtil.Group 'sync', (err) ->
+		@runner = new balUtil.Group 'serial', (err) ->
 			throw err	if err
 		@runner.total = Infinity
 
@@ -49,10 +48,17 @@ class App
 					for repo in repos
 						repoShortname = repo.name.replace(/^docpad-plugin-/,'')
 						repoClonePath = "#{pluginsPath}/#{repoShortname}"
-						if repoShortname isnt repo.name and /^(EXPER|DEPR)/.test(repo.description) is false and fsUtil.existsSync(repoClonePath) is false
-							commands.push ['git', 'clone', repo.ssh_url, repoClonePath]
+						if repoShortname isnt repo.name and /^(EXPER|DEPR)/.test(repo.description) is false
+							if fsUtil.existsSync(repoClonePath) is false
+								commands.push ['git', 'clone', repo.ssh_url, repoClonePath]
+							else
+								commands.push {
+									command: 'git'
+									args: ['pull','origin','master']
+									options: {cwd: repoClonePath}
+								}
 
-					balUtil.spawnMultiple commands, {output:true}, (err) ->
+					balUtil.spawnMultiple commands, {output:true,outputCommand:true,tasksMode:'parallel'}, (err) ->
 						return (complete(err); next?(err))  if err
 						clonePage(page+1)
 			clonePage(1)
@@ -60,7 +66,7 @@ class App
 		@
 
 	outdated: (opts,next) ->
-		{pluginsPath} = @config
+		{npmEdgePath,pluginsPath} = @config
 		{skip,only} = (opts or {skip:null,only:null})
 		@runner.pushAndRun (complete) ->
 			# Require Joe Testing Framework
@@ -90,9 +96,14 @@ class App
 						return
 
 					# Execute the plugin's tests
-					command = 'npm outdated'
-					options = {cwd:pluginPath, output:true}
-					balUtil.spawn command, options, (err,results) ->
+					command = npmEdgePath
+					options = {cwd:pluginPath}
+					balUtil.nodeCommand command, options, (err,stdout,stderr) ->
+						# Log
+						console.log pluginPath  if stdout or stderr
+						console.log stdout  if stdout
+						console.log stderr  if stderr
+
 						# Done
 						nextFile(err,true)
 
@@ -140,7 +151,14 @@ class App
 					# Test the plugin
 					joe.test pluginName, (done) ->
 						# Execute the plugin's tests
-						commands = ['npm install', 'make compile', 'npm test']
+						commands = []
+						#commands.push('npm install')
+						commands.push('npm link bal-util')
+						if fsUtil.existsSync(pluginPath+'/Cakefile')
+							commands.push('cake compile')
+						else if fsUtil.existsSync(pluginPath+'/Makefile')
+							commands.push('make compile')
+						commands.push('npm test')
 						options = {cwd:pluginPath, output:true}
 						balUtil.spawnMultiple commands, options, (err,results) ->
 							# Output the test results for the plugin
@@ -165,6 +183,8 @@ class App
 
 		@
 
+# -----------------
+# Helpers
 
 # Should we skip any plugins?
 extractArgument = (name) ->
@@ -180,17 +200,32 @@ extractCsvArgument = (name) ->
 	result = result.split(',')  if result
 	return result
 
-# Run
+
+
+# -----------------
+# Commands
+
+# App
 app = new App({
+	npmEdgePath: pathUtil.join(__dirname, 'node_modules', 'npmedge', 'bin', 'npmedge')
 	pluginsPath: pathUtil.join(__dirname, 'plugins')
-})
-app.ensure()
-if extractArgument('outdated') is 'yes'
-	app.outdated()
-if extractArgument('clone') is 'yes'
+}).ensure()
+defaultSkip = ['pygments','concatmin','tumblr','iis']
+
+# outdated
+task 'outdated', 'check which plugins have outdated dependencies', ->
+	app.outdated({
+		skip: extractCsvArgument('skip') or defaultSkip
+		only: extractCsvArgument('only')
+	})
+
+# clone
+task 'clone', 'clone out new plugins and update the old', ->
 	app.clone()
-if extractArgument('test') is 'yes'
+
+# test
+task 'test', 'run the tests', ->
 	app.test({
-		skip: extractCsvArgument('skip')
+		skip: extractCsvArgument('skip') or defaultSkip
 		only: extractCsvArgument('only')
 	})
