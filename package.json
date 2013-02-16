@@ -19,18 +19,19 @@
     "url": "http://github.com/bevry/docpad-extras.git"
   },
   "engines": {
-    "node": ">=0.6.0",
-    "npm": ">=1.1.0"
+    "node": ">=0.6",
+    "npm": ">=1.1"
   },
   "dependencies": {
-    "request": "~2.11.4"
+    "request": "~2.12.0"
   },
   "devDependencies": {
-    "coffee-script": "1.3.x",
-    "bal-util": "1.13.x",
-    "joe": "1.0.x"
+    "npmedge": "~0.1.2",
+    "coffee-script": "~1.4.0",
+    "bal-util": "~1.16.8",
+    "joe": "~1.1.1"
   },
   "scripts": {
-    "test": "make test"
+    "test": "cake test"
   }
 }
