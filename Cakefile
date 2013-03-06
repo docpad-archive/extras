@@ -65,15 +65,54 @@ class App
 
 		@
 
+	status: (opts,next) ->
+		{pluginsPath} = @config
+		{skip,only} = (opts or {skip:null,only:null})
+		@runner.pushAndRun (complete) ->
+			# Scan Plugins
+			balUtil.scandir(
+				# Path
+				pluginsPath
+
+				# Skip files
+				false
+
+				# Handle directories
+				(pluginPath,pluginRelativePath,nextFile) ->
+					# Prepare
+					pluginName = pathUtil.basename(pluginRelativePath)
+
+					# Skip
+					if skip and (pluginName in skip)
+						console.log("Skipping #{pluginName}")
+						return
+					if only and (pluginName in only) is false
+						console.log("Skipping #{pluginName}")
+						return
+
+					# Execute the plugin's tests
+					options = {cwd:pluginPath, env:process.env}
+					balUtil.exec 'git status', options, (err,stdout,stderr) ->
+						# Log
+						if stdout and stdout.indexOf('nothing to commit') is -1
+							console.log pluginPath  if stdout or stderr
+							console.log stdout  if stdout
+							console.log stderr  if stderr
+
+						# Done
+						nextFile(err,true)
+
+				# Finish
+				(err,list,tree) ->
+					return (complete(err); next?(err))
+			)
+
+		@
+
 	outdated: (opts,next) ->
 		{npmEdgePath,pluginsPath} = @config
 		{skip,only} = (opts or {skip:null,only:null})
 		@runner.pushAndRun (complete) ->
-			# Require Joe Testing Framework
-			joe = require('joe')
-			Reporter = joe.require('reporters/console')
-			joe.setReporter(new Reporter())
-
 			# Scan Plugins
 			balUtil.scandir(
 				# Path
@@ -100,9 +139,10 @@ class App
 					options = {cwd:pluginPath}
 					balUtil.nodeCommand command, options, (err,stdout,stderr) ->
 						# Log
-						console.log pluginPath  if stdout or stderr
-						console.log stdout  if stdout
-						console.log stderr  if stderr
+						if stdout and stdout.indexOf('is specified') isnt -1
+							console.log pluginPath  if stdout or stderr
+							console.log stdout  if stdout
+							console.log stderr  if stderr
 
 						# Done
 						nextFile(err,true)
@@ -152,8 +192,7 @@ class App
 					joe.test pluginName, (done) ->
 						# Execute the plugin's tests
 						commands = []
-						#commands.push('npm install')
-						commands.push('npm link bal-util')
+						commands.push('npm install')
 						if fsUtil.existsSync(pluginPath+'/Cakefile')
 							commands.push('cake compile')
 						else if fsUtil.existsSync(pluginPath+'/Makefile')
@@ -222,6 +261,13 @@ task 'outdated', 'check which plugins have outdated dependencies', ->
 # clone
 task 'clone', 'clone out new plugins and update the old', ->
 	app.clone()
+
+# status
+task 'status', 'check the git status of our plugins', ->
+	app.status({
+		skip: extractCsvArgument('skip') or defaultSkip
+		only: extractCsvArgument('only')
+	})
 
 # test
 task 'test', 'run the tests', ->
