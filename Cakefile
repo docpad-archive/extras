@@ -249,7 +249,7 @@ app = new App({
 	npmEdgePath: pathUtil.join(__dirname, 'node_modules', 'npmedge', 'bin', 'npmedge')
 	pluginsPath: pathUtil.join(__dirname, 'plugins')
 }).ensure()
-defaultSkip = ['pygments','concatmin','tumblr','iis']
+defaultSkip = ['pygments','concatmin','tumblr','iis','html2jade','html2coffee']
 
 # outdated
 task 'outdated', 'check which plugins have outdated dependencies', ->
