@@ -6,10 +6,10 @@ clean:
 	npm link docpad
 
 outdated:
-	node_modules/.bin/coffee ./runner.coffee --outdated=yes
+	cake outdated
 
 clone:
-	node_modules/.bin/coffee ./runner.coffee --clone=yes
+	cake clone
 
 install:
 	npm install
@@ -34,6 +34,6 @@ sync:
 	git push
 
 test:
-	node_modules/.bin/coffee ./runner.coffee --test=yes --joe-reporter=list --skip=pygments,concatmin
+	cake test
 
 .PHONY: clean clone install sync test
