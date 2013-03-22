@@ -33,7 +33,17 @@
 		"DocPad's Website": {
 			"branch": "master",
 			"repo": "git://github.com/bevry/docpad-website.git",
-			"description": "The DocPad Website. Open-Sourced for your Educational Pleasure. All rights still reserved at this point in time."
+			"description": "DocPad's Website"
+		},
+		"Bevry's Website": {
+			"branch": "master",
+			"repo": "git://github.com/bevry/bevry-website.git",
+			"description": "Bevry's Website (the company behind DocPad)"
+		},
+		"Startup Hostel's Website": {
+			"branch": "master",
+			"repo": "git://github.com/bevry/startup-hostel.git",
+			"description": "Startup Hostel, the home in paradise for the doers of the world!"
 		},
 		"NodeChat": {
 			"branch": "master",
