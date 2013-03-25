@@ -1,5 +1,4 @@
 # Requires
-request = require('request')
 pathUtil = require('path')
 fsUtil = require('fs')
 balUtil = require('bal-util')
@@ -18,57 +17,88 @@ class App
 			throw err	if err
 		@runner.total = Infinity
 
+	addTask: (next,task) ->
+		@runner.pushAndRun (complete) ->
+			return task (err) ->
+				return complete(err); next?(err)
+		@
+
 	ensure: (opts,next) ->
 		{pluginsPath} = @config
-		@runner.pushAndRun (complete) ->
-			balUtil.ensurePath pluginsPath, (err) ->
-				return (complete(err); next?(err))
+		@addTask next, (next) ->
+			return balUtil.ensurePath(pluginsPath,next)
 		@
 
 	clone: (opts,next) ->
 		{pluginsPath} = @config
-		@runner.pushAndRun (complete) ->
-			clonePage = (page) ->
-				requestOptions =
-					method: 'GET'
-					uri: 'https://api.github.com/orgs/docpad/repos'
-					qs: {page}
-				request requestOptions, (err,res,body) ->
-					return (complete(err); next?(err))  if err
-					commands = []
-					repos = JSON.parse(body)
+		@addTask next, (next) ->
+			# Prepare
+			console.log "Fetching latest repos"
+			balUtil.readPath "https://api.github.com/orgs/docpad/repos?page=1&per_page=100", (err,data) ->
+				# Check
+				return next(err)  if err
 
-					if repos.message
-						err = new Error(repos.message)
-						return (complete(err); next?(err))
+				# Invalid JSON
+				try
+					repos = JSON.parse(data)
+				catch err
+					return next(err)
 
-					if repos.length is 0
-						return (complete(); next?())
+				# Error Message
+				if repos.message
+					err = new Error(repos.message)
+					return next(err)
 
-					for repo in repos
-						repoShortname = repo.name.replace(/^docpad-plugin-/,'')
-						repoClonePath = "#{pluginsPath}/#{repoShortname}"
-						if repoShortname isnt repo.name and /^(EXPER|DEPR)/.test(repo.description) is false
-							if fsUtil.existsSync(repoClonePath) is false
-								commands.push ['git', 'clone', repo.ssh_url, repoClonePath]
+				# No repos
+				if repos.length is 0
+					return next()
+
+				# Log
+				console.log "Fetched latest repos"
+
+				# Prepare
+				cloneTasks = new balUtil.Group(next)
+
+				# Clone each one
+				balUtil.each repos, (repo) ->
+					# Prepare
+					spawnOpts = {}
+					repoShortname = repo.name.replace(/^docpad-plugin-/,'')
+					repoClonePath = "#{pluginsPath}/#{repoShortname}"
+
+					# Skip if expiremental or deprecated or is not a plugin
+					return  if /^(EXPER|DEPR)/.test(repo.description) or repoShortname is repo.name
+
+					# New
+					if fsUtil.existsSync(repoClonePath) is false
+						command = ['clone', repo.ssh_url, repoClonePath]
+
+					# Update
+					else
+						command = ['pull', 'origin', 'master']
+						spawnOpts.cwd = repoClonePath
+
+					# Handle
+					cloneTasks.push (next) ->
+						console.log "Fetching #{repoShortname}"
+						balUtil.gitCommand command, spawnOpts, (err,args...) ->
+							if err
+								console.log "Fetching #{repoShortname} FAILED"
+								args.forEach (arg) -> console.log(arg)  if arg
+								return next(err)
 							else
-								commands.push {
-									command: 'git'
-									args: ['pull','origin','master']
-									options: {cwd: repoClonePath}
-								}
+								console.log "Fetched #{repoShortname}"
+							return next()
 
-					balUtil.spawnMultiple commands, {output:true,outputCommand:true,tasksMode:'parallel'}, (err) ->
-						return (complete(err); next?(err))  if err
-						clonePage(page+1)
-			clonePage(1)
+				# Run
+				cloneTasks.run()
 
 		@
 
 	status: (opts,next) ->
 		{pluginsPath} = @config
 		{skip,only} = (opts or {skip:null,only:null})
-		@runner.pushAndRun (complete) ->
+		@addTask next, (next) ->
 			# Scan Plugins
 			balUtil.scandir(
 				# Path
@@ -104,7 +134,7 @@ class App
 
 				# Finish
 				(err,list,tree) ->
-					return (complete(err); next?(err))
+					return next(err)
 			)
 
 		@
@@ -112,7 +142,7 @@ class App
 	outdated: (opts,next) ->
 		{npmEdgePath,pluginsPath} = @config
 		{skip,only} = (opts or {skip:null,only:null})
-		@runner.pushAndRun (complete) ->
+		@addTask next, (next) ->
 			# Scan Plugins
 			balUtil.scandir(
 				# Path
@@ -148,8 +178,7 @@ class App
 						nextFile(err,true)
 
 				# Finish
-				(err,list,tree) ->
-					return (complete(err); next?(err))
+				next
 			)
 
 		@
@@ -158,7 +187,7 @@ class App
 	test: (opts,next) ->
 		{pluginsPath} = @config
 		{skip,only} = (opts or {skip:null,only:null})
-		@runner.pushAndRun (complete) ->
+		@addTask next, (next) ->
 			# Require Joe Testing Framework
 			joe = require('joe')
 			Reporter = joe.require('reporters/console')
@@ -190,7 +219,10 @@ class App
 
 					# Test the plugin
 					joe.test pluginName, (done) ->
-						# Execute the plugin's tests
+						# Prepare
+						options = {output:true,cwd:pluginPath}
+
+						# Commands
 						commands = []
 						commands.push('npm install')
 						if fsUtil.existsSync(pluginPath+'/Cakefile')
@@ -198,15 +230,19 @@ class App
 						else if fsUtil.existsSync(pluginPath+'/Makefile')
 							commands.push('make compile')
 						commands.push('npm test')
-						options = {cwd:pluginPath, output:true}
+
+						# Spawn
 						balUtil.spawnMultiple commands, options, (err,results) ->
 							# Output the test results for the plugin
 							if results.length is commands.length
 								testResult = results[commands.length-1]
 								err = testResult[0]
+								# args = testResult[1...]
 								if err
-									err = new Error('the tests failed')
-									done(err)
+									joeError = new Error("Testing #{pluginName} FAILED")
+									# console.log "Testing #{pluginName} FAILED"
+									# args.forEach (arg) -> console.log(arg)  if arg
+									done(joeError)
 								else
 									done()
 							else
@@ -216,8 +252,7 @@ class App
 							nextFile(err,true)
 
 				# Finish
-				(err,list,tree) ->
-					return (complete(err); next?(err))
+				next
 			)
 
 		@
