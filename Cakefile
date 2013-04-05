@@ -2,6 +2,9 @@
 pathUtil = require('path')
 fsUtil = require('fs')
 balUtil = require('bal-util')
+safefs = require('safefs')
+eachr = require('eachr')
+{TaskGroup} = require('taskgroup')
 
 
 # -----------------
@@ -13,12 +16,11 @@ class App
 
 	constructor: (@config) ->
 		# Runner
-		@runner = new balUtil.Group 'serial', (err) ->
+		@runner = new TaskGroup().setConfig(concurrency:0).run().on 'complete', (err) ->
 			throw err	if err
-		@runner.total = Infinity
 
 	addTask: (next,task) ->
-		@runner.pushAndRun (complete) ->
+		@runner.addTask (complete) ->
 			return task (err) ->
 				return complete(err); next?(err)
 		@
@@ -26,7 +28,7 @@ class App
 	ensure: (opts,next) ->
 		{pluginsPath} = @config
 		@addTask next, (next) ->
-			return balUtil.ensurePath(pluginsPath,next)
+			return safefs.ensurePath(pluginsPath,next)
 		@
 
 	clone: (opts,next) ->
@@ -57,10 +59,10 @@ class App
 				console.log "Fetched latest repos"
 
 				# Prepare
-				cloneTasks = new balUtil.Group(next)
+				cloneTasks = new TaskGroup().setConfig(concurrency:0).once('complete',next)
 
 				# Clone each one
-				balUtil.each repos, (repo) ->
+				eachr repos, (repo) ->
 					# Prepare
 					spawnOpts = {}
 					repoShortname = repo.name.replace(/^docpad-plugin-/,'')
@@ -79,9 +81,9 @@ class App
 						spawnOpts.cwd = repoClonePath
 
 					# Handle
-					cloneTasks.push (next) ->
+					cloneTasks.addTask (next) ->
 						console.log "Fetching #{repoShortname}"
-						balUtil.gitCommand command, spawnOpts, (err,args...) ->
+						balUtil.spawnCommand 'git', command, spawnOpts, (err,args...) ->
 							if err
 								console.log "Fetching #{repoShortname} FAILED"
 								args.forEach (arg) -> console.log(arg)  if arg
@@ -122,7 +124,7 @@ class App
 
 					# Execute the plugin's tests
 					options = {cwd:pluginPath, env:process.env}
-					balUtil.exec 'git status', options, (err,stdout,stderr) ->
+					balUtil.spawnCommand 'git', ['status'], options, (err,stdout,stderr) ->
 						# Log
 						if stdout and stdout.indexOf('nothing to commit') is -1
 							console.log pluginPath  if stdout or stderr
@@ -167,7 +169,7 @@ class App
 					# Execute the plugin's tests
 					command = npmEdgePath
 					options = {cwd:pluginPath}
-					balUtil.nodeCommand command, options, (err,stdout,stderr) ->
+					balUtil.spawnCommand 'node', command, options, (err,stdout,stderr) ->
 						# Log
 						if stdout and stdout.indexOf('is specified') isnt -1
 							console.log pluginPath  if stdout or stderr
@@ -190,8 +192,6 @@ class App
 		@addTask next, (next) ->
 			# Require Joe Testing Framework
 			joe = require('joe')
-			Reporter = joe.require('reporters/console')
-			joe.setReporter(new Reporter())
 
 			# Scan Plugins
 			balUtil.scandir(
