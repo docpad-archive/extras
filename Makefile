@@ -5,15 +5,6 @@ clean:
 	make install
 	npm link docpad
 
-outdated:
-	cake outdated
-
-clone:
-	cake clone
-
-install:
-	npm install
-
 sync:
 	git checkout docpad-6.x
 	git pull origin docpad-6.x
@@ -31,9 +22,6 @@ sync:
 	git merge master
 
 	git checkout master
-	git push
+	git push origin --all
 
-test:
-	cake test
-
-.PHONY: clean clone install sync test
+.PHONY: clean sync
