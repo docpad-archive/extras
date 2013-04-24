@@ -73,7 +73,7 @@ class App
 
 					# New
 					if fsUtil.existsSync(repoClonePath) is false
-						command = ['clone', repo.ssh_url, repoClonePath]
+						command = ['clone', repo.clone_url, repoClonePath]
 
 					# Update
 					else
