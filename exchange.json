@@ -20,6 +20,11 @@
 			"repo": "https://github.com/docpad/twitter-bootstrap-jade.docpad.git",
 			"description": "Twitter Bootstrap skeleton for DocPad developed using Jade (a HAML alternative for Node.js)."
 		},
+		"Twitter Bootstrap with Coffeekup": {
+			"branch": "master",
+			"repo": "https://github.com/lzrski/twitter-bootstrap-coffeekup.docpad.git",
+			"description": "Twitter Bootstrap skeleton for DocPad developed using Coffeekup (markup as coffeescript)."
+		},
 		"Kitchensink": {
 			"branch": "docpad-6.x",
 			"repo": "https://github.com/docpad/kitchensink.docpad.git",
