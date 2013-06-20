@@ -25,6 +25,11 @@
 			"repo": "https://github.com/lzrski/twitter-bootstrap-coffeekup.docpad.git",
 			"description": "Twitter Bootstrap skeleton for DocPad developed using Coffeekup (markup as coffeescript)."
 		},
+		"YUI Purecss": {
+			"branch": "master",
+			"repo": "https://github.com/MassDistributionMedia/yui-purecss.docpad.git",
+			"description": "YUI Purecss skeleton for DocPad."
+		},
 		"Kitchensink": {
 			"branch": "docpad-6.x",
 			"repo": "https://github.com/docpad/kitchensink.docpad.git",
