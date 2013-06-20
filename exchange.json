@@ -3,37 +3,32 @@
 		"HTML5 Boilerplate": {
 			"branch": "docpad-6.x",
 			"repo": "https://github.com/docpad/html5-boilerplate.docpad.git",
-			"description": "HTML5 Boilerplate skeleton for DocPad. Bare essentials for building a modern website with best practices."
+			"description": "HTML5 Boilerplate skeleton for DocPad. Bare essentials for building a modern website with best practices"
 		},
 		"HTML5 Boilerplate with Grunt": {
 			"branch": "master",
 			"repo": "https://github.com/lukekarrys/html5-boilerplate.docpad.git",
-			"description": "The HTML5 Boilerplate skeleton with Grunt for concatenation and minification of assets."
+			"description": "The HTML5 Boilerplate skeleton with Grunt for concatenation and minification of assets"
 		},
 		"Twitter Bootstrap": {
 			"branch": "docpad-6.x",
 			"repo": "https://github.com/docpad/twitter-bootstrap.docpad.git",
-			"description": "Simple and flexible HTML, CSS, and Javascript for popular user interface components and interactions."
+			"description": "Simple and flexible HTML, CSS, and Javascript for popular user interface components and interactions"
 		},
 		"Twitter Bootstrap with Jade": {
 			"branch": "master",
 			"repo": "https://github.com/docpad/twitter-bootstrap-jade.docpad.git",
-			"description": "Twitter Bootstrap skeleton for DocPad developed using Jade (a HAML alternative for Node.js)."
+			"description": "Twitter Bootstrap skeleton for DocPad developed using Jade (a HAML alternative for Node.js)"
 		},
 		"Twitter Bootstrap with Coffeekup": {
 			"branch": "master",
 			"repo": "https://github.com/lzrski/twitter-bootstrap-coffeekup.docpad.git",
-			"description": "Twitter Bootstrap skeleton for DocPad developed using Coffeekup (markup as coffeescript)."
-		},
-		"YUI Purecss": {
-			"branch": "master",
-			"repo": "https://github.com/MassDistributionMedia/yui-purecss.docpad.git",
-			"description": "YUI Purecss skeleton for DocPad."
+			"description": "Twitter Bootstrap skeleton for DocPad developed using Coffeekup (markup as coffeescript)"
 		},
 		"Kitchensink": {
 			"branch": "docpad-6.x",
 			"repo": "https://github.com/docpad/kitchensink.docpad.git",
-			"description": "A DocPad Skeleton useful for showcasing different features and functionality of DocPad. Implemented using Twitter Bootstrap."
+			"description": "A DocPad Skeleton useful for showcasing different features and functionality of DocPad. Implemented using Twitter Bootstrap"
 		},
 		"Benjamin Lupton's Website": {
 			"branch": "master",
@@ -79,6 +74,11 @@
 			"branch": "master",
 			"repo": "https://github.com/TravelingTechGuy/Meny.docpad.git",
 			"description": "Create a simple page utilizing the Meny 3D menu"
+		},
+		"YUI PureCSS": {
+			"branch": "master",
+			"repo": "https://github.com/MassDistributionMedia/yui-purecss.docpad.git",
+			"description": "YUI PureCSS skeleton for DocPad"
 		}
 	}
 }
