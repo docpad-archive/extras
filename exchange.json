@@ -69,7 +69,7 @@
 			"branch": "master",
 			"repo": "https://github.com/braziljs/conf-boilerplate.git",
 			"description": "A kickstart to create websites for conference/events"
-		}
+		},
 		"Meny": {
 			"branch": "master",
 			"repo": "https://github.com/TravelingTechGuy/Meny.docpad.git",
