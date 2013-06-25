@@ -23,8 +23,9 @@
     "npm": ">=1.1"
   },
   "dependencies": {
-    "bal-util": "~2.0.5",
+    "bal-util": "~2.2.0",
     "safefs": "~3.0.1",
+    "safeps": "~2.2.0",
     "eachr": "~2.0.2",
     "taskgroup": "~3.1.1"
   },
