@@ -3,6 +3,7 @@ pathUtil = require('path')
 fsUtil = require('fs')
 balUtil = require('bal-util')
 safefs = require('safefs')
+safeps = require('safeps')
 eachr = require('eachr')
 {TaskGroup} = require('taskgroup')
 
@@ -59,11 +60,12 @@ class App
 				console.log "Fetched latest repos"
 
 				# Prepare
-				cloneTasks = new TaskGroup().setConfig(concurrency:0).once('complete',next)
+				cloneTasks = new TaskGroup().setConfig(concurrency:1).once('complete',next)
 
 				# Clone each one
 				eachr repos, (repo) ->
 					# Prepare
+					spawnCommands = []
 					spawnOpts = {}
 					repoShortname = repo.name.replace(/^docpad-plugin-/,'')
 					repoClonePath = "#{pluginsPath}/#{repoShortname}"
@@ -73,20 +75,23 @@ class App
 
 					# New
 					if fsUtil.existsSync(repoClonePath) is false
-						command = ['clone', repo.clone_url, repoClonePath]
+						spawnCommands.push ['git', 'clone', repo.clone_url, repoClonePath]
 
 					# Update
 					else
-						command = ['pull', 'origin', 'master']
+						spawnCommands.push ['git', 'checkout', 'master']
+						spawnCommands.push ['git', 'pull', 'origin', 'master']
 						spawnOpts.cwd = repoClonePath
+
+					# Re-link
+					spawnCommands.push ['npm', 'link', 'docpad']
 
 					# Handle
 					cloneTasks.addTask (next) ->
 						console.log "Fetching #{repoShortname}"
-						balUtil.spawnCommand 'git', command, spawnOpts, (err,args...) ->
+						safeps.spawnMultiple spawnCommands, spawnOpts, (err,args...) ->
 							if err
-								console.log "Fetching #{repoShortname} FAILED"
-								args.forEach (arg) -> console.log(arg)  if arg
+								console.log "Fetching #{repoShortname} FAILED", err
 								return next(err)
 							else
 								console.log "Fetched #{repoShortname}"
@@ -124,7 +129,7 @@ class App
 
 					# Execute the plugin's tests
 					options = {cwd:pluginPath, env:process.env}
-					balUtil.spawnCommand 'git', ['status'], options, (err,stdout,stderr) ->
+					safeps.spawnCommand 'git', ['status'], options, (err,stdout,stderr) ->
 						# Log
 						if stdout and stdout.indexOf('nothing to commit') is -1
 							console.log pluginPath  if stdout or stderr
@@ -169,7 +174,7 @@ class App
 					# Execute the plugin's tests
 					command = npmEdgePath
 					options = {cwd:pluginPath}
-					balUtil.spawnCommand 'node', command, options, (err,stdout,stderr) ->
+					safeps.spawnCommand 'node', command, options, (err,stdout,stderr) ->
 						# Log
 						if stdout and stdout.indexOf('is specified') isnt -1
 							console.log pluginPath  if stdout or stderr
@@ -232,7 +237,7 @@ class App
 						commands.push('npm test')
 
 						# Spawn
-						balUtil.spawnMultiple commands, options, (err,results) ->
+						safeps.spawnMultiple commands, options, (err,results) ->
 							# Output the test results for the plugin
 							if results.length is commands.length
 								testResult = results[commands.length-1]
