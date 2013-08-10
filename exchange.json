@@ -79,6 +79,11 @@
 			"branch": "master",
 			"repo": "https://github.com/MassDistributionMedia/yui-purecss.docpad.git",
 			"description": "YUI PureCSS skeleton for DocPad"
+		},
+		"Zurb Foundation": {
+			"branch": "master",
+			"repo": "https://github.com/Clearskyabove/zurb-foundation.docpad.git",
+			"description": "A clean responsive template that contains a logical setup for a website + blog"
 		}
 	}
 }
