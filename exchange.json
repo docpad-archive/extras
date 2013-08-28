@@ -32,17 +32,17 @@
 		},
 		"Benjamin Lupton's Website": {
 			"branch": "master",
-			"repo": "https://github.com/balupton/balupton.docpad.git",
+			"repo": "https://github.com/balupton/website.git",
 			"description": "Use Benjamin Lupton's website - http://balupton.com - as the base for your own :)"
 		},
 		"DocPad's Website": {
 			"branch": "master",
-			"repo": "https://github.com/bevry/docpad-website.git",
+			"repo": "https://github.com/docpad/website.git",
 			"description": "DocPad's Website"
 		},
 		"Bevry's Website": {
 			"branch": "master",
-			"repo": "https://github.com/bevry/bevry-website.git",
+			"repo": "https://github.com/bevry/website.git",
 			"description": "Bevry's Website (the company behind DocPad)"
 		},
 		"Startup Hostel's Website": {
@@ -52,7 +52,7 @@
 		},
 		"NodeChat": {
 			"branch": "master",
-			"repo": "https://github.com/balupton/nodechat.docpad.git",
+			"repo": "https://github.com/docpad/nodechat.docpad.git",
 			"description": "Node Chat, built using Socket.io, DocPad, Backbone.js and Twitter Bootstrap"
 		},
 		"SlidePad": {
