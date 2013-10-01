@@ -84,6 +84,11 @@
 			"branch": "master",
 			"repo": "https://github.com/Clearskyabove/zurb-foundation.docpad.git",
 			"description": "A clean responsive template that contains a logical setup for a website + blog"
+		},
+		"HTML5 Boilerplate with Jade and LESS": {
+			"branch": "master",
+			"repo": "https://github.com/jheytompkins/html5-boilerplate-jade-less-livereload.docpad.git",
+			"description": "A basic and clean starting point/structure for creating web sites and applications using jade, less and html5 best practices."
 		}
 	}
 }
