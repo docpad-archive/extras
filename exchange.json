@@ -10,6 +10,11 @@
 			"repo": "https://github.com/lukekarrys/html5-boilerplate.docpad.git",
 			"description": "The HTML5 Boilerplate skeleton with Grunt for concatenation and minification of assets"
 		},
+		"HTML5 Boilerplate with Jade and LESS": {
+			"branch": "master",
+			"repo": "https://github.com/jheytompkins/html5-boilerplate-jade-less-livereload.docpad.git",
+			"description": "A skeleton that used the HTML5 boilerplate with Jade and LESS"
+		},
 		"Twitter Bootstrap": {
 			"branch": "docpad-6.x",
 			"repo": "https://github.com/docpad/twitter-bootstrap.docpad.git",
