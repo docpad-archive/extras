@@ -228,19 +228,20 @@ class App
 						options = {output:true,cwd:pluginPath}
 
 						# Commands
-						commands = []
-						commands.push('npm install')
+						spawnCommands = []
+						spawnCommands.push('npm link docpad')
+						spawnCommands.push('npm install')
 						if fsUtil.existsSync(pluginPath+'/Cakefile')
-							commands.push('cake compile')
+							spawnCommands.push('cake compile')
 						else if fsUtil.existsSync(pluginPath+'/Makefile')
-							commands.push('make compile')
-						commands.push('npm test')
+							spawnCommands.push('make compile')
+						spawnCommands.push('npm test')
 
 						# Spawn
-						safeps.spawnMultiple commands, options, (err,results) ->
+						safeps.spawnMultiple spawnCommands, options, (err,results) ->
 							# Output the test results for the plugin
-							if results.length is commands.length
-								testResult = results[commands.length-1]
+							if results.length is spawnCommands.length
+								testResult = results[spawnCommands.length-1]
 								err = testResult[0]
 								# args = testResult[1...]
 								if err
@@ -289,7 +290,7 @@ app = new App({
 	npmEdgePath: pathUtil.join(__dirname, 'node_modules', 'npmedge', 'bin', 'npmedge')
 	pluginsPath: pathUtil.join(__dirname, 'plugins')
 }).ensure()
-defaultSkip = ['pygments','concatmin','tumblr','iis','html2jade','html2coffee']
+defaultSkip = ['pygments','concatmin','iis','html2jade','html2coffee','tumblr']
 
 # outdated
 task 'outdated', 'check which plugins have outdated dependencies', ->
