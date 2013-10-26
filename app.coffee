@@ -223,7 +223,7 @@ class App
 
 	test: (opts,next) ->
 		{pluginsPath} = @config
-		{skip,only} = (opts or {skip:null,only:null})
+		{skip,only,startFrom} = (opts or {})
 		@addTask next, (next) ->
 			# Require Joe Testing Framework
 			joe = require('joe')
@@ -242,6 +242,9 @@ class App
 					pluginName = pathUtil.basename(pluginRelativePath)
 
 					# Skip
+					if startFrom and startFrom > pluginName
+						console.log("Skipping #{pluginName}")
+						return
 					if skip and (pluginName in skip)
 						console.log("Skipping #{pluginName}")
 						return
@@ -296,20 +299,12 @@ class App
 # -----------------
 # Helpers
 
-# Should we skip any plugins?
-extractArgument = (name) ->
-	result = null
-	for arg in process.argv
-		value = arg.replace(new RegExp("^--#{name}="),'')
-		if value isnt arg
-			result = value
-			break
-	return result
-extractCsvArgument = (name) ->
-	result = extractArgument(name)
+# Handle CSV values
+splitCsvValue = (result) ->
+	result or= ''
 	result = result.split(',')  if result
+	result or= null
 	return result
-
 
 
 # -----------------
@@ -333,34 +328,46 @@ cli.version(
 	require('./package.json').version
 )
 
+# Options
+cli
+	.option('--only <only>', 'only run against these plugins (CSV)')
+	.option('--skip <skip>', 'skip these plugins (CSV)')
+	.option('--start <start>', 'start from this plugin name')
+
 # exec
 cli.command('exec <command>').description('execute a command for each plugin').action (command) ->
 	app.exec({command})
 
 # outdated
-cli.command('outdated').description('check which plugins have outdated dependencies').action ->
-	app.outdated({
-		skip: extractCsvArgument('skip') or defaultSkip
-		only: extractCsvArgument('only')
-	})
+cli.command('outdated').description('check which plugins have outdated dependencies')
+	.action ->
+		app.status({
+			only: splitCsvValue(cli.only)
+			skip: splitCsvValue(cli.skip) or defaultSkip
+			startFrom: cli.start
+		})
 
 # clone
 cli.command('clone').description('clone out new plugins and update the old').action ->
 	app.clone()
 
 # status
-cli.command('status').description('check the git status of our plugins').action ->
-	app.status({
-		skip: extractCsvArgument('skip') or defaultSkip
-		only: extractCsvArgument('only')
-	})
+cli.command('status').description('check the git status of our plugins')
+	.action ->
+		app.status({
+			only: splitCsvValue(cli.only)
+			skip: splitCsvValue(cli.skip) or defaultSkip
+			startFrom: cli.start
+		})
 
 # test
-cli.command('test').description('run the tests').action ->
-	app.test({
-		skip: extractCsvArgument('skip') or defaultSkip
-		only: extractCsvArgument('only')
-	})
+cli.command('test').description('run the tests')
+	.action ->
+		app.test({
+			only: splitCsvValue(cli.only)
+			skip: splitCsvValue(cli.skip) or defaultSkip
+			startFrom: cli.start
+		})
 
 # Start the CLI
 cli.parse(process.argv)
