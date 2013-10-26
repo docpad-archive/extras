@@ -27,7 +27,8 @@
     "safefs": "~3.0.1",
     "safeps": "~2.2.0",
     "eachr": "~2.0.2",
-    "taskgroup": "~3.1.1"
+    "taskgroup": "~3.1.1",
+    "commander": "~2.0.0"
   },
   "devDependencies": {
     "npmedge": "~0.1.2",
@@ -36,6 +37,6 @@
     "joe-reporter-console": "~1.2.0"
   },
   "scripts": {
-    "test": "cake test"
+    "test": "./node_modules/coffee-script/bin/coffee app.coffee test"
   }
 }

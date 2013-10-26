@@ -5,6 +5,7 @@ balUtil = require('bal-util')
 safefs = require('safefs')
 safeps = require('safeps')
 eachr = require('eachr')
+commander = require('commander')
 {TaskGroup} = require('taskgroup')
 
 
@@ -190,6 +191,35 @@ class App
 
 		@
 
+	exec: (opts,next) ->
+		{pluginsPath} = @config
+		@addTask next, (next) ->
+			# Scan Plugins
+			balUtil.scandir(
+				# Path
+				pluginsPath
+
+				# Skip files
+				false
+
+				# Handle directories
+				(pluginPath,pluginRelativePath,nextFile) ->
+					# Prepare
+					pluginName = pathUtil.basename(pluginRelativePath)
+
+					# Execute the command
+					safeps.exec opts.command, {cwd:pluginPath, env: process.env}, (err, stdout, stderr) ->
+						console.log "exec [#{opts.command}] on: #{pluginPath}"
+						process.stdout.write stderr  if err
+						process.stdout.write stdout
+						console.log ''
+						return nextFile(err, true)
+
+				# Finish
+				next
+			)
+
+		@
 
 	test: (opts,next) ->
 		{pluginsPath} = @config
@@ -255,7 +285,7 @@ class App
 								done()
 
 							# All done
-							nextFile(err,true)
+							nextFile(err, true)
 
 				# Finish
 				next
@@ -292,27 +322,45 @@ app = new App({
 }).ensure()
 defaultSkip = ['pygments','concatmin','iis','html2jade','html2coffee','tumblr']
 
+
+## Commands
+
+# Use [Commander](https://github.com/visionmedia/commander.js/) for command and option parsing
+cli = require('commander')
+
+# Extract out version out of our package and apply it to commander
+cli.version(
+	require('./package.json').version
+)
+
+# exec
+cli.command('exec <command>').description('execute a command for each plugin').action (command) ->
+	app.exec({command})
+
 # outdated
-task 'outdated', 'check which plugins have outdated dependencies', ->
+cli.command('outadated').description('check which plugins have outdated dependencies').action ->
 	app.outdated({
 		skip: extractCsvArgument('skip') or defaultSkip
 		only: extractCsvArgument('only')
 	})
 
 # clone
-task 'clone', 'clone out new plugins and update the old', ->
+cli.command('clone').description('clone out new plugins and update the old').action ->
 	app.clone()
 
 # status
-task 'status', 'check the git status of our plugins', ->
+cli.command('status').description('check the git status of our plugins').action ->
 	app.status({
 		skip: extractCsvArgument('skip') or defaultSkip
 		only: extractCsvArgument('only')
 	})
 
 # test
-task 'test', 'run the tests', ->
+cli.command('test').description('run the tests').action ->
 	app.test({
 		skip: extractCsvArgument('skip') or defaultSkip
 		only: extractCsvArgument('only')
 	})
+
+# Start the CLI
+cli.parse(process.argv)
