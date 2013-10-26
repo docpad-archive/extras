@@ -218,6 +218,7 @@ class App
 					pluginPackageData = require(pluginPackagePath)
 					(pluginPackageData.peerDependencies ?= {}).docpad ?= '6'
 					delete (pluginPackageData.devDependencies ?= {}).docpad
+					delete (pluginPackageData.engines ?= {}).docpad
 					pluginPackageDataString = JSON.stringify(pluginPackageData, null, '  ')
 					safefs.writeFile pluginPackagePath, pluginPackageDataString, (err) ->
 						return nextFile(err, true)
