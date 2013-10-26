@@ -179,7 +179,7 @@ class App
 						# Log
 						if stdout and stdout.indexOf('is specified') isnt -1
 							console.log pluginPath  if stdout or stderr
-							console.log stdout  if stdout
+							console.log stdout.replace(/^npm http .*/m, '')  if stdout
 							console.log stderr  if stderr
 
 						# Done
