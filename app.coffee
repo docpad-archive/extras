@@ -191,6 +191,43 @@ class App
 
 		@
 
+	standardize: (opts,next) ->
+		{pluginsPath} = @config
+		@addTask next, (next) ->
+			# Scan Plugins
+			balUtil.scandir(
+				# Path
+				pluginsPath
+
+				# Skip files
+				false
+
+				# Handle directories
+				(pluginPath,pluginRelativePath,nextFile) ->
+					# Prepare
+					pluginName = pathUtil.basename(pluginRelativePath)
+
+					# Update the .travis.yml file
+					travisPath = pluginPath+'/.travis.yml'
+					travisData = fsUtil.readFileSync(travisPath).toString()
+					travisData = travisData.replace('install: "npm install"', 'install: "npm install; npm install docpad; cd ./node_modules/docpad; npm install; cd ../.."')
+					fsUtil.writeFileSync(travisPath, travisData)
+
+					# Update the package.json file
+					pluginPackagePath = pluginPath+'/package.json'
+					pluginPackageData = require(pluginPackagePath)
+					(pluginPackageData.peerDependencies ?= {}).docpad ?= '6'
+					delete (pluginPackageData.devDependencies ?= {}).docpad
+					pluginPackageDataString = JSON.stringify(pluginPackageData, null, '  ')
+					safefs.writeFile pluginPackagePath, pluginPackageDataString, (err) ->
+						return nextFile(err, true)
+
+				# Finish
+				next
+			)
+
+		@
+
 	exec: (opts,next) ->
 		{pluginsPath} = @config
 		@addTask next, (next) ->
@@ -346,6 +383,10 @@ cli.command('outdated').description('check which plugins have outdated dependenc
 			skip: splitCsvValue(cli.skip) or defaultSkip
 			startFrom: cli.start
 		})
+
+# standardize
+cli.command('standardize').description('ensure plugins live up to the latest standards').action ->
+	app.standardize()
 
 # clone
 cli.command('clone').description('clone out new plugins and update the old').action ->
