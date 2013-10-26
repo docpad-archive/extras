@@ -338,7 +338,7 @@ cli.command('exec <command>').description('execute a command for each plugin').a
 	app.exec({command})
 
 # outdated
-cli.command('outadated').description('check which plugins have outdated dependencies').action ->
+cli.command('outdated').description('check which plugins have outdated dependencies').action ->
 	app.outdated({
 		skip: extractCsvArgument('skip') or defaultSkip
 		only: extractCsvArgument('only')
