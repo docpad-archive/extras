@@ -75,6 +75,11 @@
 			"repo": "https://github.com/braziljs/conf-boilerplate.git",
 			"description": "A kickstart to create websites for conference/events"
 		},
+		"Zurb Foundation(SASS)": {
+			"branch": "master",
+			"repo": "https://github.com/axyz/zurb-foundation.docpad.git",
+			"description": "A minimal Zurb Foundation skeleton with SASS and coffeescript"
+		},
 		"Meny": {
 			"branch": "master",
 			"repo": "https://github.com/TravelingTechGuy/Meny.docpad.git",
