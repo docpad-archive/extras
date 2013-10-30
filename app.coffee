@@ -5,6 +5,7 @@ balUtil = require('bal-util')
 safefs = require('safefs')
 safeps = require('safeps')
 eachr = require('eachr')
+commander = require('commander')
 {TaskGroup} = require('taskgroup')
 
 
@@ -178,7 +179,7 @@ class App
 						# Log
 						if stdout and stdout.indexOf('is specified') isnt -1
 							console.log pluginPath  if stdout or stderr
-							console.log stdout  if stdout
+							console.log stdout.replace(/^npm http .*/m, '')  if stdout
 							console.log stderr  if stderr
 
 						# Done
@@ -190,10 +191,77 @@ class App
 
 		@
 
+	standardize: (opts,next) ->
+		{pluginsPath} = @config
+		@addTask next, (next) ->
+			# Scan Plugins
+			balUtil.scandir(
+				# Path
+				pluginsPath
+
+				# Skip files
+				false
+
+				# Handle directories
+				(pluginPath,pluginRelativePath,nextFile) ->
+					# Prepare
+					pluginName = pathUtil.basename(pluginRelativePath)
+
+					# Update the .travis.yml file
+					travisPath = pluginPath+'/.travis.yml'
+					travisData = fsUtil.readFileSync(travisPath).toString()
+					travisData = travisData.replace('install: "npm install"', 'install: "npm install; npm install docpad; cd ./node_modules/docpad; npm install; cd ../.."')
+					fsUtil.writeFileSync(travisPath, travisData)
+
+					# Update the package.json file
+					pluginPackagePath = pluginPath+'/package.json'
+					pluginPackageData = require(pluginPackagePath)
+					(pluginPackageData.peerDependencies ?= {}).docpad ?= '6'
+					delete (pluginPackageData.devDependencies ?= {}).docpad
+					delete (pluginPackageData.engines ?= {}).docpad
+					pluginPackageDataString = JSON.stringify(pluginPackageData, null, '  ')
+					safefs.writeFile pluginPackagePath, pluginPackageDataString, (err) ->
+						return nextFile(err, true)
+
+				# Finish
+				next
+			)
+
+		@
+
+	exec: (opts,next) ->
+		{pluginsPath} = @config
+		@addTask next, (next) ->
+			# Scan Plugins
+			balUtil.scandir(
+				# Path
+				pluginsPath
+
+				# Skip files
+				false
+
+				# Handle directories
+				(pluginPath,pluginRelativePath,nextFile) ->
+					# Prepare
+					pluginName = pathUtil.basename(pluginRelativePath)
+
+					# Execute the command
+					safeps.exec opts.command, {cwd:pluginPath, env: process.env}, (err, stdout, stderr) ->
+						console.log "exec [#{opts.command}] on: #{pluginPath}"
+						process.stdout.write stderr  if err
+						process.stdout.write stdout
+						console.log ''
+						return nextFile(err, true)
+
+				# Finish
+				next
+			)
+
+		@
 
 	test: (opts,next) ->
 		{pluginsPath} = @config
-		{skip,only} = (opts or {skip:null,only:null})
+		{skip,only,startFrom} = (opts or {})
 		@addTask next, (next) ->
 			# Require Joe Testing Framework
 			joe = require('joe')
@@ -212,6 +280,9 @@ class App
 					pluginName = pathUtil.basename(pluginRelativePath)
 
 					# Skip
+					if startFrom and startFrom > pluginName
+						console.log("Skipping #{pluginName}")
+						return
 					if skip and (pluginName in skip)
 						console.log("Skipping #{pluginName}")
 						return
@@ -255,7 +326,7 @@ class App
 								done()
 
 							# All done
-							nextFile(err,true)
+							nextFile(err, true)
 
 				# Finish
 				next
@@ -266,20 +337,12 @@ class App
 # -----------------
 # Helpers
 
-# Should we skip any plugins?
-extractArgument = (name) ->
-	result = null
-	for arg in process.argv
-		value = arg.replace(new RegExp("^--#{name}="),'')
-		if value isnt arg
-			result = value
-			break
-	return result
-extractCsvArgument = (name) ->
-	result = extractArgument(name)
+# Handle CSV values
+splitCsvValue = (result) ->
+	result or= ''
 	result = result.split(',')  if result
+	result or= null
 	return result
-
 
 
 # -----------------
@@ -292,27 +355,61 @@ app = new App({
 }).ensure()
 defaultSkip = ['pygments','concatmin','iis','html2jade','html2coffee','tumblr']
 
+
+## Commands
+
+# Use [Commander](https://github.com/visionmedia/commander.js/) for command and option parsing
+cli = require('commander')
+
+# Extract out version out of our package and apply it to commander
+cli.version(
+	require('./package.json').version
+)
+
+# Options
+cli
+	.option('--only <only>', 'only run against these plugins (CSV)')
+	.option('--skip <skip>', 'skip these plugins (CSV)')
+	.option('--start <start>', 'start from this plugin name')
+
+# exec
+cli.command('exec <command>').description('execute a command for each plugin').action (command) ->
+	app.exec({command})
+
 # outdated
-task 'outdated', 'check which plugins have outdated dependencies', ->
-	app.outdated({
-		skip: extractCsvArgument('skip') or defaultSkip
-		only: extractCsvArgument('only')
-	})
+cli.command('outdated').description('check which plugins have outdated dependencies')
+	.action ->
+		app.status({
+			only: splitCsvValue(cli.only)
+			skip: splitCsvValue(cli.skip) or defaultSkip
+			startFrom: cli.start
+		})
+
+# standardize
+cli.command('standardize').description('ensure plugins live up to the latest standards').action ->
+	app.standardize()
 
 # clone
-task 'clone', 'clone out new plugins and update the old', ->
+cli.command('clone').description('clone out new plugins and update the old').action ->
 	app.clone()
 
 # status
-task 'status', 'check the git status of our plugins', ->
-	app.status({
-		skip: extractCsvArgument('skip') or defaultSkip
-		only: extractCsvArgument('only')
-	})
+cli.command('status').description('check the git status of our plugins')
+	.action ->
+		app.status({
+			only: splitCsvValue(cli.only)
+			skip: splitCsvValue(cli.skip) or defaultSkip
+			startFrom: cli.start
+		})
 
 # test
-task 'test', 'run the tests', ->
-	app.test({
-		skip: extractCsvArgument('skip') or defaultSkip
-		only: extractCsvArgument('only')
-	})
+cli.command('test').description('run the tests')
+	.action ->
+		app.test({
+			only: splitCsvValue(cli.only)
+			skip: splitCsvValue(cli.skip) or defaultSkip
+			startFrom: cli.start
+		})
+
+# Start the CLI
+cli.parse(process.argv)
