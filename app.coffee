@@ -353,7 +353,7 @@ app = new App({
 	npmEdgePath: pathUtil.join(__dirname, 'node_modules', 'npmedge', 'bin', 'npmedge')
 	pluginsPath: pathUtil.join(__dirname, 'plugins')
 }).ensure()
-defaultSkip = ['pygments','concatmin','iis','html2jade','html2coffee','tumblr']
+defaultSkip = ['pygments','concatmin','iis','html2jade','html2coffee','tumblr','contenttypes']
 
 
 ## Commands
