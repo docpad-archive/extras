@@ -27,7 +27,7 @@
     "safefs": "~3.0.4",
     "safeps": "~2.2.0",
     "eachr": "~2.0.2",
-    "taskgroup": "~3.3.1",
+    "taskgroup": "~3.3.2",
     "commander": "~2.0.0"
   },
   "devDependencies": {

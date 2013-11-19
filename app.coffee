@@ -7,6 +7,7 @@ safeps = require('safeps')
 eachr = require('eachr')
 commander = require('commander')
 {TaskGroup} = require('taskgroup')
+exchange = require('./exchange')
 
 
 # -----------------
@@ -18,95 +19,129 @@ class App
 
 	constructor: (@config) ->
 		# Runner
-		@runner = new TaskGroup().setConfig(concurrency:0).run().on 'complete', (err) ->
+		@runner = new TaskGroup().run().on 'complete', (err) ->
 			throw err	if err
 
-	addTask: (next,task) ->
-		@runner.addTask (complete) ->
-			return task (err) ->
-				return complete(err); next?(err)
-		@
-
 	ensure: (opts,next) ->
-		{pluginsPath} = @config
-		@addTask next, (next) ->
-			return safefs.ensurePath(pluginsPath,next)
-		@
+		{skeletonsPath, pluginsPath} = @config
+
+		@runner.addGroup ->
+			@addTask (complete) -> safefs.ensurePath(pluginsPath, complete)
+			@addTask (complete) -> safefs.ensurePath(skeletonsPath, complete)
+
+		@runner.addTask(next); @
 
 	clone: (opts,next) ->
-		{pluginsPath} = @config
-		@addTask next, (next) ->
+		me = @
+		{skeletonsPath, pluginsPath} = @config
+
+		@runner.addGroup ->
+			# Skeletons
+			@addTask (complete) ->
+				console.log "Cloning latest skeletons"
+
+				cloneRepos = []
+				for own key,repo of exchange.skeletons
+					repoShortname = repo.repo.replace(/^.+\/(.+\/.+)\.git$/, '$1').replace('/', '-')
+					cloneRepos.push(
+						name: key
+						url: repo.repo
+						path: "#{skeletonsPath}/#{repoShortname}"
+						branch: repo.branch
+					)
+
+				# Clone the repos
+				me.cloneRepos({repos: cloneRepos}, complete)
+
+			# Plugins
+			@addTask (complete) ->
+				console.log "Fetching latest plugins"
+				balUtil.readPath "https://api.github.com/orgs/docpad/repos?page=1&per_page=100", (err,data) ->
+					# Check
+					return next(err)  if err
+
+					# Invalid JSON
+					try
+						repos = JSON.parse(data)
+					catch err
+						return complete(err)
+
+					# Error Message
+					if repos.message
+						err = new Error(repos.message)
+						return complete(err)
+
+					# No repos
+					if repos.length is 0
+						return complete()
+
+					# Skip if not a plugin
+					cloneRepos = []
+					repos.forEach (repo) ->
+						# Prepare
+						repoShortname = repo.name.replace(/^docpad-plugin-/,'')
+
+						# Skip if expiremental or deprecated or is not a plugin
+						return  if /^(EXPER|DEPR)/.test(repo.description) or repoShortname is repo.name
+
+						# Add the repo to the ones we want to clone
+						cloneRepos.push(
+							name: repo.name
+							url: repo.clone_url
+							path: "#{pluginsPath}/#{repoShortname}"
+							branch: 'master'
+						)
+
+					# Log
+					console.log "Cloning latest plugins"
+
+					# Clone the repos
+					me.cloneRepos({repos: cloneRepos}, complete)
+
+		@runner.addTask(next); @
+
+	cloneRepos: (opts,next) ->
+		# Prepare
+		cloneTasks = new TaskGroup().setConfig(concurrency:1).once('complete',next)
+
+		# Clone each one
+		eachr opts.repos, (repo) ->
 			# Prepare
-			console.log "Fetching latest repos"
-			balUtil.readPath "https://api.github.com/orgs/docpad/repos?page=1&per_page=100", (err,data) ->
-				# Check
-				return next(err)  if err
+			spawnCommands = []
+			spawnOpts = {}
 
-				# Invalid JSON
-				try
-					repos = JSON.parse(data)
-				catch err
-					return next(err)
+			# New
+			if fsUtil.existsSync(repo.path) is false
+				spawnCommands.push ['git', 'clone', repo.url, repo.path]
 
-				# Error Message
-				if repos.message
-					err = new Error(repos.message)
-					return next(err)
+			# Update
+			else
+				spawnCommands.push ['git', 'checkout', repo.branch]
+				spawnCommands.push ['git', 'pull', 'origin', repo.branch]
+				spawnOpts.cwd = repo.path
 
-				# No repos
-				if repos.length is 0
+			# Re-link
+			spawnCommands.push ['npm', 'link', 'docpad']
+
+			# Handle
+			cloneTasks.addTask (next) ->
+				console.log "Fetching #{repo.name}"
+				safeps.spawnMultiple spawnCommands, spawnOpts, (err,args...) ->
+					if err
+						console.log "Fetching #{repo.name} FAILED", err
+						return next(err)
+					else
+						console.log "Fetched #{repo.name}"
 					return next()
 
-				# Log
-				console.log "Fetched latest repos"
-
-				# Prepare
-				cloneTasks = new TaskGroup().setConfig(concurrency:1).once('complete',next)
-
-				# Clone each one
-				eachr repos, (repo) ->
-					# Prepare
-					spawnCommands = []
-					spawnOpts = {}
-					repoShortname = repo.name.replace(/^docpad-plugin-/,'')
-					repoClonePath = "#{pluginsPath}/#{repoShortname}"
-
-					# Skip if expiremental or deprecated or is not a plugin
-					return  if /^(EXPER|DEPR)/.test(repo.description) or repoShortname is repo.name
-
-					# New
-					if fsUtil.existsSync(repoClonePath) is false
-						spawnCommands.push ['git', 'clone', repo.clone_url, repoClonePath]
-
-					# Update
-					else
-						spawnCommands.push ['git', 'checkout', 'master']
-						spawnCommands.push ['git', 'pull', 'origin', 'master']
-						spawnOpts.cwd = repoClonePath
-
-					# Re-link
-					spawnCommands.push ['npm', 'link', 'docpad']
-
-					# Handle
-					cloneTasks.addTask (next) ->
-						console.log "Fetching #{repoShortname}"
-						safeps.spawnMultiple spawnCommands, spawnOpts, (err,args...) ->
-							if err
-								console.log "Fetching #{repoShortname} FAILED", err
-								return next(err)
-							else
-								console.log "Fetched #{repoShortname}"
-							return next()
-
-				# Run
-				cloneTasks.run()
-
-		@
+		# Run
+		cloneTasks.run()
 
 	status: (opts,next) ->
 		{pluginsPath} = @config
 		{skip,only} = (opts or {skip:null,only:null})
-		@addTask next, (next) ->
+
+		@runner.addTask (next) ->
 			# Scan Plugins
 			balUtil.scandir(
 				# Path
@@ -145,12 +180,13 @@ class App
 					return next(err)
 			)
 
-		@
+		@runner.addTask(next); @
 
 	outdated: (opts,next) ->
 		{npmEdgePath,pluginsPath} = @config
 		{skip,only} = (opts or {skip:null,only:null})
-		@addTask next, (next) ->
+
+		@runner.addTask (next) ->
 			# Scan Plugins
 			balUtil.scandir(
 				# Path
@@ -189,11 +225,12 @@ class App
 				next
 			)
 
-		@
+		@runner.addTask(next); @
 
 	standardize: (opts,next) ->
 		{pluginsPath} = @config
-		@addTask next, (next) ->
+
+		@runner.addTask (next) ->
 			# Scan Plugins
 			balUtil.scandir(
 				# Path
@@ -227,11 +264,12 @@ class App
 				next
 			)
 
-		@
+		@runner.addTask(next); @
 
 	exec: (opts,next) ->
 		{pluginsPath} = @config
-		@addTask next, (next) ->
+
+		@runner.addTask (next) ->
 			# Scan Plugins
 			balUtil.scandir(
 				# Path
@@ -257,12 +295,13 @@ class App
 				next
 			)
 
-		@
+		@runner.addTask(next); @
 
 	test: (opts,next) ->
 		{pluginsPath} = @config
 		{skip,only,startFrom} = (opts or {})
-		@addTask next, (next) ->
+
+		@runner.addTask (next) ->
 			# Require Joe Testing Framework
 			joe = require('joe')
 
@@ -332,7 +371,7 @@ class App
 				next
 			)
 
-		@
+		@runner.addTask(next); @
 
 # -----------------
 # Helpers
@@ -352,6 +391,7 @@ splitCsvValue = (result) ->
 app = new App({
 	npmEdgePath: pathUtil.join(__dirname, 'node_modules', 'npmedge', 'bin', 'npmedge')
 	pluginsPath: pathUtil.join(__dirname, 'plugins')
+	skeletonsPath: pathUtil.join(__dirname, 'skeletons')
 }).ensure()
 defaultSkip = ['pygments','concatmin','iis','html2jade','html2coffee','tumblr','contenttypes']
 
