@@ -15,5 +15,6 @@ node_modules
 npm-debug.log
 
 plugins
+skeletons
 test/.env
 test/src/documents/tumblr/
