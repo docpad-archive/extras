@@ -10,7 +10,7 @@
 <!-- /BADGES -->
 
 
-A test runner for all of DocPad's officially support extensions
+A test runner for all of DocPad's officially supported extensions
 
 
 ## Usage
