@@ -31,6 +31,7 @@ A test runner for all of DocPad's officially supported extensions
 	cd ~
 	git clone https://github.com/docpad/extras.git docpad-extras
 	cd docpad-extras
+	npm link docpad
 	npm install
 	chmod +x ./app
 	```
