@@ -28,7 +28,8 @@
     "safeps": "~2.2.0",
     "eachr": "~2.0.2",
     "taskgroup": "~3.3.2",
-    "commander": "~2.0.0"
+    "commander": "~2.0.0",
+    "open": "0.0.4"
   },
   "devDependencies": {
     "npmedge": "~0.1.2",
