@@ -305,6 +305,9 @@ class App
 			# Require Joe Testing Framework
 			joe = require('joe')
 
+			# Start playing eye of the tiger
+			require('open')('http://youtu.be/2WrEmJpV2ic')
+
 			# Scan Plugins
 			balUtil.scandir(
 				# Path
