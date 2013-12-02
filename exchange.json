@@ -12,7 +12,7 @@
 		},
 		"HTML5 Boilerplate with Jade and LESS": {
 			"branch": "master",
-			"repo": "https://github.com/jheytompkins/html5-boilerplate-jade-less-livereload.docpad.git",
+			"repo": "https://github.com/jh3y/html5-boilerplate-jade-less-livereload.docpad.git",
 			"description": "A skeleton that uses the HTML5 boilerplate with Jade and LESS. Also includes jQuery and the livereload plugin."
 		},
 		"Twitter Bootstrap": {
