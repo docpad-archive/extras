@@ -31,7 +31,7 @@
     "npm": ">=1.1"
   },
   "dependencies": {
-    "bal-util": "~2.3.2",
+    "bal-util": "~2.4.0",
     "safefs": "~3.0.4",
     "safeps": "~2.2.0",
     "eachr": "~2.0.2",
@@ -44,7 +44,7 @@
     "coffee-script": "~1.6.2",
     "joe": "~1.3.2",
     "joe-reporter-console": "~1.2.0",
-    "projectz": "~0.2.7"
+    "projectz": "~0.3.0"
   },
   "scripts": {
     "test": "./node_modules/coffee-script/bin/coffee app.coffee test"
