@@ -246,12 +246,15 @@ class App
 					# Prepare
 					pluginName = pathUtil.basename(pluginRelativePath)
 
+					# Rename contributing
 					safeps.spawnCommand 'git', ['mv','-f','-k','Contributing.md','CONTRIBUTING.md'], {cwd:pluginPath,output:true}, (err) ->
 						return complete(err)  if err
 
+						# Rename history
 						safeps.spawnCommand 'git', ['mv','-f','-k','History.md','HISTORY.md'], {cwd:pluginPath,output:true}, (err) ->
 							return complete(err)  if err
 
+							# Download meta files
 							safeps.exec pathUtil.join(__dirname, 'download-meta.bash'), {cwd:pluginPath,output:true}, (err) ->
 								return complete(err)  if err
 
@@ -267,6 +270,8 @@ class App
 								delete engines.docpad
 								devDeps.projectz = '~0.3.9'
 
+								pluginPackageData.bugs.url = "https://github.com/docpad/docpad-plugin-#{pluginName}/issues"
+								pluginPackageData.repository.url = "https://github.com/docpad/docpad-plugin-#{pluginName}.git"
 								pluginPackageData.license = 'MIT'
 								pluginPackageData.badges = {
 									"travis": true
@@ -279,21 +284,15 @@ class App
 									"bitcoin": "https://coinbase.com/checkouts/9ef59f5479eec1d97d63382c9ebcb93a"
 								}
 
-								# Write the file
+								# Write package
 								pluginPackageDataString = JSON.stringify(pluginPackageData, null, '  ')
 								safefs.writeFile pluginPackagePath, pluginPackageDataString, (err) ->
 									return complete(err)  if err
 
-									# Update the .travis.yml file
-									travisPath = pluginPath+'/.travis.yml'
-									travisData = fsUtil.readFileSync(travisPath).toString()
-									travisData = travisData.replace('install: "npm install"', 'install: "npm install; npm install docpad; cd ./node_modules/docpad; npm install; cd ../.."')
-									fsUtil.writeFile travisPath, travisData, (err) ->
+									# Prepublish
+									cakePath = pathUtil.join(pluginPath, 'node_modules', '.bin', 'cake')
+									safeps.exec cakePath+' prepublish', {cwd:pluginPath,output:true}, (err) ->
 										return complete(err)
-
-										cakePath = pathUtil.join(pluginPath, 'node_modules', '.bin', 'cake')
-										safeps.exec cakePath+' prepublish', {cwd:pluginPath,output:true}, (err) ->
-											return complete(err)
 
 				# Finish
 				(err) ->
