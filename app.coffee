@@ -231,6 +231,8 @@ class App
 		{pluginsPath} = @config
 
 		@runner.addTask (next) ->
+			standardizeTasks = new TaskGroup(concurrency: 5).once('complete', next)
+
 			# Scan Plugins
 			balUtil.scandir(
 				# Path
@@ -240,28 +242,63 @@ class App
 				false
 
 				# Handle directories
-				(pluginPath,pluginRelativePath,nextFile) ->
+				(pluginPath,pluginRelativePath,nextFile) ->  nextFile(null,true); standardizeTasks.addTask (complete) ->
 					# Prepare
 					pluginName = pathUtil.basename(pluginRelativePath)
 
-					# Update the .travis.yml file
-					travisPath = pluginPath+'/.travis.yml'
-					travisData = fsUtil.readFileSync(travisPath).toString()
-					travisData = travisData.replace('install: "npm install"', 'install: "npm install; npm install docpad; cd ./node_modules/docpad; npm install; cd ../.."')
-					fsUtil.writeFileSync(travisPath, travisData)
+					safeps.spawnCommand 'git', ['mv','-f','-k','Contributing.md','CONTRIBUTING.md'], {cwd:pluginPath,output:true}, (err) ->
+						return complete(err)  if err
 
-					# Update the package.json file
-					pluginPackagePath = pluginPath+'/package.json'
-					pluginPackageData = require(pluginPackagePath)
-					(pluginPackageData.peerDependencies ?= {}).docpad ?= '6'
-					delete (pluginPackageData.devDependencies ?= {}).docpad
-					delete (pluginPackageData.engines ?= {}).docpad
-					pluginPackageDataString = JSON.stringify(pluginPackageData, null, '  ')
-					safefs.writeFile pluginPackagePath, pluginPackageDataString, (err) ->
-						return nextFile(err, true)
+						safeps.spawnCommand 'git', ['mv','-f','-k','History.md','HISTORY.md'], {cwd:pluginPath,output:true}, (err) ->
+							return complete(err)  if err
+
+							safeps.exec pathUtil.join(__dirname, 'download-meta.bash'), {cwd:pluginPath,output:true}, (err) ->
+								return complete(err)  if err
+
+								# Update the package.json file
+								pluginPackagePath = pluginPath+'/package.json'
+								pluginPackageData = require(pluginPackagePath)
+
+								engines = (pluginPackageData.engines ?= {})
+								peerDeps = (pluginPackageData.peerDependencies ?= {})
+								devDeps = (pluginPackageData.devDependencies ?= {})
+
+								devDeps.docpad = (peerDeps.docpad ?= engines.docpad ? '6')
+								delete engines.docpad
+								devDeps.projectz = '~0.3.9'
+
+								pluginPackageData.license = 'MIT'
+								pluginPackageData.badges = {
+									"travis": true
+									"npm": true
+									"david": true
+									"daviddev": true
+									"gittip": "docpad"
+									"flattr": "344188/balupton-on-Flattr"
+									"paypal": "QB8GQPZAH84N6"
+									"bitcoin": "https://coinbase.com/checkouts/9ef59f5479eec1d97d63382c9ebcb93a"
+								}
+
+								# Write the file
+								pluginPackageDataString = JSON.stringify(pluginPackageData, null, '  ')
+								safefs.writeFile pluginPackagePath, pluginPackageDataString, (err) ->
+									return complete(err)  if err
+
+									# Update the .travis.yml file
+									travisPath = pluginPath+'/.travis.yml'
+									travisData = fsUtil.readFileSync(travisPath).toString()
+									travisData = travisData.replace('install: "npm install"', 'install: "npm install; npm install docpad; cd ./node_modules/docpad; npm install; cd ../.."')
+									fsUtil.writeFile travisPath, travisData, (err) ->
+										return complete(err)
+
+										cakePath = pathUtil.join(pluginPath, 'node_modules', '.bin', 'cake')
+										safeps.exec cakePath+' prepublish', {cwd:pluginPath,output:true}, (err) ->
+											return complete(err)
 
 				# Finish
-				next
+				(err) ->
+					return next(err)  if err
+					return standardizeTasks.run()
 			)
 
 		@runner.addTask(next); @
