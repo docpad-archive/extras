@@ -20,7 +20,7 @@ class App
 	constructor: (@config) ->
 		# Runner
 		@runner = new TaskGroup().run().on 'complete', (err) ->
-			throw err	if err
+			console.log(err.stack)  if err
 
 	ensure: (opts,next) ->
 		{skeletonsPath, pluginsPath} = @config
