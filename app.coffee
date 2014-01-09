@@ -31,7 +31,7 @@ class App
 		@logger.pipe(filter).pipe(human).pipe(process.stdout)
 
 		# Runner
-		@runner = new TaskGroup().run().on 'complete', (err) =>
+		@runner = new TaskGroup().run().on 'complete', (err) ->
 			console.log(err.stack)  if err
 
 	log: (args...) ->
@@ -311,7 +311,7 @@ class App
 
 									me.log 'debug', "Standardize #{pluginName}: prepublish"
 									cakePath = pathUtil.join(pluginPath, 'node_modules', '.bin', 'cake')
-									safeps.exec cakePath+' prepublish', {cwd:pluginPath,output:true}, (err) ->
+									safeps.spawn [cakePath, 'prepublish'], {cwd:pluginPath,output:true,outputPrefix: '>	'}, (err) ->
 										return complete(err)
 
 				# Finish
@@ -448,15 +448,6 @@ splitCsvValue = (result) ->
 # -----------------
 # Commands
 
-# App
-app = new App({
-	npmEdgePath: pathUtil.join(__dirname, 'node_modules', 'npmedge', 'bin', 'npmedge')
-	pluginsPath: pathUtil.join(__dirname, 'plugins')
-	skeletonsPath: pathUtil.join(__dirname, 'skeletons')
-}).ensure()
-defaultSkip = ['pygments','concatmin','iis','html2jade','html2coffee','tumblr','contenttypes']
-
-
 ## Commands
 
 # Use [Commander](https://github.com/visionmedia/commander.js/) for command and option parsing
@@ -475,12 +466,12 @@ cli
 	.option('-d, --debug', 'output debug messages')
 
 # exec
-cli.command('exec <command>').description('execute a command for each plugin').action (command) ->
+cli.command('exec <command>').description('execute a command for each plugin').action (command) ->  process.nextTick ->
 	app.exec({command})
 
 # outdated
 cli.command('outdated').description('check which plugins have outdated dependencies')
-	.action ->
+	.action ->  process.nextTick ->
 		app.status({
 			only: splitCsvValue(cli.only)
 			skip: splitCsvValue(cli.skip) or defaultSkip
@@ -488,16 +479,16 @@ cli.command('outdated').description('check which plugins have outdated dependenc
 		})
 
 # standardize
-cli.command('standardize').description('ensure plugins live up to the latest standards').action ->
+cli.command('standardize').description('ensure plugins live up to the latest standards').action ->  process.nextTick ->
 	app.standardize()
 
 # clone
-cli.command('clone').description('clone out new plugins and update the old').action ->
+cli.command('clone').description('clone out new plugins and update the old').action ->  process.nextTick ->
 	app.clone()
 
 # status
 cli.command('status').description('check the git status of our plugins')
-	.action ->
+	.action ->  process.nextTick ->
 		app.status({
 			only: splitCsvValue(cli.only)
 			skip: splitCsvValue(cli.skip) or defaultSkip
@@ -506,7 +497,7 @@ cli.command('status').description('check the git status of our plugins')
 
 # test
 cli.command('test').description('run the tests')
-	.action ->
+	.action ->  process.nextTick ->
 		app.test({
 			only: splitCsvValue(cli.only)
 			skip: splitCsvValue(cli.skip) or defaultSkip
@@ -515,3 +506,12 @@ cli.command('test').description('run the tests')
 
 # Start the CLI
 cli.parse(process.argv)
+
+# App
+app = new App({
+	npmEdgePath: pathUtil.join(__dirname, 'node_modules', 'npmedge', 'bin', 'npmedge')
+	pluginsPath: pathUtil.join(__dirname, 'plugins')
+	skeletonsPath: pathUtil.join(__dirname, 'skeletons')
+	debug: cli.debug
+}).ensure()
+defaultSkip = ['pygments','concatmin','iis','html2jade','html2coffee','tumblr','contenttypes']
