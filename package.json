@@ -37,7 +37,10 @@
     "eachr": "~2.0.2",
     "taskgroup": "~3.3.2",
     "commander": "~2.1.0",
-    "open": "0.0.4"
+    "open": "0.0.4",
+    "caterpillar-filter": "~2.0.3",
+    "caterpillar-human": "~2.1.1",
+    "caterpillar": "~2.0.7"
   },
   "devDependencies": {
     "npmedge": "~0.1.2",

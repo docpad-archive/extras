@@ -10,17 +10,33 @@ commander = require('commander')
 exchange = require('./exchange')
 
 
+
 # -----------------
 # App
 
 class App
 	runner: null
 	config: null
+	logger: null
 
 	constructor: (@config) ->
+		# Prepare
+		me = @
+
+		# Logger
+		level    = if @config.debug then 7 else 6
+		@logger  = require('caterpillar').createLogger({level:level})
+		filter   = require('caterpillar-filter').createFilter()
+		human    = require('caterpillar-human').createHuman()
+		@logger.pipe(filter).pipe(human).pipe(process.stdout)
+
 		# Runner
-		@runner = new TaskGroup().run().on 'complete', (err) ->
+		@runner = new TaskGroup().run().on 'complete', (err) =>
 			console.log(err.stack)  if err
+
+	log: (args...) ->
+		logger = (@logger or console)
+		logger.log.apply(logger, args)
 
 	ensure: (opts,next) ->
 		{skeletonsPath, pluginsPath} = @config
@@ -38,7 +54,7 @@ class App
 		@runner.addGroup ->
 			# Skeletons
 			@addTask (complete) ->
-				console.log "Cloning latest skeletons"
+				me.log 'info', "Cloning latest skeletons"
 
 				cloneRepos = []
 				for own key,repo of exchange.skeletons
@@ -55,7 +71,7 @@ class App
 
 			# Plugins
 			@addTask (complete) ->
-				console.log "Fetching latest plugins"
+				me.log 'info', "Fetching latest plugins"
 				balUtil.readPath "https://api.github.com/orgs/docpad/repos?page=1&per_page=100", (err,data) ->
 					# Check
 					return next(err)  if err
@@ -93,7 +109,7 @@ class App
 						)
 
 					# Log
-					console.log "Cloning latest plugins"
+					me.log 'info', "Cloning latest plugins"
 
 					# Clone the repos
 					me.cloneRepos({repos: cloneRepos}, complete)
@@ -102,6 +118,7 @@ class App
 
 	cloneRepos: (opts,next) ->
 		# Prepare
+		me = @
 		cloneTasks = new TaskGroup().setConfig(concurrency:1).once('complete',next)
 
 		# Clone each one
@@ -125,19 +142,20 @@ class App
 
 			# Handle
 			cloneTasks.addTask (next) ->
-				console.log "Fetching #{repo.name}"
+				me.log 'info', "Fetching #{repo.name}"
 				safeps.spawnMultiple spawnCommands, spawnOpts, (err,args...) ->
 					if err
-						console.log "Fetching #{repo.name} FAILED", err
+						me.log 'info', "Fetching #{repo.name} FAILED", err
 						return next(err)
 					else
-						console.log "Fetched #{repo.name}"
+						me.log 'info', "Fetched #{repo.name}"
 					return next()
 
 		# Run
 		cloneTasks.run()
 
 	status: (opts,next) ->
+		me = @
 		{pluginsPath} = @config
 		{skip,only} = (opts or {skip:null,only:null})
 
@@ -157,10 +175,10 @@ class App
 
 					# Skip
 					if skip and (pluginName in skip)
-						console.log("Skipping #{pluginName}")
+						me.log('info', "Skipping #{pluginName}")
 						return
 					if only and (pluginName in only) is false
-						console.log("Skipping #{pluginName}")
+						me.log('info', "Skipping #{pluginName}")
 						return
 
 					# Execute the plugin's tests
@@ -168,9 +186,9 @@ class App
 					safeps.spawnCommand 'git', ['status'], options, (err,stdout,stderr) ->
 						# Log
 						if stdout and stdout.indexOf('nothing to commit') is -1
-							console.log pluginPath  if stdout or stderr
-							console.log stdout  if stdout
-							console.log stderr  if stderr
+							me.log 'info', pluginPath  if stdout or stderr
+							me.log 'info', stdout  if stdout
+							me.log 'info', stderr  if stderr
 
 						# Done
 						nextFile(err,true)
@@ -183,6 +201,7 @@ class App
 		@runner.addTask(next); @
 
 	outdated: (opts,next) ->
+		me = @
 		{npmEdgePath,pluginsPath} = @config
 		{skip,only} = (opts or {skip:null,only:null})
 
@@ -202,10 +221,10 @@ class App
 
 					# Skip
 					if skip and (pluginName in skip)
-						console.log("Skipping #{pluginName}")
+						me.log('info', "Skipping #{pluginName}")
 						return
 					if only and (pluginName in only) is false
-						console.log("Skipping #{pluginName}")
+						me.log('info', "Skipping #{pluginName}")
 						return
 
 					# Execute the plugin's tests
@@ -214,9 +233,9 @@ class App
 					safeps.spawnCommand 'node', command, options, (err,stdout,stderr) ->
 						# Log
 						if stdout and stdout.indexOf('is specified') isnt -1
-							console.log pluginPath  if stdout or stderr
-							console.log stdout.replace(/^npm http .*/m, '')  if stdout
-							console.log stderr  if stderr
+							me.log 'info', pluginPath  if stdout or stderr
+							me.log 'info', stdout.replace(/^npm http .*/m, '')  if stdout
+							me.log 'info', stderr  if stderr
 
 						# Done
 						nextFile(err,true)
@@ -228,10 +247,11 @@ class App
 		@runner.addTask(next); @
 
 	standardize: (opts,next) ->
+		me = @
 		{pluginsPath} = @config
 
 		@runner.addTask (next) ->
-			standardizeTasks = new TaskGroup(concurrency: 5).once('complete', next)
+			standardizeTasks = new TaskGroup(concurrency:1).once('complete', next)
 
 			# Scan Plugins
 			balUtil.scandir(
@@ -246,15 +266,15 @@ class App
 					# Prepare
 					pluginName = pathUtil.basename(pluginRelativePath)
 
-					# Rename contributing
+					me.log 'debug', "Standardize #{pluginName}: rename contributing"
 					safeps.spawnCommand 'git', ['mv','-f','-k','Contributing.md','CONTRIBUTING.md'], {cwd:pluginPath,output:true}, (err) ->
 						return complete(err)  if err
 
-						# Rename history
+						me.log 'debug', "Standardize #{pluginName}: rename history"
 						safeps.spawnCommand 'git', ['mv','-f','-k','History.md','HISTORY.md'], {cwd:pluginPath,output:true}, (err) ->
 							return complete(err)  if err
 
-							# Download meta files
+							me.log 'debug', "Standardize #{pluginName}: download meta files"
 							safeps.exec pathUtil.join(__dirname, 'download-meta.bash'), {cwd:pluginPath,output:true}, (err) ->
 								return complete(err)  if err
 
@@ -284,12 +304,12 @@ class App
 									"bitcoin": "https://coinbase.com/checkouts/9ef59f5479eec1d97d63382c9ebcb93a"
 								}
 
-								# Write package
+								me.log 'debug', "Standardize #{pluginName}: write package"
 								pluginPackageDataString = JSON.stringify(pluginPackageData, null, '  ')
 								safefs.writeFile pluginPackagePath, pluginPackageDataString, (err) ->
 									return complete(err)  if err
 
-									# Prepublish
+									me.log 'debug', "Standardize #{pluginName}: prepublish"
 									cakePath = pathUtil.join(pluginPath, 'node_modules', '.bin', 'cake')
 									safeps.exec cakePath+' prepublish', {cwd:pluginPath,output:true}, (err) ->
 										return complete(err)
@@ -303,6 +323,7 @@ class App
 		@runner.addTask(next); @
 
 	exec: (opts,next) ->
+		me = @
 		{pluginsPath} = @config
 
 		@runner.addTask (next) ->
@@ -321,10 +342,10 @@ class App
 
 					# Execute the command
 					safeps.exec opts.command, {cwd:pluginPath, env: process.env}, (err, stdout, stderr) ->
-						console.log "exec [#{opts.command}] on: #{pluginPath}"
+						me.log 'info', "exec [#{opts.command}] on: #{pluginPath}"
 						process.stdout.write stderr  if err
 						process.stdout.write stdout
-						console.log ''
+						me.log 'info', ''
 						return nextFile(err, true)
 
 				# Finish
@@ -334,6 +355,7 @@ class App
 		@runner.addTask(next); @
 
 	test: (opts,next) ->
+		me = @
 		{pluginsPath} = @config
 		{skip,only,startFrom} = (opts or {})
 
@@ -359,16 +381,16 @@ class App
 
 					# Skip
 					if startFrom and startFrom > pluginName
-						console.log("Skipping #{pluginName}")
+						me.log('info', "Skipping #{pluginName}")
 						return
 					if skip and (pluginName in skip)
-						console.log("Skipping #{pluginName}")
+						me.log('info', "Skipping #{pluginName}")
 						return
 					if only and (pluginName in only) is false
-						console.log("Skipping #{pluginName}")
+						me.log('info', "Skipping #{pluginName}")
 						return
 					if fsUtil.existsSync(pluginPath+'/test') is false
-						console.log("Skipping #{pluginName}")
+						me.log('info', "Skipping #{pluginName}")
 						return
 
 					# Test the plugin
@@ -395,8 +417,8 @@ class App
 								# args = testResult[1...]
 								if err
 									joeError = new Error("Testing #{pluginName} FAILED")
-									# console.log "Testing #{pluginName} FAILED"
-									# args.forEach (arg) -> console.log(arg)  if arg
+									# me.log 'info', "Testing #{pluginName} FAILED"
+									# args.forEach (arg) -> me.log('info', arg)  if arg
 									done(joeError)
 								else
 									done()
@@ -450,6 +472,7 @@ cli
 	.option('--only <only>', 'only run against these plugins (CSV)')
 	.option('--skip <skip>', 'skip these plugins (CSV)')
 	.option('--start <start>', 'start from this plugin name')
+	.option('-d, --debug', 'output debug messages')
 
 # exec
 cli.command('exec <command>').description('execute a command for each plugin').action (command) ->
