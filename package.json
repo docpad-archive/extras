@@ -32,10 +32,10 @@
   },
   "dependencies": {
     "bal-util": "~2.4.0",
-    "safefs": "~3.0.4",
-    "safeps": "~2.2.0",
+    "safefs": "~3.1.1",
+    "safeps": "~2.2.11",
     "eachr": "~2.0.2",
-    "taskgroup": "~3.3.2",
+    "taskgroup": "~3.3.8",
     "commander": "~2.1.0",
     "open": "0.0.4",
     "caterpillar-filter": "~2.0.3",
