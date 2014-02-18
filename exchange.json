@@ -15,6 +15,11 @@
 			"repo": "https://github.com/jh3y/html5-boilerplate-jade-less-livereload.docpad.git",
 			"description": "A skeleton that uses the HTML5 boilerplate with Jade and LESS. Also includes jQuery and the livereload plugin."
 		},
+		"Simple Blog Site Starting Point with HTML5 Boilerplate, Jade, LESS, moment, markdown and livereload": {
+			"branch": "master",
+			"repo": "https://github.com/jh3y/blogging-with-h5bp-jade-less-moment-md-livereload.docpad.git",
+			"description": "Skeleton for building a modern blog website with best practices using jade, less, moment, markdown and livereload to aid development."
+		},
 		"Twitter Bootstrap": {
 			"branch": "docpad-6.x",
 			"repo": "https://github.com/docpad/twitter-bootstrap.docpad.git",
