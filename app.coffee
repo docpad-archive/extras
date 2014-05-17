@@ -31,7 +31,7 @@ class App
 		@logger.pipe(filter).pipe(human).pipe(process.stdout)
 
 		# Runner
-		@runner = new TaskGroup().run().on 'complete', (err) ->
+		@runner = new TaskGroup('runner').run().on 'complete', (err) ->
 			console.log(err.stack)  if err
 
 	log: (args...) ->
@@ -41,19 +41,20 @@ class App
 	ensure: (opts,next) ->
 		{skeletonsPath, pluginsPath} = @config
 
-		@runner.addGroup ->
-			@addTask (complete) -> safefs.ensurePath(pluginsPath, complete)
-			@addTask (complete) -> safefs.ensurePath(skeletonsPath, complete)
+		@runner.addGroup 'ensure', ->
+			@addTask 'plugins', (complete) -> safefs.ensurePath(pluginsPath, complete)
+			@addTask 'skeletons', (complete) -> safefs.ensurePath(skeletonsPath, complete)
 
-		@runner.addTask(next); @
+		@runner.addTask('ensure complete callback', next)  if next
+		@
 
 	clone: (opts,next) ->
 		me = @
 		{skeletonsPath, pluginsPath} = @config
 
-		@runner.addGroup ->
+		@runner.addGroup 'clone', ->
 			# Skeletons
-			@addTask (complete) ->
+			@addTask 'skeletons', (complete) ->
 				me.log 'info', "Cloning latest skeletons"
 
 				cloneRepos = []
@@ -70,7 +71,7 @@ class App
 				me.cloneRepos({repos: cloneRepos}, complete)
 
 			# Plugins
-			@addTask (complete) ->
+			@addTask 'plugins', (complete) ->
 				me.log 'info', "Fetching latest plugins"
 				balUtil.readPath "https://api.github.com/orgs/docpad/repos?page=1&per_page=100", (err,data) ->
 					# Check
@@ -114,12 +115,13 @@ class App
 					# Clone the repos
 					me.cloneRepos({repos: cloneRepos}, complete)
 
-		@runner.addTask(next); @
+		@runner.addTask('clone complete callback', next)  if next
+		@
 
 	cloneRepos: (opts,next) ->
 		# Prepare
 		me = @
-		cloneTasks = new TaskGroup().setConfig(concurrency:1).once('complete',next)
+		cloneTasks = new TaskGroup('clone repos').setConfig(concurrency:1).once('complete',next)
 
 		# Clone each one
 		eachr opts.repos, (repo) ->
@@ -141,7 +143,7 @@ class App
 			spawnCommands.push ['npm', 'link', 'docpad']
 
 			# Handle
-			cloneTasks.addTask (next) ->
+			cloneTasks.addTask "clone repo #{repo}", (next) ->
 				me.log 'info', "Fetching #{repo.name}"
 				safeps.spawnMultiple spawnCommands, spawnOpts, (err,args...) ->
 					if err
@@ -159,7 +161,7 @@ class App
 		{pluginsPath} = @config
 		{skip,only} = (opts or {skip:null,only:null})
 
-		@runner.addTask (next) ->
+		@runner.addTask 'status', (next) ->
 			# Scan Plugins
 			balUtil.scandir(
 				# Path
@@ -198,14 +200,15 @@ class App
 					return next(err)
 			)
 
-		@runner.addTask(next); @
+		@runner.addTask('status complete callback', next)  if next
+		@
 
 	outdated: (opts,next) ->
 		me = @
 		{npmEdgePath,pluginsPath} = @config
 		{skip,only} = (opts or {skip:null,only:null})
 
-		@runner.addTask (next) ->
+		@runner.addTask 'outdated', (next) ->
 			# Scan Plugins
 			balUtil.scandir(
 				# Path
@@ -244,13 +247,14 @@ class App
 				next
 			)
 
-		@runner.addTask(next); @
+		@runner.addTask('outdated complete callback', next)  if next
+		@
 
 	standardize: (opts,next) ->
 		me = @
 		{pluginsPath} = @config
 
-		@runner.addTask (next) ->
+		@runner.addTask 'standardize', (next) ->
 			standardizeTasks = new TaskGroup(concurrency:1).once('complete', next)
 
 			# Scan Plugins
@@ -262,7 +266,7 @@ class App
 				false
 
 				# Handle directories
-				(pluginPath,pluginRelativePath,nextFile) ->  nextFile(null,true); standardizeTasks.addTask (complete) ->
+				(pluginPath,pluginRelativePath,nextFile) ->  nextFile(null,true); standardizeTasks.addTask "standardize #{pluginPath}", (complete) ->
 					# Prepare
 					pluginName = pathUtil.basename(pluginRelativePath)
 
@@ -324,13 +328,14 @@ class App
 					return standardizeTasks.run()
 			)
 
-		@runner.addTask(next); @
+		@runner.addTask('standardize complete callback', next)  if next
+		@
 
 	exec: (opts,next) ->
 		me = @
 		{pluginsPath} = @config
 
-		@runner.addTask (next) ->
+		@runner.addTask 'exec', (next) ->
 			# Scan Plugins
 			balUtil.scandir(
 				# Path
@@ -356,14 +361,15 @@ class App
 				next
 			)
 
-		@runner.addTask(next); @
+		@runner.addTask('exec complete callback', next)  if next
+		@
 
 	test: (opts,next) ->
 		me = @
 		{pluginsPath} = @config
 		{skip,only,startFrom} = (opts or {})
 
-		@runner.addTask (next) ->
+		@runner.addTask 'test', (next) ->
 			# Require Joe Testing Framework
 			joe = require('joe')
 
@@ -436,7 +442,8 @@ class App
 				next
 			)
 
-		@runner.addTask(next); @
+		@runner.addTask('test complete callback', next)  if next
+		@
 
 # -----------------
 # Helpers
