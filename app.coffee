@@ -41,20 +41,19 @@ class App
 	ensure: (opts,next) ->
 		{skeletonsPath, pluginsPath} = @config
 
-		@runner.addGroup 'ensure tasks', ->
-			@addTask 'plugins path', (complete) -> safefs.ensurePath(pluginsPath, complete)
-			@addTask 'skeletons path', (complete) -> safefs.ensurePath(skeletonsPath, complete)
+		@runner.addGroup ->
+			@addTask (complete) -> safefs.ensurePath(pluginsPath, complete)
+			@addTask (complete) -> safefs.ensurePath(skeletonsPath, complete)
 
-		@runner.addTask(next)  if next
-		@
+		@runner.addTask(next); @
 
 	clone: (opts,next) ->
 		me = @
 		{skeletonsPath, pluginsPath} = @config
 
-		@runner.addGroup 'clone tasks', ->
+		@runner.addGroup ->
 			# Skeletons
-			@addTask 'skeletons task', (complete) ->
+			@addTask (complete) ->
 				me.log 'info', "Cloning latest skeletons"
 
 				cloneRepos = []
@@ -71,7 +70,7 @@ class App
 				me.cloneRepos({repos: cloneRepos}, complete)
 
 			# Plugins
-			@addTask 'plugins task', (complete) ->
+			@addTask (complete) ->
 				me.log 'info', "Fetching latest plugins"
 				balUtil.readPath "https://api.github.com/orgs/docpad/repos?page=1&per_page=100", (err,data) ->
 					# Check
@@ -115,8 +114,7 @@ class App
 					# Clone the repos
 					me.cloneRepos({repos: cloneRepos}, complete)
 
-		@runner.addTask(next)  if next
-		@
+		@runner.addTask(next); @
 
 	cloneRepos: (opts,next) ->
 		# Prepare
@@ -200,8 +198,7 @@ class App
 					return next(err)
 			)
 
-		@runner.addTask(next)  if next
-		@
+		@runner.addTask(next); @
 
 	outdated: (opts,next) ->
 		me = @
@@ -247,8 +244,7 @@ class App
 				next
 			)
 
-		@runner.addTask(next)  if next
-		@
+		@runner.addTask(next); @
 
 	standardize: (opts,next) ->
 		me = @
@@ -328,8 +324,7 @@ class App
 					return standardizeTasks.run()
 			)
 
-		@runner.addTask(next)  if next
-		@
+		@runner.addTask(next); @
 
 	exec: (opts,next) ->
 		me = @
@@ -361,8 +356,7 @@ class App
 				next
 			)
 
-		@runner.addTask(next)  if next
-		@
+		@runner.addTask(next); @
 
 	test: (opts,next) ->
 		me = @
@@ -442,8 +436,7 @@ class App
 				next
 			)
 
-		@runner.addTask(next)  if next
-		@
+		@runner.addTask(next); @
 
 # -----------------
 # Helpers
