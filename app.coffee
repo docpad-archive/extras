@@ -292,7 +292,7 @@ class App
 
 								devDeps.docpad = (peerDeps.docpad ?= engines.docpad ? '6')
 								delete engines.docpad
-								devDeps.projectz = '~0.3.12'
+								devDeps.projectz = '~0.3.13'
 
 								pluginPackageData.bugs.url = "https://github.com/docpad/docpad-plugin-#{pluginName}/issues"
 								pluginPackageData.repository.url = "https://github.com/docpad/docpad-plugin-#{pluginName}.git"
@@ -317,10 +317,14 @@ class App
 								safefs.writeFile pluginPackagePath, pluginPackageDataString, (err) ->
 									return complete(err)  if err
 
-									me.log 'debug', "Standardize #{pluginName}: projectz"
-									projectzPath = pathUtil.join(pluginPath, 'node_modules', '.bin', 'projectz')
-									safeps.spawn [projectzPath, 'compile'], {cwd:pluginPath,output:true,outputPrefix:'>	'}, (err) ->
-										return complete(err)
+									me.log 'debug', "Standardize #{pluginName}: install new deps"
+									safeps.spawn ['npm', 'install'], {cwd:pluginPath,output:true,outputPrefix:'>	'}, (err) ->
+										return complete(err)  if err
+
+										me.log 'debug', "Standardize #{pluginName}: projectz"
+										projectzPath = pathUtil.join(pluginPath, 'node_modules', '.bin', 'projectz')
+										safeps.spawn [projectzPath, 'compile'], {cwd:pluginPath,output:true,outputPrefix:'>	'}, (err) ->
+											return complete(err)
 
 				# Finish
 				(err) ->
