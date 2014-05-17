@@ -313,9 +313,9 @@ class App
 								safefs.writeFile pluginPackagePath, pluginPackageDataString, (err) ->
 									return complete(err)  if err
 
-									me.log 'debug', "Standardize #{pluginName}: prepublish"
-									cakePath = pathUtil.join(pluginPath, 'node_modules', '.bin', 'cake')
-									safeps.spawn [cakePath, 'prepublish'], {cwd:pluginPath,output:true,outputPrefix:'>	'}, (err) ->
+									me.log 'debug', "Standardize #{pluginName}: projectz"
+									projectzPath = pathUtil.join(pluginPath, 'node_modules', '.bin', 'projectz')
+									safeps.spawn [projectzPath, 'compile'], {cwd:pluginPath,output:true,outputPrefix:'>	'}, (err) ->
 										return complete(err)
 
 				# Finish
