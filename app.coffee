@@ -288,7 +288,7 @@ class App
 
 								devDeps.docpad = (peerDeps.docpad ?= engines.docpad ? '6')
 								delete engines.docpad
-								devDeps.projectz = '~0.3.9'
+								devDeps.projectz = '~0.3.11'
 
 								pluginPackageData.bugs.url = "https://github.com/docpad/docpad-plugin-#{pluginName}/issues"
 								pluginPackageData.repository.url = "https://github.com/docpad/docpad-plugin-#{pluginName}.git"
@@ -302,6 +302,10 @@ class App
 									"flattr": "344188/balupton-on-Flattr"
 									"paypal": "QB8GQPZAH84N6"
 									"bitcoin": "https://coinbase.com/checkouts/9ef59f5479eec1d97d63382c9ebcb93a"
+									"wishlist": "http://amzn.com/w/2F8TXKSNAFG4V"
+								}
+								pluginPackageData.cakeConfiguration = {
+									"COFFEE_SRC_PATH": "src"
 								}
 
 								me.log 'debug', "Standardize #{pluginName}: write package"
@@ -311,7 +315,7 @@ class App
 
 									me.log 'debug', "Standardize #{pluginName}: prepublish"
 									cakePath = pathUtil.join(pluginPath, 'node_modules', '.bin', 'cake')
-									safeps.spawn [cakePath, 'prepublish'], {cwd:pluginPath,output:true,outputPrefix: '>	'}, (err) ->
+									safeps.spawn [cakePath, 'prepublish'], {cwd:pluginPath,output:true,outputPrefix:'>	'}, (err) ->
 										return complete(err)
 
 				# Finish
