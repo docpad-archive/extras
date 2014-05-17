@@ -288,7 +288,7 @@ class App
 
 								devDeps.docpad = (peerDeps.docpad ?= engines.docpad ? '6')
 								delete engines.docpad
-								devDeps.projectz = '~0.3.11'
+								devDeps.projectz = '~0.3.12'
 
 								pluginPackageData.bugs.url = "https://github.com/docpad/docpad-plugin-#{pluginName}/issues"
 								pluginPackageData.repository.url = "https://github.com/docpad/docpad-plugin-#{pluginName}.git"
