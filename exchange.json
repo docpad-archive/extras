@@ -94,6 +94,11 @@
 			"branch": "master",
 			"repo": "https://github.com/Clearskyabove/zurb-foundation.docpad.git",
 			"description": "A clean responsive template that contains a logical setup for a website + blog"
+		},
+		"Casteasoft Foundation Simple Blog": {
+			"branch": "master",
+			"repo": "https://github.com/Casteasoft/zurb-foundation.docpad.git",
+			"description": "This skeleton supports blog posts, clean url, posts url using date-url based, pagination on blog posts listing, and more."
 		}
 	}
 }
