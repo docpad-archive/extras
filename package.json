@@ -10,9 +10,14 @@
   "badges": {
     "travis": false,
     "npm": false,
+    "npmdownloads": false,
+    "david": true,
+    "daviddev": true,
     "gittip": "docpad",
     "flattr": "344188/balupton-on-Flattr",
-    "paypal": "QB8GQPZAH84N6"
+    "paypal": "QB8GQPZAH84N6",
+    "bitcoin": "https://coinbase.com/checkouts/9ef59f5479eec1d97d63382c9ebcb93a",
+    "wishlist": "http://amzn.com/w/2F8TXKSNAFG4V"
   },
   "author": "2012+ Bevry Pty Ltd <us@bevry.me> (http://bevry.me), 2011 Benjamin Lupton <b@lupton.cc> (http://balupton.com)",
   "maintainers": [
@@ -31,23 +36,24 @@
     "npm": ">=1.1"
   },
   "dependencies": {
-    "bal-util": "~2.4.0",
-    "safefs": "~3.1.1",
-    "safeps": "~2.2.11",
-    "eachr": "~2.0.2",
-    "taskgroup": "~3.3.8",
-    "commander": "~2.1.0",
-    "open": "0.0.4",
+    "bal-util": "~2.4.2",
+    "caterpillar": "~2.0.7",
     "caterpillar-filter": "~2.0.3",
     "caterpillar-human": "~2.1.1",
-    "caterpillar": "~2.0.7"
+    "commander": "~2.5.0",
+    "eachr": "~2.0.2",
+    "feedr": "^2.10.4",
+    "open": "0.0.5",
+    "safefs": "~3.1.1",
+    "safeps": "~2.2.11",
+    "taskgroup": "^4.0.5"
   },
   "devDependencies": {
-    "npmedge": "~0.1.2",
-    "coffee-script": "~1.6.2",
-    "joe": "~1.4.0",
-    "joe-reporter-console": "~1.2.0",
-    "projectz": "~0.3.12"
+    "npmedge": "~0.2.1",
+    "coffee-script": "~1.8.0",
+    "joe": "~1.5.0",
+    "joe-reporter-console": "~1.2.1",
+    "projectz": "~0.3.17"
   },
   "scripts": {
     "test": "./node_modules/coffee-script/bin/coffee app.coffee test"
