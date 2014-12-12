@@ -65,6 +65,11 @@
 			"repo": "https://github.com/georgeOsdDev/slidepad.git",
 			"description": "Create HTML5 Presentations easily with DocPad"
 		},
+		"Slides": {
+			"branch": "master",
+			"repo": "https://github.com/jmyrland/Slides.git",
+			"description": "A simple DocPad solution for generating smashing html slides."
+		},
 		"Reveal.js": {
 			"branch": "master",
 			"repo": "https://github.com/DjebbZ/revealjs-docpad.git",
