@@ -315,7 +315,8 @@ class App
 										safeps.spawn [projectzPath, 'compile'], {cwd:pluginPath,output:true,outputPrefix:'>	'}, (err) ->
 											return complete(err)  if err
 
-											safeps.spawnCommand 'git', ['commit', '-am', 'updated base files'], {cwd:pluginPath,output:true}, (err) ->
+											safeps.spawnCommand 'git', ['commit', '-am', 'updated base files'], {cwd:pluginPath,output:true}, (err,stdout) ->
+												return complete()  if err and stdout.indexOf('nothing to commit') isnt -1
 												return complete(err)  if err
 
 												safeps.spawnCommand 'git', ['push', 'origin', 'master'], {cwd:pluginPath,output:true}, (err) ->
