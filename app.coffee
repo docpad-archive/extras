@@ -31,7 +31,7 @@ class App
 		@logger.pipe(filter).pipe(human).pipe(process.stdout)
 
 		# Runner
-		@runner = new TaskGroup('runner').run().on 'complete', (err) ->
+		@runner = new TaskGroup('runner').run().done (err) ->
 			console.log(err.stack)  if err
 
 	log: (args...) ->
@@ -73,24 +73,9 @@ class App
 			# Plugins
 			@addTask 'plugins', (complete) ->
 				me.log 'info', "Fetching latest plugins"
-				balUtil.readPath "https://api.github.com/orgs/docpad/repos?page=1&per_page=100", (err,data) ->
+				require('feedr').create(cache:false).readFeed {url:"https://api.github.com/orgs/docpad/repos?page=1&per_page=100", parse:'json'}, (err,repos) ->
 					# Check
 					return next(err)  if err
-
-					# Invalid JSON
-					try
-						repos = JSON.parse(data)
-					catch err
-						return complete(err)
-
-					# Error Message
-					if repos.message
-						err = new Error(repos.message)
-						return complete(err)
-
-					# No repos
-					if repos.length is 0
-						return complete()
 
 					# Skip if not a plugin
 					cloneRepos = []
@@ -110,7 +95,7 @@ class App
 						)
 
 					# Log
-					me.log 'info', "Cloning latest plugins"
+					me.log 'info', "Cloning #{repos.length} latest plugins"
 
 					# Clone the repos
 					me.cloneRepos({repos: cloneRepos}, complete)
@@ -121,7 +106,7 @@ class App
 	cloneRepos: (opts,next) ->
 		# Prepare
 		me = @
-		cloneTasks = new TaskGroup('clone repos').setConfig(concurrency:1).once('complete',next)
+		cloneTasks = new TaskGroup('clone repos', {concurrency:1}).done(next)
 
 		# Clone each one
 		eachr opts.repos, (repo) ->
@@ -255,7 +240,7 @@ class App
 		{pluginsPath} = @config
 
 		@runner.addTask 'standardize', (next) ->
-			standardizeTasks = new TaskGroup(concurrency:1).once('complete', next)
+			standardizeTasks = new TaskGroup(concurrency:1).done(next)
 
 			# Scan Plugins
 			balUtil.scandir(
@@ -292,7 +277,7 @@ class App
 
 								devDeps.docpad = (peerDeps.docpad ?= engines.docpad ? '6')
 								delete engines.docpad
-								devDeps.projectz = '~0.3.13'
+								devDeps.projectz = '~0.3.17'
 
 								pluginPackageData.bugs.url = "https://github.com/docpad/docpad-plugin-#{pluginName}/issues"
 								pluginPackageData.repository.url = "https://github.com/docpad/docpad-plugin-#{pluginName}.git"
@@ -300,9 +285,10 @@ class App
 								pluginPackageData.badges = {
 									"travis": true
 									"npm": true
+									"npmdownloads": true
 									"david": true
 									"daviddev": true
-									"gittip": "docpad"
+									"gratipay": "docpad"
 									"flattr": "344188/balupton-on-Flattr"
 									"paypal": "QB8GQPZAH84N6"
 									"bitcoin": "https://coinbase.com/checkouts/9ef59f5479eec1d97d63382c9ebcb93a"
@@ -324,7 +310,13 @@ class App
 										me.log 'debug', "Standardize #{pluginName}: projectz"
 										projectzPath = pathUtil.join(pluginPath, 'node_modules', '.bin', 'projectz')
 										safeps.spawn [projectzPath, 'compile'], {cwd:pluginPath,output:true,outputPrefix:'>	'}, (err) ->
-											return complete(err)
+											return complete(err)  if err
+
+											safeps.spawnCommand 'git', ['commit', '-am', 'updated base files'], {cwd:pluginPath,output:true}, (err) ->
+												return complete(err)  if err
+
+												safeps.spawnCommand 'git', ['push', 'origin', 'master'], {cwd:pluginPath,output:true}, (err) ->
+													return complete(err)
 
 				# Finish
 				(err) ->
