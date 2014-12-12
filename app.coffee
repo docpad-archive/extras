@@ -272,12 +272,15 @@ class App
 								pluginPackageData = require(pluginPackagePath)
 
 								engines = (pluginPackageData.engines ?= {})
+								deps = (pluginPackageData.dependencies ?= {})
 								peerDeps = (pluginPackageData.peerDependencies ?= {})
 								devDeps = (pluginPackageData.devDependencies ?= {})
 
 								devDeps.docpad = (peerDeps.docpad ?= engines.docpad ? '6')
 								delete engines.docpad
-								devDeps.projectz = '~0.3.17'
+								devDeps['projectz'] = '~0.3.17'
+								if devDeps['coffee-script']
+									devDeps['coffee-script'] = '~1.8.0'
 
 								pluginPackageData.bugs.url = "https://github.com/docpad/docpad-plugin-#{pluginName}/issues"
 								pluginPackageData.repository.url = "https://github.com/docpad/docpad-plugin-#{pluginName}.git"
@@ -479,7 +482,7 @@ cli.command('exec <command>').description('execute a command for each plugin').a
 # outdated
 cli.command('outdated').description('check which plugins have outdated dependencies')
 	.action ->  process.nextTick ->
-		app.status({
+		app.outdated({
 			only: splitCsvValue(cli.only)
 			skip: splitCsvValue(cli.skip) or defaultSkip
 			startFrom: cli.start
@@ -516,7 +519,7 @@ cli.parse(process.argv)
 
 # App
 app = new App({
-	npmEdgePath: pathUtil.join(__dirname, 'node_modules', 'npmedge', 'bin', 'npmedge')
+	npmEdgePath: pathUtil.join(__dirname, 'node_modules', 'npmedge', 'cli.js')
 	pluginsPath: pathUtil.join(__dirname, 'plugins')
 	skeletonsPath: pathUtil.join(__dirname, 'skeletons')
 	debug: cli.debug
