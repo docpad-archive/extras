@@ -42,6 +42,7 @@ Add `(out of date)` to the name of the out of date skeleton in [this file](https
 	cd ~
 	git clone https://github.com/docpad/extras.git docpad-extras
 	cd docpad-extras
+	git checkout docpad-6.x
 	npm link docpad
 	npm install
 	chmod +x ./app
