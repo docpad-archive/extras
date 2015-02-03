@@ -1,7 +1,7 @@
 # Requires
 pathUtil = require('path')
 fsUtil = require('fs')
-balUtil = require('bal-util')
+scandir = require('scandirectory')
 safefs = require('safefs')
 safeps = require('safeps')
 eachr = require('eachr')
@@ -148,15 +148,15 @@ class App
 
 		@runner.addTask 'status', (next) ->
 			# Scan Plugins
-			balUtil.scandir(
+			scandir({
 				# Path
-				pluginsPath
+				path: pluginsPath
 
 				# Skip files
-				false
+				fileAction: false
 
 				# Handle directories
-				(pluginPath,pluginRelativePath,nextFile) ->
+				dirAction: (pluginPath,pluginRelativePath,nextFile) ->
 					# Prepare
 					pluginName = pathUtil.basename(pluginRelativePath)
 
@@ -181,9 +181,9 @@ class App
 						nextFile(err,true)
 
 				# Finish
-				(err,list,tree) ->
+				next: (err,list,tree) ->
 					return next(err)
-			)
+			})
 
 		@runner.addTask('status complete callback', next)  if next
 		@
@@ -195,15 +195,15 @@ class App
 
 		@runner.addTask 'outdated', (next) ->
 			# Scan Plugins
-			balUtil.scandir(
+			scandir({
 				# Path
-				pluginsPath
+				path: pluginsPath
 
 				# Skip files
-				false
+				fileAction: false
 
 				# Handle directories
-				(pluginPath,pluginRelativePath,nextFile) ->
+				dirAction: (pluginPath,pluginRelativePath,nextFile) ->
 					# Prepare
 					pluginName = pathUtil.basename(pluginRelativePath)
 
@@ -229,8 +229,8 @@ class App
 						nextFile(err,true)
 
 				# Finish
-				next
-			)
+				next: next
+			})
 
 		@runner.addTask('outdated complete callback', next)  if next
 		@
@@ -243,17 +243,19 @@ class App
 			standardizeTasks = new TaskGroup(concurrency:1).done(next)
 
 			# Scan Plugins
-			balUtil.scandir(
+			scandir({
 				# Path
-				pluginsPath
+				path: pluginsPath
 
 				# Skip files
-				false
+				fileAction: false
 
 				# Handle directories
-				(pluginPath,pluginRelativePath,nextFile) ->  nextFile(null,true); standardizeTasks.addTask "standardize #{pluginPath}", (complete) ->
+				dirAction: (pluginPath,pluginRelativePath,nextFile) ->  nextFile(null,true); standardizeTasks.addTask "standardize #{pluginPath}", (complete) ->
 					# Prepare
 					pluginName = pathUtil.basename(pluginRelativePath)
+
+					me.log 'info', "Standardizing #{pluginName}"
 
 					me.log 'debug', "Standardize #{pluginName}: rename contributing"
 					safeps.spawnCommand 'git', ['mv','-f','-k','Contributing.md','CONTRIBUTING.md'], {cwd:pluginPath,output:true}, (err) ->
@@ -276,11 +278,16 @@ class App
 								peerDeps = (pluginPackageData.peerDependencies ?= {})
 								devDeps = (pluginPackageData.devDependencies ?= {})
 
+								#if deps['taskgroup']
+								#	deps['taskgroup'] = '~4.2.0'
+
 								devDeps.docpad = (peerDeps.docpad ?= engines.docpad ? '6')
 								delete engines.docpad
-								devDeps['projectz'] = '~0.3.17'
+								devDeps['projectz'] = '^0.3.17'
 								if devDeps['coffee-script']
-									devDeps['coffee-script'] = '~1.8.0'
+									devDeps['coffee-script'] = '^1.9.0'
+								if devDeps['joe']
+									devDeps['joe'] = '^1.6.0'
 
 								pluginPackageData.bugs.url = "https://github.com/docpad/docpad-plugin-#{pluginName}/issues"
 								pluginPackageData.repository.url = "https://github.com/docpad/docpad-plugin-#{pluginName}.git"
@@ -323,10 +330,10 @@ class App
 													return complete(err)
 
 				# Finish
-				(err) ->
+				next: (err) ->
 					return next(err)  if err
 					return standardizeTasks.run()
-			)
+			})
 
 		@runner.addTask('standardize complete callback', next)  if next
 		@
@@ -337,15 +344,15 @@ class App
 
 		@runner.addTask 'exec', (next) ->
 			# Scan Plugins
-			balUtil.scandir(
+			scandir({
 				# Path
-				pluginsPath
+				path: pluginsPath
 
 				# Skip files
-				false
+				fileAction: false
 
 				# Handle directories
-				(pluginPath,pluginRelativePath,nextFile) ->
+				dirAction: (pluginPath,pluginRelativePath,nextFile) ->
 					# Prepare
 					pluginName = pathUtil.basename(pluginRelativePath)
 
@@ -358,8 +365,8 @@ class App
 						return nextFile(err, true)
 
 				# Finish
-				next
-			)
+				next: next
+			})
 
 		@runner.addTask('exec complete callback', next)  if next
 		@
@@ -377,15 +384,15 @@ class App
 			require('open')('http://youtu.be/2WrEmJpV2ic')
 
 			# Scan Plugins
-			balUtil.scandir(
+			scandir({
 				# Path
-				pluginsPath
+				path: pluginsPath
 
 				# Skip files
-				false
+				fileAction: false
 
 				# Handle directories
-				(pluginPath,pluginRelativePath,nextFile) ->
+				dirAction: (pluginPath,pluginRelativePath,nextFile) ->
 					# Prepare
 					pluginName = pathUtil.basename(pluginRelativePath)
 
@@ -439,8 +446,8 @@ class App
 							nextFile(err, true)
 
 				# Finish
-				next
-			)
+				next: next
+			})
 
 		@runner.addTask('test complete callback', next)  if next
 		@
