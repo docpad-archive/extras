@@ -284,7 +284,7 @@ class App
 
 								devDeps.docpad = (peerDeps.docpad ?= engines.docpad ? '6')
 								delete engines.docpad
-								devDeps['projectz'] = '^0.3.17'
+								devDeps['projectz'] = '^0.4.2'
 								if devDeps['coffee-script']
 									devDeps['coffee-script'] = '^1.9.0'
 								if devDeps['joe']
