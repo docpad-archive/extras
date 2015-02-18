@@ -280,6 +280,7 @@ class App
 
 								#if deps['taskgroup']
 								#	deps['taskgroup'] = '~4.2.0'
+								# ^ can't do this, as it is a API change, so we have to manually update plugins using older taskgroups
 
 								devDeps.docpad = (peerDeps.docpad ?= engines.docpad ? '6')
 								delete engines.docpad
@@ -412,38 +413,43 @@ class App
 
 					# Test the plugin
 					joe.test pluginName, (done) ->
-						# Prepare
-						options = {output:true,cwd:pluginPath}
+						options = {output:true,cwd:pluginPath+'/test'}
+						safeps.spawn 'npm link docpad', options, (err) ->
+							# Error
+							return nextFile(err)  if err
 
-						# Commands
-						spawnCommands = []
-						spawnCommands.push('npm link docpad')
-						spawnCommands.push('npm install')
-						if fsUtil.existsSync(pluginPath+'/Cakefile')
-							spawnCommands.push('cake compile')
-						else if fsUtil.existsSync(pluginPath+'/Makefile')
-							spawnCommands.push('make compile')
-						spawnCommands.push('npm test')
+							# Prepare
+							options = {output:true,cwd:pluginPath}
 
-						# Spawn
-						safeps.spawnMultiple spawnCommands, options, (err,results) ->
-							# Output the test results for the plugin
-							if results.length is spawnCommands.length
-								testResult = results[spawnCommands.length-1]
-								err = testResult[0]
-								# args = testResult[1...]
-								if err
-									joeError = new Error("Testing #{pluginName} FAILED")
-									# me.log 'info', "Testing #{pluginName} FAILED"
-									# args.forEach (arg) -> me.log('info', arg)  if arg
-									done(joeError)
+							# Commands
+							spawnCommands = []
+							spawnCommands.push('npm link docpad')
+							spawnCommands.push('npm install')
+							if fsUtil.existsSync(pluginPath+'/Cakefile')
+								spawnCommands.push('cake compile')
+							else if fsUtil.existsSync(pluginPath+'/Makefile')
+								spawnCommands.push('make compile')
+							spawnCommands.push('npm test')
+
+							# Spawn
+							safeps.spawnMultiple spawnCommands, options, (err,results) ->
+								# Output the test results for the plugin
+								if results.length is spawnCommands.length
+									testResult = results[spawnCommands.length-1]
+									err = testResult[0]
+									# args = testResult[1...]
+									if err
+										joeError = new Error("Testing #{pluginName} FAILED")
+										# me.log 'info', "Testing #{pluginName} FAILED"
+										# args.forEach (arg) -> me.log('info', arg)  if arg
+										done(joeError)
+									else
+										done()
 								else
 									done()
-							else
-								done()
 
-							# All done
-							nextFile(err, true)
+								# All done
+								nextFile(err, true)
 
 				# Finish
 				next: next
