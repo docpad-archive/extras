@@ -238,6 +238,7 @@ class App
 	standardize: (opts,next) ->
 		me = @
 		{pluginsPath} = @config
+		{skip,only} = (opts or {skip:null,only:null})
 
 		@runner.addTask 'standardize', (next) ->
 			standardizeTasks = new TaskGroup(concurrency:1).done(next)
@@ -255,6 +256,15 @@ class App
 					# Prepare
 					pluginName = pathUtil.basename(pluginRelativePath)
 
+					# Skip
+					if skip and (pluginName in skip)
+						me.log('info', "Skipping #{pluginName}")
+						return
+					if only and (pluginName in only) is false
+						me.log('info', "Skipping #{pluginName}")
+						return
+
+					# Log
 					me.log 'info', "Standardizing #{pluginName}"
 
 					me.log 'debug', "Standardize #{pluginName}: rename contributing"
@@ -538,4 +548,4 @@ app = new App({
 	skeletonsPath: pathUtil.join(__dirname, 'skeletons')
 	debug: cli.debug
 }).ensure()
-defaultSkip = ['pygments','concatmin','iis','html2jade','html2coffee','tumblr','contenttypes']
+defaultSkip = ['pygments','concatmin','iis','html2jade','html2coffee','robotskirt','tumblr','contenttypes']
