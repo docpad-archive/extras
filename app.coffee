@@ -221,9 +221,11 @@ class App
 					safeps.spawnCommand 'node', command, options, (err,stdout,stderr) ->
 						# Log
 						if stdout and stdout.indexOf('is specified') isnt -1
-							me.log 'info', pluginPath  if stdout or stderr
-							me.log 'info', stdout.replace(/^npm http .*/m, '')  if stdout
-							me.log 'info', stderr  if stderr
+							if stdout or stderr
+								output = pluginPath
+								output += '\n'+stdout.replace(/^npm http .*/m, '')  if stdout
+								output += '\n'+stderr  if stderr
+								me.log 'info', output
 
 						# Done
 						nextFile(err,true)
