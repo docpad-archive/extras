@@ -296,7 +296,7 @@ class App
 								delete engines.docpad
 								devDeps['projectz'] = '^0.5.0'
 								if devDeps['coffee-script']
-									devDeps['coffee-script'] = '^1.9.0'
+									devDeps['coffee-script'] = '^1.9.1'
 								if devDeps['joe']
 									devDeps['joe'] = '^1.6.0'
 
