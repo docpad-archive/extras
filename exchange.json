@@ -36,7 +36,7 @@
 			"description": "A DocPad Skeleton useful for showcasing different features and functionality of DocPad. Implemented using Twitter Bootstrap"
 		},
 		"Benjamin Lupton's Website": {
-			"branch": "master",
+			"branch": "2012+",
 			"repo": "https://github.com/balupton/website.git",
 			"description": "Use Benjamin Lupton's website - http://balupton.com - as the base for your own :)"
 		},
