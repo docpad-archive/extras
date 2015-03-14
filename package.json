@@ -40,6 +40,7 @@
     "caterpillar-filter": "~2.0.3",
     "caterpillar-human": "~2.1.1",
     "commander": "~2.6.0",
+    "cson": "^2.0.0",
     "eachr": "~2.0.2",
     "feedr": "^2.10.4",
     "open": "0.0.5",

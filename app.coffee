@@ -6,8 +6,8 @@ safefs = require('safefs')
 safeps = require('safeps')
 eachr = require('eachr')
 commander = require('commander')
+CSON = require('cson')
 {TaskGroup} = require('taskgroup')
-exchange = require('./exchange')
 
 
 
@@ -51,8 +51,17 @@ class App
 	clone: (opts,next) ->
 		me = @
 		{skeletonsPath, pluginsPath} = @config
+		exchange = null
 
 		@runner.addGroup 'clone', ->
+			# Exchange
+			@addTask 'exchange', ->
+				result = CSON.parseCSONFile(__dirname+'/exchange.cson')
+				if result instanceof Error
+					return result
+				else
+					exchange = result
+
 			# Skeletons
 			@addTask 'skeletons', (complete) ->
 				me.log 'info', "Cloning latest skeletons"
