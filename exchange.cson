@@ -1,129 +1,132 @@
+# Skeletons that are not maintained by the DocPad Extras Team (on the docpad github organisation)
+# should have "(Unsupported)" added to their names
 skeletons:
 	"h5bp":
-		name: "HTML5 Boilerplate"
+		name: "HTML5 Boilerplate (Supported)"
 		description: "HTML5 Boilerplate skeleton for DocPad. Bare essentials for building a modern website with best practices"
 		branch: "docpad-6.x"
 		repo: "https://github.com/docpad/docpad-skeleton-h5bp.git"
 
 	"h5bp-grunt":
-		name: "HTML5 Boilerplate with Grunt"
-		id: "h5bp-grunt",
-		branch: "master",
-		repo: "https://github.com/lukekarrys/html5-boilerplate.docpad.git",
+		name: "HTML5 Boilerplate with Grunt (Unsupported)"
+		id: "h5bp-grunt"
+		branch: "master"
+		repo: "https://github.com/lukekarrys/html5-boilerplate.docpad.git"
 		description: "The HTML5 Boilerplate skeleton with Grunt for concatenation and minification of assets"
 
 	"h5bp-jade":
-		name: "HTML5 Boilerplate with Jade and LESS"
-		branch: "master",
-		repo: "https://github.com/jh3y/html5-boilerplate-jade-less-livereload.docpad.git",
+		name: "HTML5 Boilerplate with Jade and LESS (Unsupported)"
+		branch: "master"
+		repo: "https://github.com/jh3y/html5-boilerplate-jade-less-livereload.docpad.git"
 		description: "A skeleton that uses the HTML5 boilerplate with Jade and LESS. Also includes jQuery and the livereload plugin."
 
 	"bootstrap":
-		name: "Twitter Bootstrap"
-		branch: "docpad-6.x",
-		repo: "https://github.com/docpad/twitter-bootstrap.docpad.git",
+		name: "Twitter Bootstrap (Supported)"
+		branch: "docpad-6.x"
+		repo: "https://github.com/docpad/twitter-bootstrap.docpad.git"
 		description: "Simple and flexible HTML, CSS, and Javascript for popular user interface components and interactions"
 
 	"bootstrap-jade":
-		name: "Twitter Bootstrap with Jade"
-		branch: "master",
-		repo: "https://github.com/docpad/twitter-bootstrap-jade.docpad.git",
+		name: "Twitter Bootstrap with Jade (Supported)"
+		branch: "master"
+		repo: "https://github.com/docpad/twitter-bootstrap-jade.docpad.git"
 		description: "Twitter Bootstrap skeleton for DocPad developed using Jade (a HAML alternative for Node.js)"
 
 	# "bootstrap-coffeekup":
 	# 	name: "Twitter Bootstrap with Coffeekup"
-	# 	branch: "master",
-	# 	repo: "https://github.com/lzrski/twitter-bootstrap-coffeekup.docpad.git",
+	# 	branch: "master"
+	# 	repo: "https://github.com/lzrski/twitter-bootstrap-coffeekup.docpad.git"
 	# 	description: "Twitter Bootstrap skeleton for DocPad developed using Coffeekup (markup as coffeescript)"
 	# ^ CoffeeKup is no longer maintained, so we shouldn't encourage it's usage any more ~balupton
 
 	# "kitchsink":
 	# 	name: "Kitchensink"
-	# 	branch: "docpad-6.x",
-	# 	repo: "https://github.com/docpad/kitchensink.docpad.git",
+	# 	branch: "docpad-6.x"
+	# 	repo: "https://github.com/docpad/kitchensink.docpad.git"
 	# 	description: "A DocPad Skeleton useful for showcasing different features and functionality of DocPad. Implemented using Twitter Bootstrap"
 	# ^ Kitchensink skeleton is outdated ~balupton
 
 	"balupton":
-		name: "Benjamin Lupton's Website"
-		branch: "2012+",
-		repo: "https://github.com/balupton/website.git",
+		name: "Benjamin Lupton's Website (Supported)"
+		branch: "2012+"
+		repo: "https://github.com/balupton/website.git"
 		description: "Use Benjamin Lupton's website - http://balupton.com - as the base for your own :)"
 
 	"docpad":
-		name: "DocPad's Website"
-		branch: "master",
-		repo: "https://github.com/docpad/website.git",
+		name: "DocPad's Website (Supported)"
+		branch: "master"
+		repo: "https://github.com/docpad/website.git"
 		description: "DocPad's Website"
 
 	"bevry":
-		name: "Bevry's Website"
-		branch: "master",
-		repo: "https://github.com/bevry/website.git",
+		name: "Bevry's Website (Supported)"
+		branch: "master"
+		repo: "https://github.com/bevry/website.git"
 		description: "Bevry's Website (the company behind DocPad)"
 
 	"startuphostel":
-		name: "Startup Hostel's Website"
-		branch: "master",
-		repo: "https://github.com/bevry/startup-hostel.git",
+		name: "Startup Hostel's Website (Unsupported)"
+		branch: "master"
+		repo: "https://github.com/bevry/startup-hostel.git"
 		description: "Startup Hostel, the home in paradise for the doers of the world!"
 
-	"nodechat":
-		name: "NodeChat"
-		branch: "master",
-		repo: "https://github.com/docpad/nodechat.docpad.git",
-		description: "Node Chat, built using Socket.io, DocPad, Backbone.js and Twitter Bootstrap"
+	# "nodechat":
+	# 	name: "NodeChat"
+	# 	branch: "master"
+	# 	repo: "https://github.com/docpad/nodechat.docpad.git"
+	# 	description: "Node Chat, built using Socket.io, DocPad, Backbone.js and Twitter Bootstrap"
+	# ^ Hasn't been maintained for a very long time ~baluptn
 
 	"slidepad":
-		name: "SlidePad"
-		branch: "master",
-		repo: "https://github.com/georgeOsdDev/slidepad.git",
+		name: "SlidePad (Unsupported)"
+		branch: "master"
+		repo: "https://github.com/georgeOsdDev/slidepad.git"
 		description: "Create HTML5 Presentations easily with DocPad"
 
 	"slides":
-		name: "Slides"
-		branch: "master",
-		repo: "https://github.com/jmyrland/Slides.git",
+		name: "Slides (Unsupported)"
+		branch: "master"
+		repo: "https://github.com/jmyrland/Slides.git"
 		description: "A simple DocPad solution for generating smashing html slides."
 
 	"reveal":
-		name: "Reveal.js"
-		branch: "master",
-		repo: "https://github.com/DjebbZ/revealjs-docpad.git",
+		name: "Reveal.js (Unsupported)"
+		branch: "master"
+		repo: "https://github.com/DjebbZ/revealjs-docpad.git"
 		description: "Create Reveal.js presentations easily with DocPad"
 
-	"conf":
-		name: "Conference Boilerplate"
-		branch: "master",
-		repo: "https://github.com/braziljs/conf-boilerplate.git",
-		description: "A kickstart to create websites for conference/events"
-
-	"menu":
-		name: "Meny"
-		branch: "master",
-		repo: "https://github.com/TravelingTechGuy/Meny.docpad.git",
+	"meny":
+		name: "Meny (Unsupported)"
+		branch: "master"
+		repo: "https://github.com/TravelingTechGuy/Meny.docpad.git"
 		description: "Create a simple page utilizing the Meny 3D menu"
 
+	"conf":
+		name: "Conference Boilerplate (Unsupported)"
+		branch: "master"
+		repo: "https://github.com/braziljs/conf-boilerplate.git"
+		description: "A kickstart to create websites for conference/events"
+
 	"purecss":
-		name: "YUI PureCSS"
-		branch: "master",
-		repo: "https://github.com/MassDistributionMedia/yui-purecss.docpad.git",
+		name: "YUI PureCSS (Unsupported)"
+		branch: "master"
+		repo: "https://github.com/MassDistributionMedia/yui-purecss.docpad.git"
 		description: "YUI PureCSS skeleton for DocPad"
 
 	"zurb":
-		name: "Zurb Foundation"
-		branch: "master",
-		repo: "https://github.com/Clearskyabove/zurb-foundation.docpad.git",
+		name: "Zurb Foundation (Unsupported)"
+		branch: "master"
+		repo: "https://github.com/Clearskyabove/zurb-foundation.docpad.git"
 		description: "A clean responsive template that contains a logical setup for a website + blog"
 
 	"zurb-sass":
-		name: "Zurb Foundation"
-		branch: "master",
-		repo: "https://github.com/axyz/zurb-foundation.docpad.git",
+		name: "Zurb Foundation (Unsupported)"
+		branch: "master"
+		repo: "https://github.com/axyz/zurb-foundation.docpad.git"
 		description: "A minimal Zurb Foundation skeleton with SASS and coffeescript"
 
 	"casteasoft":
-		name: "Casteasoft Foundation Simple Blog"
-		branch: "master",
-		repo: "https://github.com/Casteasoft/zurb-foundation.docpad.git",
+		name: "Casteasoft Foundation Simple Blog (Unsupported)"
+		branch: "master"
+		repo: "https://github.com/Casteasoft/zurb-foundation.docpad.git"
 		description: "This skeleton supports blog posts, clean url, posts url using date-url based, pagination on blog posts listing, and more."
