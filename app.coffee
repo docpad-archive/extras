@@ -113,30 +113,33 @@ class App
 			# Prepare
 			spawnCommands = []
 			spawnOpts = {}
+			spawnOpts.cwd = repo.path
 
-			# New
-			if fsUtil.existsSync(repo.path) is false
-				spawnCommands.push ['git', 'clone', repo.url, repo.path]
+			safefs.ensurePath repo.path, (err) ->
+				return next(err)  if err
 
-			# Update
-			else
+				# New
+				if fsUtil.existsSync(repo.path) is false
+					spawnCommands.push ['git', 'init']
+
+				# Update
+				spawnCommands.push ['git', 'fetch', 'origin']
 				spawnCommands.push ['git', 'checkout', repo.branch]
 				spawnCommands.push ['git', 'pull', 'origin', repo.branch]
-				spawnOpts.cwd = repo.path
 
-			# Re-link
-			spawnCommands.push ['npm', 'link', 'docpad']
+				# Re-link
+				spawnCommands.push ['npm', 'link', 'docpad']
 
-			# Handle
-			cloneTasks.addTask "clone repo #{repo}", (next) ->
-				me.log 'info', "Fetching #{repo.name}"
-				safeps.spawnMultiple spawnCommands, spawnOpts, (err,args...) ->
-					if err
-						me.log 'info', "Fetching #{repo.name} FAILED", err
-						return next(err)
-					else
-						me.log 'info', "Fetched #{repo.name}"
-					return next()
+				# Handle
+				cloneTasks.addTask "init repo #{repo}", (next) ->
+					me.log 'info', "Fetching #{repo.name} / #{repo.branch}"
+					safeps.spawnMultiple spawnCommands, spawnOpts, (err,args...) ->
+						if err
+							me.log 'info', "Fetching #{repo.name} FAILED", err
+							return next(err)
+						else
+							me.log 'info', "Fetched #{repo.name}"
+						return next()
 
 		# Run
 		cloneTasks.run()
