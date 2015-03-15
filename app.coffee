@@ -127,8 +127,12 @@ class App
 			safefs.ensurePath repo.path, (err) ->
 				return next(err)  if err
 
+				# New
+				if fsUtil.existsSync(repo.path+'/.git') is false
+					spawnCommands.push ['git', 'init']
+					spawnCommands.push ['git', 'remote', 'add', 'origin', repo.url]
+
 				# Update
-				spawnCommands.push ['git', 'init']
 				spawnCommands.push ['git', 'fetch', 'origin']
 				spawnCommands.push ['git', 'checkout', repo.branch]
 				spawnCommands.push ['git', 'pull', 'origin', repo.branch]
