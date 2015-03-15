@@ -68,7 +68,7 @@ class App
 
 				cloneRepos = []
 				for own key,repo of exchange.skeletons
-					repoShortname = repo.repo.replace(/^.+\/(.+\/.+)\.git$/, '$1').replace('/', '-').replace('docpad-skeleton-', '').replace('.docpad', '')
+					repoShortname = repo.repo.toLowerCase().replace(/^.+\/(.+\/.+)\.git$/, '$1').replace('/', '-').replace('docpad-skeleton-', '').replace('.docpad', '')
 					cloneRepos.push(
 						name: key
 						url: repo.repo
