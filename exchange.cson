@@ -15,7 +15,7 @@ skeletons:
 
 	"bootstrap-jade":
 		name: "Twitter Bootstrap with Jade (Supported)"
-		branch: "master"
+		branch: "docpad-6.x"
 		repo: "https://github.com/docpad/docpad-skeleton-bootstrap-jade.git"
 		description: "Twitter Bootstrap skeleton for DocPad developed using Jade (a HAML alternative for Node.js)"
 
