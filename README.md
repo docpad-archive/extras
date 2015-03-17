@@ -2,10 +2,13 @@
 
 <!-- BADGES/ -->
 
-
-[![Gittip donate button](http://img.shields.io/gittip/docpad.png)](https://www.gittip.com/docpad/ "Donate weekly to this project using Gittip")
-[![Flattr donate button](http://img.shields.io/flattr/donate.png?color=yellow)](http://flattr.com/thing/344188/balupton-on-Flattr "Donate monthly to this project using Flattr")
-[![PayPayl donate button](http://img.shields.io/paypal/donate.png?color=yellow)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QB8GQPZAH84N6 "Donate once-off to this project using Paypal")
+[![Dependency Status](https://img.shields.io/david/docpad/extras.svg)](https://david-dm.org/docpad/extras)
+[![Dev Dependency Status](https://img.shields.io/david/dev/docpad/extras.svg)](https://david-dm.org/docpad/extras#info=devDependencies)<br/>
+[![Gratipay donate button](https://img.shields.io/gratipay/docpad.svg)](https://www.gratipay.com/docpad/ "Donate weekly to this project using Gratipay")
+[![Flattr donate button](https://img.shields.io/badge/flattr-donate-yellow.svg)](http://flattr.com/thing/344188/balupton-on-Flattr "Donate monthly to this project using Flattr")
+[![PayPayl donate button](https://img.shields.io/badge/paypal-donate-yellow.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=QB8GQPZAH84N6 "Donate once-off to this project using Paypal")
+[![BitCoin donate button](https://img.shields.io/badge/bitcoin-donate-yellow.svg)](https://coinbase.com/checkouts/9ef59f5479eec1d97d63382c9ebcb93a "Donate once-off to this project using BitCoin")
+[![Wishlist browse button](https://img.shields.io/badge/wishlist-donate-yellow.svg)](http://amzn.com/w/2F8TXKSNAFG4V "Buy an item on our wishlist for us")
 
 <!-- /BADGES -->
 
@@ -70,10 +73,14 @@ Add `(out of date)` to the name of the out of date skeleton in [this file](https
 
 ## License
 
-Licensed under the incredibly [permissive](http://en.wikipedia.org/wiki/Permissive_free_software_licence) [MIT license](http://creativecommons.org/licenses/MIT/)
+Unless stated otherwise all works are:
 
-Copyright &copy; 2012+ Bevry Pty Ltd <us@bevry.me> (http://bevry.me)
-<br/>Copyright &copy; 2011 Benjamin Lupton <b@lupton.cc> (http://balupton.com)
+- Copyright &copy; 2012+ Bevry Pty Ltd <us@bevry.me> (http://bevry.me)
+- Copyright &copy; 2011 Benjamin Lupton <b@lupton.cc> (http://balupton.com)
+
+and licensed under:
+
+- The incredibly [permissive](http://en.wikipedia.org/wiki/Permissive_free_software_licence) [MIT License](http://opensource.org/licenses/mit-license.php)
 
 <!-- /LICENSE -->
 
