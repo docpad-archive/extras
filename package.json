@@ -3,7 +3,7 @@
   "version": "6.0.0",
   "private": true,
   "description": "This repository contains the all the extras for DocPad",
-  "homepage": "https://github.com/bevry/docpad-extras",
+  "homepage": "https://github.com/docpad/extras",
   "license": {
     "type": "MIT"
   },
@@ -23,38 +23,40 @@
   "maintainers": [
     "Benjamin Lupton <b@lupton.cc> (https://github.com/balupton)"
   ],
-  "contributors": [],
+  "contributors": [
+    "balupton (https://github.com/balupton)"
+  ],
   "bugs": {
-    "url": "https://github.com/bevry/docpad-extras/issues"
+    "url": "https://github.com/docpad/extras/issues"
   },
   "repository": {
     "type": "git",
-    "url": "http://github.com/bevry/docpad-extras.git"
+    "url": "http://github.com/docpad/extras.git"
   },
   "engines": {
-    "node": ">=0.6",
-    "npm": ">=1.1"
+    "node": "0.12",
+    "npm": "2"
   },
   "dependencies": {
-    "caterpillar": "~2.0.7",
-    "caterpillar-filter": "~2.0.3",
-    "caterpillar-human": "~2.1.1",
-    "commander": "~2.6.0",
+    "caterpillar": "^2.0.7",
+    "caterpillar-filter": "^2.0.3",
+    "caterpillar-human": "^2.1.1",
+    "commander": "^2.6.0",
     "cson": "^2.0.0",
-    "eachr": "~2.0.2",
+    "eachr": "^2.0.2",
     "feedr": "^2.10.4",
     "open": "0.0.5",
-    "safefs": "~3.1.1",
-    "safeps": "~2.2.11",
+    "safefs": "^3.1.1",
+    "safeps": "^2.2.11",
     "scandirectory": "^2.5.0",
     "taskgroup": "^4.2.0"
   },
   "devDependencies": {
-    "npmedge": "~0.2.1",
-    "coffee-script": "~1.9.0",
-    "joe": "~1.6.0",
-    "joe-reporter-console": "~1.2.1",
-    "projectz": "~0.3.17"
+    "npmedge": "*",
+    "coffee-script": "^1.9.1",
+    "joe": "^1.6.0",
+    "joe-reporter-console": "^1.2.1",
+    "projectz": "^0.5.0"
   },
   "scripts": {
     "test": "./node_modules/coffee-script/bin/coffee app.coffee test"
