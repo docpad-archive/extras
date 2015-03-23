@@ -76,13 +76,14 @@ skeletons:
 	# 	description: "Node Chat, built using Socket.io, DocPad, Backbone.js and Twitter Bootstrap"
 	# ^ Hasn't been maintained for a very long time ~baluptn
 
-	"h5bp-grunt":
-		name: "HTML5 Boilerplate with Grunt (Unsupported)"
-		id: "h5bp-grunt"
-		branch: "master"
-		repo: "https://github.com/lukekarrys/html5-boilerplate.docpad.git"
-		description: "The HTML5 Boilerplate skeleton with Grunt for concatenation and minification of assets"
-
+	#"h5bp-grunt":
+		#name: "HTML5 Boilerplate with Grunt (Unsupported)"
+		#id: "h5bp-grunt"
+		#branch: "master"
+		#repo: "https://github.com/lukekarrys/html5-boilerplate.docpad.git"
+		#description: "The HTML5 Boilerplate skeleton with Grunt for concatenation and minification of assets"
+	# ^ broken 24 March 2015: https://gitter.im/docpad/docpad?at=5510391fe336ad920a5f80ff
+	
 	"h5bp-jade":
 		name: "HTML5 Boilerplate with Jade and LESS (Unsupported)"
 		branch: "master"
