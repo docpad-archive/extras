@@ -6,6 +6,12 @@ skeletons:
 		description: "HTML5 Boilerplate skeleton for DocPad. Bare essentials for building a modern website with best practices"
 		branch: "docpad-6.x"
 		repo: "https://github.com/docpad/docpad-skeleton-h5bp.git"
+		
+	"casper":
+		name: "Casper (Supported)"
+		branch: "docpad-6.x"
+		repo: "https://github.com/dstack/casper-skeleton.git"
+		description: "A port of Casper, the default theme for Ghost, to docpad"
 
 	"bootstrap":
 		name: "Twitter Bootstrap (Supported)"
