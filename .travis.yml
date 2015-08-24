@@ -1,0 +1,42 @@
+# August 25, 2015
+# https://docpad.org/docs/deploy
+
+# Use the latest travis infrastructure
+sudo: false
+
+# We use node
+language: ruby
+rvm:
+  - "2.2"
+
+# Custom Notifications
+# travis encrypt "$TRAVIS_NOTIFICATION_EMAIL" --add notifications.email.recipients
+# travis encrypt "$SLACK_SUBDOMAIN:$SLACK_TRAVIS_TOKEN#updates" --add notifications.slack
+notifications:
+  email:
+    recipients:
+      secure: Q0vmCEjEpjb7+DNGMLSOeI7/MBk1p41oAuSVaFlNRhTbG5/4zualNxjy7hK1NmO34Qfa9bRyozIgphf33L4KSM2WFKD/6MRNm42H917g2it29f7bgG7oL0GQvevwfGWsPdjkOGazSRXysjNUhHf1VtPL1urs6zjJfGS/0EOOXYE=
+  slack:
+    secure: O9yDTll7xSncd01b6ITLIb17GmDe24tSfQilkK53D28bu2+7xa8GQtlmZvOjS6APxsFEd5/Hig6LTb0/fk4DB8tz7bkqFOQ8Nk3aAK4t6T4lMEGde6IRWc8+i//8EtUPodByzdC7Ma5cB5OIiImYed8KqXtClP35OmqE4D/7b28=
+
+# Prepare and run our tests
+# This should be easier, but https://github.com/travis-ci/travis.rb/issues/315 is a thing
+# Doesn't use --debug on `travis login` as that will output our github token
+install: gem install travis --no-rdoc --no-ri
+script: >
+  if [ ! -z $GITHUB_TRAVIS_TOKEN ]; then
+    echo "Deploying...";
+    travis login --skip-completion-check --org --github-token "$GITHUB_TRAVIS_TOKEN";
+    export TRAVIS_ACCESS_TOKEN=`cat ~/.travis/config.yml | grep access_token | sed 's/ *access_token: *//'`;
+    travis restart --debug --skip-completion-check --org -r "$DEPLOY_REPO_SLUG" -t "$TRAVIS_ACCESS_TOKEN";
+    echo "Deployed";
+  else
+    echo "Skipped deploy";
+  fi
+
+# Custom deployment
+# travis encrypt "GITHUB_TRAVIS_TOKEN=$GITHUB_TRAVIS_TOKEN" --add env.global
+env:
+  global:
+    - DEPLOY_REPO_SLUG='docpad/website'  # this is the repo owner and repo name that you want tested and deployed, set correctly
+    - secure: j23rh5AXqzciN7yexR+v7BjFw9fy7ftkL178Omzp8gaVvBYshlkPWaKIka7cwx+ye9C1GLwDjkurXiOvgW/d1JsTqXZjDC3qsg0yhnXMSgzvG6tVovOtJ8UHqdlONVzI+wyFFV7sPT8DQ45BhelF2zrMH7kWkNb/ONjqlKJbhPg=
