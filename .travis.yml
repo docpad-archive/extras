@@ -17,7 +17,7 @@ notifications:
     recipients:
       secure: Q0vmCEjEpjb7+DNGMLSOeI7/MBk1p41oAuSVaFlNRhTbG5/4zualNxjy7hK1NmO34Qfa9bRyozIgphf33L4KSM2WFKD/6MRNm42H917g2it29f7bgG7oL0GQvevwfGWsPdjkOGazSRXysjNUhHf1VtPL1urs6zjJfGS/0EOOXYE=
   slack:
-    secure: O9yDTll7xSncd01b6ITLIb17GmDe24tSfQilkK53D28bu2+7xa8GQtlmZvOjS6APxsFEd5/Hig6LTb0/fk4DB8tz7bkqFOQ8Nk3aAK4t6T4lMEGde6IRWc8+i//8EtUPodByzdC7Ma5cB5OIiImYed8KqXtClP35OmqE4D/7b28=
+    secure: RcV9Vog8BwO7gRwrC+gU/IoUxcyVD32g6Ro5Xu+YmXho1SJQ9KNifPfz+mrFD1eLEyhTQb1d8Nn6XeOg0NG976dqTNFHTdzsxmWJm6h/i1gMzeby96aNG5g6+dmgYDNL1e6oy9FsleKBepMXYqOl64rSWOCnvwVtktvULLXwArQ=
 
 # Prepare and run our tests
 # This should be easier, but https://github.com/travis-ci/travis.rb/issues/315 is a thing
