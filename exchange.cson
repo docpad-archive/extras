@@ -6,7 +6,13 @@ skeletons:
 		description: "HTML5 Boilerplate skeleton for DocPad. Bare essentials for building a modern website with best practices"
 		branch: "docpad-6.x"
 		repo: "https://github.com/docpad/docpad-skeleton-h5bp.git"
-	
+
+	"casper":
+		name: "Casper (Supported)"
+		branch: "docpad-6.x"
+		repo: "https://github.com/docpad/docpad-skeleton-casper.git"
+		description: "A port of Casper, the default theme for Ghost, to DocPad"
+
 	"bootstrap":
 		name: "Twitter Bootstrap (Supported)"
 		branch: "docpad-6.x"
@@ -83,12 +89,6 @@ skeletons:
 		#repo: "https://github.com/lukekarrys/html5-boilerplate.docpad.git"
 		#description: "The HTML5 Boilerplate skeleton with Grunt for concatenation and minification of assets"
 	# ^ broken 24 March 2015: https://gitter.im/docpad/docpad?at=5510391fe336ad920a5f80ff
-		
-	"casper":
-		name: "Casper (Unsupported)"
-		branch: "docpad-6.x"
-		repo: "https://github.com/dstack/casper-skeleton.git"
-		description: "A port of Casper, the default theme for Ghost, to docpad"
 
 	"h5bp-jade":
 		name: "HTML5 Boilerplate with Jade and LESS (Unsupported)"
