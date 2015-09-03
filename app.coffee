@@ -55,11 +55,9 @@ class App
 
 		@runner.addGroup 'clone', ->
 			# Exchange
-			@addTask 'exchange', ->
-				result = CSON.parseCSONFile(__dirname+'/exchange.cson')
-				if result instanceof Error
-					return result
-				else
+			@addTask 'exchange', (complete) ->
+				CSON.load __dirname+'/exchange.cson', (err, result) ->
+					return complete(err)  if err
 					exchange = result
 
 			# Skeletons
@@ -203,7 +201,7 @@ class App
 
 	outdated: (opts,next) ->
 		me = @
-		{npmEdgePath,pluginsPath} = @config
+		{pluginsPath} = @config
 		{skip,only} = (opts or {skip:null,only:null})
 
 		@runner.addTask 'outdated', (next) ->
@@ -229,19 +227,18 @@ class App
 						return
 
 					# Execute the plugin's tests
-					command = npmEdgePath
-					options = {cwd:pluginPath}
-					safeps.spawnCommand 'node', command, options, (err,stdout,stderr) ->
+					options = {cwd: pluginPath}
+					safeps.spawnCommand 'npm', 'outdated', options, (err,stdout,stderr) ->
 						# Log
-						if stdout and stdout.indexOf('is specified') isnt -1
-							if stdout or stderr
-								output = pluginPath
-								output += '\n'+stdout.replace(/^npm http .*/m, '')  if stdout
-								output += '\n'+stderr  if stderr
-								me.log 'info', output
+						# if stdout and stdout.indexOf('is specified') isnt -1
+						# 	if stdout or stderr
+						# 		output = pluginPath
+						# 		output += '\n'+stdout.replace(/^npm http .*/m, '')  if stdout
+						# 		output += '\n'+stderr  if stderr
+						me.log 'info', stdout, stderr
 
 						# Done
-						nextFile(err,true)
+						nextFile(err, true)
 
 				# Finish
 				next: next
@@ -407,78 +404,87 @@ class App
 			joe = require('joe')
 
 			# Start playing eye of the tiger
-			require('open')('http://youtu.be/2WrEmJpV2ic')
+			# require('open')('http://youtu.be/2WrEmJpV2ic')
 
-			# Scan Plugins
-			scandir({
-				# Path
-				path: pluginsPath
+			# Exchange
+			joe.suite 'docpad-extras', (suite, test) ->
+				test 'exchange', (done) ->
+					CSON.load __dirname+'/exchange.cson', (err, result) ->
+						done(err)
 
-				# Skip files
-				fileAction: false
+				suite 'plugins', (suite, test, done) ->
+					# Scan Plugins
+					scandir({
+						# Path
+						path: pluginsPath
 
-				# Handle directories
-				dirAction: (pluginPath,pluginRelativePath,nextFile) ->
-					# Prepare
-					pluginName = pathUtil.basename(pluginRelativePath)
+						# Skip files
+						fileAction: false
 
-					# Skip
-					if startFrom and startFrom > pluginName
-						me.log('info', "Skipping #{pluginName}")
-						return
-					if skip and (pluginName in skip)
-						me.log('info', "Skipping #{pluginName}")
-						return
-					if only and (pluginName in only) is false
-						me.log('info', "Skipping #{pluginName}")
-						return
-					if fsUtil.existsSync(pluginPath+'/test') is false
-						me.log('info', "Skipping #{pluginName}")
-						return
-
-					# Test the plugin
-					joe.test pluginName, (done) ->
-						options = {output:true,cwd:pluginPath+'/test'}
-						safeps.spawn 'npm link docpad', options, (err) ->
-							# Error
-							return nextFile(err)  if err
-
+						# Handle directories
+						dirAction: (pluginPath,pluginRelativePath,nextFile) ->
 							# Prepare
-							options = {output:true,cwd:pluginPath}
+							pluginName = pathUtil.basename(pluginRelativePath)
 
-							# Commands
-							spawnCommands = []
-							spawnCommands.push('npm link docpad')
-							spawnCommands.push('npm install')
-							if fsUtil.existsSync(pluginPath+'/Cakefile')
-								spawnCommands.push('cake compile')
-							else if fsUtil.existsSync(pluginPath+'/Makefile')
-								spawnCommands.push('make compile')
-							spawnCommands.push('npm test')
+							# Skip
+							if startFrom and startFrom > pluginName
+								me.log('info', "Skipping #{pluginName}")
+								return
+							if skip and (pluginName in skip)
+								me.log('info', "Skipping #{pluginName}")
+								return
+							if only and (pluginName in only) is false
+								me.log('info', "Skipping #{pluginName}")
+								return
+							if fsUtil.existsSync(pluginPath+'/test') is false
+								me.log('info', "Skipping #{pluginName}")
+								return
 
-							# Spawn
-							safeps.spawnMultiple spawnCommands, options, (err,results) ->
-								# Output the test results for the plugin
-								if results.length is spawnCommands.length
-									testResult = results[spawnCommands.length-1]
-									err = testResult[0]
-									# args = testResult[1...]
-									if err
-										joeError = new Error("Testing #{pluginName} FAILED")
-										# me.log 'info', "Testing #{pluginName} FAILED"
-										# args.forEach (arg) -> me.log('info', arg)  if arg
-										done(joeError)
-									else
-										done()
-								else
-									done()
+							# Test the plugin
+							test pluginName, (done) ->
+								options = {output:true,cwd:pluginPath+'/test'}
+								safeps.spawn 'npm link docpad', options, (err) ->
+									# Error
+									return nextFile(err)  if err
 
-								# All done
-								nextFile(err, true)
+									# Prepare
+									options = {output:true,cwd:pluginPath}
 
-				# Finish
-				next: next
-			})
+									# Commands
+									spawnCommands = []
+									spawnCommands.push('npm link docpad')
+									spawnCommands.push('npm install')
+									if fsUtil.existsSync(pluginPath+'/Cakefile')
+										spawnCommands.push('cake compile')
+									else if fsUtil.existsSync(pluginPath+'/Makefile')
+										spawnCommands.push('make compile')
+									spawnCommands.push('npm test')
+
+									# Spawn
+									safeps.spawnMultiple spawnCommands, options, (err,results) ->
+										# Output the test results for the plugin
+										if results.length is spawnCommands.length
+											testResult = results[spawnCommands.length-1]
+											err = testResult[0]
+											# args = testResult[1...]
+											if err
+												joeError = new Error("Testing #{pluginName} FAILED")
+												# me.log 'info', "Testing #{pluginName} FAILED"
+												# args.forEach (arg) -> me.log('info', arg)  if arg
+												done(joeError)
+											else
+												done()
+										else
+											done()
+
+										# All done
+										nextFile(err, true)
+
+						# Finish
+						next: done
+					})
+
+				test 'complete', -> next()
 
 		@runner.addTask('test complete callback', next)  if next
 		@
@@ -558,7 +564,6 @@ cli.parse(process.argv)
 
 # App
 app = new App({
-	npmEdgePath: pathUtil.join(__dirname, 'node_modules', 'npmedge', 'cli.js')
 	pluginsPath: pathUtil.join(__dirname, 'plugins')
 	skeletonsPath: pathUtil.join(__dirname, 'skeletons')
 	debug: cli.debug

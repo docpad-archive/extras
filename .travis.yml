@@ -6,8 +6,8 @@ sudo: false
 
 # We use node
 language: ruby
-rvm:
-  - "2.2"
+rvm: "2.2"
+node_js: "iojs"
 
 # Custom Notifications
 # travis encrypt "$TRAVIS_NOTIFICATION_EMAIL" --add notifications.email.recipients
@@ -22,8 +22,9 @@ notifications:
 # Prepare and run our tests
 # This should be easier, but https://github.com/travis-ci/travis.rb/issues/315 is a thing
 # Doesn't use --debug on `travis login` as that will output our github token
-install: gem install travis --no-rdoc --no-ri
+install: gem install travis --no-rdoc --no-ri && npm install
 script: >
+  npm test;
   if [ ! -z $GITHUB_TRAVIS_TOKEN ]; then
     echo "Deploying...";
     travis login --skip-completion-check --org --github-token "$GITHUB_TRAVIS_TOKEN";

@@ -8,7 +8,7 @@
     "type": "MIT"
   },
   "badges": {
-    "travis": false,
+    "travis": true,
     "npm": false,
     "npmdownloads": false,
     "david": true,
@@ -42,23 +42,22 @@
     "caterpillar-filter": "^2.0.3",
     "caterpillar-human": "^2.1.1",
     "commander": "^2.6.0",
-    "cson": "^2.0.0",
+    "cson": "^3.0.1",
     "eachr": "^2.0.2",
     "feedr": "^2.10.4",
     "open": "0.0.5",
     "safefs": "^3.1.1",
-    "safeps": "^2.2.11",
+    "safeps": "^5.1.0",
     "scandirectory": "^2.5.0",
     "taskgroup": "^4.2.0"
   },
   "devDependencies": {
-    "npmedge": "*",
     "coffee-script": "^1.9.1",
     "joe": "^1.6.0",
     "joe-reporter-console": "^1.2.1",
     "projectz": "^0.5.0"
   },
   "scripts": {
-    "test": "./node_modules/coffee-script/bin/coffee app.coffee test"
+    "test": "./node_modules/.bin/coffee app.coffee test"
   }
 }
