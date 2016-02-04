@@ -130,7 +130,13 @@ skeletons:
 		name: "YUI PureCSS (Unsupported)"
 		branch: "master"
 		repo: "https://github.com/MassDistributionMedia/yui-purecss.docpad.git"
-		description: "YUI PureCSS skeleton for DocPad"
+		description: "YUI PureCSS skeleton for DocPad by MDM"
+
+	"mdl":
+		name: "Material Design Lite Android Template (Unsupported)"
+		branch: "master"
+		repo: "https://github.com/MassDistributionMedia/mdl-android.docpad"
+		description: "Material Design Lite Android Template by MDM"
 
 	"zurb":
 		name: "Zurb Foundation (Unsupported)"
