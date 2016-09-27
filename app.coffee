@@ -458,6 +458,8 @@ class App
 										spawnCommands.push('cake compile')
 									else if fsUtil.existsSync(pluginPath+'/Makefile')
 										spawnCommands.push('make compile')
+									else
+										spawnCommands.push('npm run compile')
 									spawnCommands.push('npm test')
 
 									# Spawn
