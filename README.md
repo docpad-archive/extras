@@ -35,7 +35,7 @@ Add `(out of date)` to the name of the out of date skeleton in [this file](https
 	cd ~
 	git clone https://github.com/bevry/docpad.git
 	cd docpad
-	cake compile
+	npm run prepare
 	npm link
 	```
 
@@ -48,25 +48,24 @@ Add `(out of date)` to the name of the out of date skeleton in [this file](https
 	git checkout docpad-6.x
 	npm link docpad
 	npm install
-	chmod +x ./app
 	```
 
 3. Learn how this application works
 
 	``` bash
-	./app --help
+	npm run info
 	```
 
 4. Clone out all the officially supported plugins and skeletons
 
 	``` bash
-	./app clone
+	npm run clone
 	```
 
 5. Run the tests against the cloned out plugins
 
 	``` bash
-	./app test
+	npm test
 	```
 
 <!-- LICENSE/ -->
@@ -83,5 +82,3 @@ and licensed under:
 - The incredibly [permissive](http://en.wikipedia.org/wiki/Permissive_free_software_licence) [MIT License](http://opensource.org/licenses/mit-license.php)
 
 <!-- /LICENSE -->
-
-

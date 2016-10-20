@@ -4,20 +4,32 @@
   "private": true,
   "description": "This repository contains the all the extras for DocPad",
   "homepage": "https://github.com/docpad/extras",
-  "license": {
-    "type": "MIT"
-  },
+  "license": "MIT",
   "badges": {
-    "travis": true,
-    "npm": false,
-    "npmdownloads": false,
-    "david": true,
-    "daviddev": true,
-    "gittip": "docpad",
-    "flattr": "344188/balupton-on-Flattr",
-    "paypal": "QB8GQPZAH84N6",
-    "bitcoin": "https://coinbase.com/checkouts/9ef59f5479eec1d97d63382c9ebcb93a",
-    "wishlist": "http://amzn.com/w/2F8TXKSNAFG4V"
+    "list": [
+      "travisci",
+      "npmversion",
+      "npmdownloads",
+      "daviddm",
+      "daviddmdev",
+      "---",
+      "slackin",
+      "patreon",
+      "gratipay",
+      "flattr",
+      "paypal",
+      "bitcoin",
+      "wishlist"
+    ],
+    "config": {
+      "patreonUsername": "bevry",
+      "gratipayUsername": "bevry",
+      "flattrUsername": "balupton",
+      "paypalURL": "https://bevry.me/paypal",
+      "bitcoinURL": "https://bevry.me/bitcoin",
+      "wishlistURL": "https://bevry.me/wishlist",
+      "slackinURL": "https://slack.bevry.me"
+    }
   },
   "author": "2012+ Bevry Pty Ltd <us@bevry.me> (http://bevry.me), 2011 Benjamin Lupton <b@lupton.cc> (http://balupton.com)",
   "maintainers": [
@@ -33,31 +45,29 @@
     "type": "git",
     "url": "http://github.com/docpad/extras.git"
   },
-  "engines": {
-    "node": "0.12",
-    "npm": "2"
+  "scripts": {
+    "info": "node --harmony ./app.js --help",
+    "clone": "node --harmony ./app.js clone",
+    "test": "node --harmony ./app.js test"
   },
   "dependencies": {
-    "caterpillar": "^2.0.7",
-    "caterpillar-filter": "^2.0.3",
-    "caterpillar-human": "^2.1.1",
-    "commander": "^2.6.0",
-    "cson": "^3.0.1",
-    "eachr": "^2.0.2",
-    "feedr": "^2.10.4",
+    "caterpillar": "^3.0.1",
+    "caterpillar-filter": "^3.0.0",
+    "caterpillar-human": "^3.0.0",
+    "commander": "^2.9.0",
+    "cson": "^4.0.0",
+    "eachr": "^3.2.0",
+    "feedr": "^2.13.3",
     "open": "0.0.5",
-    "safefs": "^3.1.1",
-    "safeps": "^5.1.0",
-    "scandirectory": "^2.5.0",
-    "taskgroup": "^4.2.0"
+    "safefs": "^4.1.0",
+    "safeps": "^6.3.0",
+    "scandirectory": "^3.0.1",
+    "taskgroup": "^5.0.1"
   },
   "devDependencies": {
-    "coffee-script": "^1.9.1",
-    "joe": "^1.6.0",
+    "eslint": "^2.13.1",
+    "joe": "^1.8.0",
     "joe-reporter-console": "^1.2.1",
-    "projectz": "^0.5.0"
-  },
-  "scripts": {
-    "test": "./node_modules/.bin/coffee app.coffee test"
+    "projectz": "^1.3.0"
   }
 }

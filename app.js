@@ -25,14 +25,17 @@ class App
 
 		# Logger
 		level    = if @config.debug then 7 else 6
-		@logger  = require('caterpillar').createLogger({level:level})
-		filter   = require('caterpillar-filter').createFilter()
-		human    = require('caterpillar-human').createHuman()
+		@logger  = require('caterpillar').create({level:level})
+		filter   = require('caterpillar-filter').create()
+		human    = require('caterpillar-human').create()
 		@logger.pipe(filter).pipe(human).pipe(process.stdout)
 
 		# Runner
-		@runner = new TaskGroup('runner').run().done (err) ->
-			console.log(err.stack)  if err
+		@runner = new TaskGroup('runner').done (err) ->
+			if err
+				console.log(err.stack)
+			else
+				console.log('done')
 
 	log: (args...) ->
 		logger = (@logger or console)
