@@ -54,9 +54,9 @@
     "eachr": "^3.2.0",
     "feedr": "^2.13.5",
     "open": "0.0.5",
+    "readdir-cluster": "^1.1.0",
     "safefs": "^4.1.0",
     "safeps": "^6.3.0",
-    "scandirectory": "^3.0.1",
     "taskgroup": "^5.0.1"
   },
   "devDependencies": {
@@ -68,6 +68,6 @@
   "scripts": {
     "info": "node --harmony ./app.js --help",
     "clone": "node --harmony ./app.js clone",
-    "test": "node --harmony ./app.js test --joe-reporter=console"
+    "test": "node --harmony ./app.js test"
   }
 }
