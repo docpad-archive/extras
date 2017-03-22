@@ -36,9 +36,10 @@
   },
   "author": "2012+ Bevry Pty Ltd <us@bevry.me> (http://bevry.me), 2011 Benjamin Lupton <b@lupton.cc> (http://balupton.com)",
   "maintainers": [
-    "Benjamin Lupton <b@lupton.cc> (https://github.com/balupton)"
+    "Benjamin Lupton <b@lupton.cc> (http://balupton.com)"
   ],
   "contributors": [
+    "Benjamin Lupton <b@lupton.cc> (http://balupton.com)",
     "balupton (https://github.com/balupton)"
   ],
   "bugs": {
