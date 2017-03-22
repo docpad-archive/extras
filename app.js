@@ -1,576 +1,711 @@
-# Requires
-pathUtil = require('path')
-fsUtil = require('fs')
-scandir = require('scandirectory')
-safefs = require('safefs')
-safeps = require('safeps')
-eachr = require('eachr')
-commander = require('commander')
-CSON = require('cson')
-{TaskGroup} = require('taskgroup')
+// Requires
+const pathUtil = require('path')
+const fsUtil = require('fs')
+const scandir = require('scandirectory')
+const safefs = require('safefs')
+const safeps = require('safeps')
+const eachr = require('eachr')
+const commander = require('commander')
+const CSON = require('cson')
+const { TaskGroup } = require('taskgroup')
 
+// Prepare
+const defaultSkip = ['pygments', 'concatmin', 'iis', 'html2jade', 'html2coffee', 'robotskirt', 'tumblr', 'contenttypes']
 
+// -----------------
+// App
 
-# -----------------
-# App
+class App {
+	constructor(opts) {
+		// Prepare
+		this.runner = null
+		this.logger = null
+		this.config = opts
 
-class App
-	runner: null
-	config: null
-	logger: null
+		// Logger
+		const level = this.config.debug ? 7 : 6
+		this.logger = require('caterpillar').create({ level })
+		this.logger
+			.pipe(require('caterpillar-filter').create())
+			.pipe(require('caterpillar-human').create())
+			.pipe(process.stdout)
 
-	constructor: (@config) ->
-		# Prepare
-		me = @
-
-		# Logger
-		level    = if @config.debug then 7 else 6
-		@logger  = require('caterpillar').create({level:level})
-		filter   = require('caterpillar-filter').create()
-		human    = require('caterpillar-human').create()
-		@logger.pipe(filter).pipe(human).pipe(process.stdout)
-
-		# Runner
-		@runner = new TaskGroup('runner').done (err) ->
-			if err
-				console.log(err.stack)
-			else
+		// Runner
+		this.runner = new TaskGroup('runner').done(function (err) {
+			if (err) {
+				console.error(err.stack)
+			}
+			else {
 				console.log('done')
+			}
+		})
 
-	log: (args...) ->
-		logger = (@logger or console)
-		logger.log.apply(logger, args)
+		// Start after loaded
+		process.nextTick(() => this.runner.run())
+	}
 
-	ensure: (opts,next) ->
-		{skeletonsPath, pluginsPath} = @config
+	// Log alias
+	log(...args) {
+		this.logger.log(...args)
+	}
 
-		@runner.addGroup 'ensure', ->
-			@addTask 'plugins', (complete) -> safefs.ensurePath(pluginsPath, complete)
-			@addTask 'skeletons', (complete) -> safefs.ensurePath(skeletonsPath, complete)
+	// Action
+	ensure(opts, next) {
+		const { skeletonsPath, pluginsPath } = this.config
 
-		@runner.addTask('ensure complete callback', next)  if next
-		@
+		this.runner.addTaskGroup('ensure', function (addTaskGroup, addTask) {
+			addTask('plugins', function (complete) {
+				safefs.ensurePath(pluginsPath, complete)
+			})
+			addTask('skeletons', function (complete) {
+				safefs.ensurePath(skeletonsPath, complete)
+			})
+		})
 
-	clone: (opts,next) ->
-		me = @
-		{skeletonsPath, pluginsPath} = @config
-		exchange = null
+		if (next) this.runner.addTask('ensure completion callback', next)
 
-		@runner.addGroup 'clone', ->
-			# Exchange
-			@addTask 'exchange', (complete) ->
-				CSON.load __dirname+'/exchange.cson', (err, result) ->
-					return complete(err)  if err
-					exchange = result
+		return this
+	}
 
-			# Skeletons
-			@addTask 'skeletons', (complete) ->
-				me.log 'info', "Cloning latest skeletons"
+	// Action
+	clone(opts, next) {
+		const me = this
+		const { skeletonsPath, pluginsPath } = this.config
+		let exchange = null
 
-				cloneRepos = []
-				for own key,repo of exchange.skeletons
-					repoShortname = repo.repo.toLowerCase().replace(/^.+\/(.+\/.+)\.git$/, '$1').replace('/', '-').replace('docpad-skeleton-', '').replace('.docpad', '')
-					cloneRepos.push(
-						name: key
-						url: repo.repo
-						path: "#{skeletonsPath}/#{repoShortname}"
+		this.runner.addTaskGroup('clone', function (addTaskGroup, addTask) {
+			// Exchange
+			addTask('exchange', function () {
+				const result = require('./exchange.json')
+				exchange = result
+			})
+
+			// Skeletons
+			addTask('skeletons', function (complete) {
+				me.log('info', `Cloning latest skeletons`)
+
+				const cloneRepos = []
+				eachr(exchange.skeletons, function (repo, key) {
+					const repoShortname = repo.repo.toLowerCase()
+						.replace(/^.+\/(.+\/.+)\.git$/, '$1')
+						.replace('/', '-')
+						.replace('docpad-skeleton-', '')
+						.replace('.docpad', '')
+
+					cloneRepos.push({
+						name: key,
+						url: repo.repo,
+						path: `${skeletonsPath}/${repoShortname}`,
 						branch: repo.branch
-					)
+					})
+				})
 
-				# Clone the repos
-				me.cloneRepos({repos: cloneRepos}, complete)
+				// Clone the repos
+				me.cloneRepos({ repos: cloneRepos }, complete)
+			})
 
-			# Plugins
-			@addTask 'plugins', (complete) ->
-				me.log 'info', "Fetching latest plugins"
-				require('feedr').create(cache:false).readFeed {url:"https://api.github.com/orgs/docpad/repos?page=1&per_page=100", parse:'json'}, (err,repos) ->
-					# Check
-					return next(err)  if err
+			// Plugins
+			addTask('plugins', function (complete) {
+				me.log('info', `Fetching latest plugins`)
+				const feedOpts = { url: 'https://api.github.com/orgs/docpad/repos?page=1&per_page=100', parse: 'json' }
+				require('feedr').create({ cache: false }).readFeed(feedOpts, function (err, repos) {
+					// Check
+					if (err) return next(err)
 
-					# Skip if not a plugin
-					cloneRepos = []
-					repos.forEach (repo) ->
-						# Prepare
-						repoShortname = repo.name.replace(/^docpad-plugin-/,'')
+					// Skip if not a plugin
+					const cloneRepos = []
+					repos.forEach(function (repo) {
+						// Prepare
+						const repoShortname = repo.name.replace(/^docpad-plugin-/, '')
 
-						# Skip if expiremental or deprecated or is not a plugin
-						return  if /^(EXPER|DEPR)/.test(repo.description) or repoShortname is repo.name
+						// Skip if expiremental or deprecated or is not a plugin
+						if (/^(EXPER|DEPR)/.test(repo.description) || repoShortname === repo.name) {
+							return
+						}
 
-						# Add the repo to the ones we want to clone
-						cloneRepos.push(
-							name: repo.name
-							url: repo.clone_url
-							path: "#{pluginsPath}/#{repoShortname}"
+						// Add the repo to the ones we want to clone
+						cloneRepos.push({
+							name: repo.name,
+							url: repo.clone_url,
+							path: `${pluginsPath}/${repoShortname}`,
 							branch: 'master'
-						)
-
-					# Log
-					me.log 'info', "Cloning #{repos.length} latest plugins"
-
-					# Clone the repos
-					me.cloneRepos({repos: cloneRepos}, complete)
-
-		@runner.addTask('clone complete callback', next)  if next
-		@
-
-	cloneRepos: (opts,next) ->
-		# Prepare
-		me = @
-		cloneTasks = new TaskGroup('clone repos', {concurrency:1}).done(next)
-
-		# Clone each one
-		eachr opts.repos, (repo) ->
-			# Prepare
-			spawnCommands = []
-			spawnOpts = {}
-			spawnOpts.cwd = repo.path
-
-			safefs.ensurePath repo.path, (err) ->
-				return next(err)  if err
-
-				# New
-				if fsUtil.existsSync(repo.path+'/.git') is false
-					spawnCommands.push ['git', 'init']
-					spawnCommands.push ['git', 'remote', 'add', 'origin', repo.url]
-
-				# Update
-				spawnCommands.push ['git', 'fetch', 'origin']
-				spawnCommands.push ['git', 'checkout', repo.branch]
-				spawnCommands.push ['git', 'pull', 'origin', repo.branch]
-
-				# Re-link
-				spawnCommands.push ['npm', 'link', 'docpad']
-
-				# Handle
-				cloneTasks.addTask "init repo #{repo}", (next) ->
-					me.log 'info', "Fetching #{repo.name} / #{repo.branch}"
-					safeps.spawnMultiple spawnCommands, spawnOpts, (err,args...) ->
-						if err
-							me.log 'info', "Fetching #{repo.name} FAILED", err
-							return next(err)
-						else
-							me.log 'info', "Fetched #{repo.name}"
-						return next()
-
-		# Run
-		cloneTasks.run()
-
-	status: (opts,next) ->
-		me = @
-		{pluginsPath} = @config
-		{skip,only} = (opts or {skip:null,only:null})
-
-		@runner.addTask 'status', (next) ->
-			# Scan Plugins
-			scandir({
-				# Path
-				path: pluginsPath
-
-				# Skip files
-				fileAction: false
-
-				# Handle directories
-				dirAction: (pluginPath,pluginRelativePath,nextFile) ->
-					# Prepare
-					pluginName = pathUtil.basename(pluginRelativePath)
-
-					# Skip
-					if skip and (pluginName in skip)
-						me.log('info', "Skipping #{pluginName}")
-						return
-					if only and (pluginName in only) is false
-						me.log('info', "Skipping #{pluginName}")
-						return
-
-					# Execute the plugin's tests
-					options = {cwd:pluginPath, env:process.env}
-					safeps.spawnCommand 'git', ['status'], options, (err,stdout,stderr) ->
-						# Log
-						if stdout and stdout.indexOf('nothing to commit') is -1
-							me.log 'info', pluginPath  if stdout or stderr
-							me.log 'info', stdout  if stdout
-							me.log 'info', stderr  if stderr
-
-						# Done
-						nextFile(err,true)
-
-				# Finish
-				next: (err,list,tree) ->
-					return next(err)
-			})
-
-		@runner.addTask('status complete callback', next)  if next
-		@
-
-	outdated: (opts,next) ->
-		me = @
-		{pluginsPath} = @config
-		{skip,only} = (opts or {skip:null,only:null})
-
-		@runner.addTask 'outdated', (next) ->
-			# Scan Plugins
-			scandir({
-				# Path
-				path: pluginsPath
-
-				# Skip files
-				fileAction: false
-
-				# Handle directories
-				dirAction: (pluginPath,pluginRelativePath,nextFile) ->
-					# Prepare
-					pluginName = pathUtil.basename(pluginRelativePath)
-
-					# Skip
-					if skip and (pluginName in skip)
-						me.log('info', "Skipping #{pluginName}")
-						return
-					if only and (pluginName in only) is false
-						me.log('info', "Skipping #{pluginName}")
-						return
-
-					# Execute the plugin's tests
-					options = {cwd: pluginPath}
-					safeps.spawnCommand 'npm', 'outdated', options, (err,stdout,stderr) ->
-						# Log
-						# if stdout and stdout.indexOf('is specified') isnt -1
-						# 	if stdout or stderr
-						# 		output = pluginPath
-						# 		output += '\n'+stdout.replace(/^npm http .*/m, '')  if stdout
-						# 		output += '\n'+stderr  if stderr
-						me.log 'info', stdout, stderr
-
-						# Done
-						nextFile(err, true)
-
-				# Finish
-				next: next
-			})
-
-		@runner.addTask('outdated complete callback', next)  if next
-		@
-
-	standardize: (opts,next) ->
-		me = @
-		{pluginsPath} = @config
-		{skip,only} = (opts or {skip:null,only:null})
-
-		@runner.addTask 'standardize', (next) ->
-			standardizeTasks = new TaskGroup(concurrency:1).done(next)
-
-			# Scan Plugins
-			scandir({
-				# Path
-				path: pluginsPath
-
-				# Skip files
-				fileAction: false
-
-				# Handle directories
-				dirAction: (pluginPath,pluginRelativePath,nextFile) ->  nextFile(null,true); standardizeTasks.addTask "standardize #{pluginPath}", (complete) ->
-					# Prepare
-					pluginName = pathUtil.basename(pluginRelativePath)
-
-					# Skip
-					if skip and (pluginName in skip)
-						me.log('info', "Skipping #{pluginName}")
-						return
-					if only and (pluginName in only) is false
-						me.log('info', "Skipping #{pluginName}")
-						return
-
-					# Log
-					me.log 'info', "Standardizing #{pluginName}"
-
-					me.log 'debug', "Standardize #{pluginName}: rename contributing"
-					safeps.spawnCommand 'git', ['mv','-f','-k','Contributing.md','CONTRIBUTING.md'], {cwd:pluginPath,output:true}, (err) ->
-						return complete(err)  if err
-
-						me.log 'debug', "Standardize #{pluginName}: rename history"
-						safeps.spawnCommand 'git', ['mv','-f','-k','History.md','HISTORY.md'], {cwd:pluginPath,output:true}, (err) ->
-							return complete(err)  if err
-
-							me.log 'debug', "Standardize #{pluginName}: download meta files"
-							safeps.exec pathUtil.join(__dirname, 'download-meta.bash'), {cwd:pluginPath,output:true}, (err) ->
-								return complete(err)  if err
-
-								# Update the package.json file
-								pluginPackagePath = pluginPath+'/package.json'
-								pluginPackageData = require(pluginPackagePath)
-
-								engines = (pluginPackageData.engines ?= {})
-								deps = (pluginPackageData.dependencies ?= {})
-								peerDeps = (pluginPackageData.peerDependencies ?= {})
-								devDeps = (pluginPackageData.devDependencies ?= {})
-
-								#if deps['taskgroup']
-								#	deps['taskgroup'] = '~4.2.0'
-								# ^ can't do this, as it is a API change, so we have to manually update plugins using older taskgroups
-
-								devDeps.docpad = (peerDeps.docpad ?= engines.docpad ? '6')
-								delete engines.docpad
-								devDeps['projectz'] = '^0.5.0'
-								if devDeps['coffee-script']
-									devDeps['coffee-script'] = '^1.9.1'
-								if devDeps['joe']
-									devDeps['joe'] = '^1.6.0'
-
-								pluginPackageData.bugs.url = "https://github.com/docpad/docpad-plugin-#{pluginName}/issues"
-								pluginPackageData.repository.url = "https://github.com/docpad/docpad-plugin-#{pluginName}.git"
-								pluginPackageData.license = 'MIT'
-								pluginPackageData.badges = {
-									"travis": true
-									"npm": true
-									"npmdownloads": true
-									"david": true
-									"daviddev": true
-									"gratipay": "docpad"
-									"flattr": "344188/balupton-on-Flattr"
-									"paypal": "QB8GQPZAH84N6"
-									"bitcoin": "https://coinbase.com/checkouts/9ef59f5479eec1d97d63382c9ebcb93a"
-									"wishlist": "http://amzn.com/w/2F8TXKSNAFG4V"
-								}
-								pluginPackageData.cakeConfiguration = {
-									"COFFEE_SRC_PATH": "src"
-								}
-
-								me.log 'debug', "Standardize #{pluginName}: write package"
-								pluginPackageDataString = JSON.stringify(pluginPackageData, null, '  ')
-								safefs.writeFile pluginPackagePath, pluginPackageDataString, (err) ->
-									return complete(err)  if err
-
-									me.log 'debug', "Standardize #{pluginName}: install new deps"
-									safeps.spawn ['npm', 'install'], {cwd:pluginPath,output:true,outputPrefix:'>	'}, (err) ->
-										return complete(err)  if err
-
-										me.log 'debug', "Standardize #{pluginName}: projectz"
-										projectzPath = pathUtil.join(pluginPath, 'node_modules', '.bin', 'projectz')
-										safeps.spawn [projectzPath, 'compile'], {cwd:pluginPath,output:true,outputPrefix:'>	'}, (err) ->
-											return complete(err)  if err
-
-											safeps.spawnCommand 'git', ['commit', '-am', 'updated base files'], {cwd:pluginPath,output:true}, (err,stdout) ->
-												return complete()  if err and stdout.indexOf('nothing to commit') isnt -1
-												return complete(err)  if err
-
-												safeps.spawnCommand 'git', ['push', 'origin', 'master'], {cwd:pluginPath,output:true}, (err) ->
-													return complete(err)
-
-				# Finish
-				next: (err) ->
-					return next(err)  if err
-					return standardizeTasks.run()
-			})
-
-		@runner.addTask('standardize complete callback', next)  if next
-		@
-
-	exec: (opts,next) ->
-		me = @
-		{pluginsPath} = @config
-
-		@runner.addTask 'exec', (next) ->
-			# Scan Plugins
-			scandir({
-				# Path
-				path: pluginsPath
-
-				# Skip files
-				fileAction: false
-
-				# Handle directories
-				dirAction: (pluginPath,pluginRelativePath,nextFile) ->
-					# Prepare
-					pluginName = pathUtil.basename(pluginRelativePath)
-
-					# Execute the command
-					safeps.exec opts.command, {cwd:pluginPath, env: process.env}, (err, stdout, stderr) ->
-						me.log 'info', "exec [#{opts.command}] on: #{pluginPath}"
-						process.stdout.write stderr  if err
-						process.stdout.write stdout
-						me.log 'info', ''
-						return nextFile(err, true)
-
-				# Finish
-				next: next
-			})
-
-		@runner.addTask('exec complete callback', next)  if next
-		@
-
-	test: (opts,next) ->
-		me = @
-		{pluginsPath} = @config
-		{skip,only,startFrom} = (opts or {})
-
-		@runner.addTask 'test', (next) ->
-			# Require Joe Testing Framework
-			joe = require('joe')
-
-			# Start playing eye of the tiger
-			# require('open')('http://youtu.be/2WrEmJpV2ic')
-
-			# Exchange
-			joe.suite 'docpad-extras', (suite, test) ->
-				test 'exchange', (done) ->
-					CSON.load __dirname+'/exchange.cson', (err, result) ->
-						done(err)
-
-				suite 'plugins', (suite, test, done) ->
-					# Scan Plugins
-					scandir({
-						# Path
-						path: pluginsPath
-
-						# Skip files
-						fileAction: false
-
-						# Handle directories
-						dirAction: (pluginPath,pluginRelativePath,nextFile) ->
-							# Prepare
-							pluginName = pathUtil.basename(pluginRelativePath)
-
-							# Skip
-							if startFrom and startFrom > pluginName
-								me.log('info', "Skipping #{pluginName}")
-								return
-							if skip and (pluginName in skip)
-								me.log('info', "Skipping #{pluginName}")
-								return
-							if only and (pluginName in only) is false
-								me.log('info', "Skipping #{pluginName}")
-								return
-							if fsUtil.existsSync(pluginPath+'/test') is false
-								me.log('info', "Skipping #{pluginName}")
-								return
-
-							# Test the plugin
-							test pluginName, (done) ->
-								options = {output:true,cwd:pluginPath+'/test'}
-								safeps.spawn 'npm link docpad', options, (err) ->
-									# Error
-									return nextFile(err)  if err
-
-									# Prepare
-									options = {output:true,cwd:pluginPath}
-
-									# Commands
-									spawnCommands = []
-									spawnCommands.push('npm link docpad')
-									spawnCommands.push('npm install')
-									if fsUtil.existsSync(pluginPath+'/Cakefile')
-										spawnCommands.push('cake compile')
-									else if fsUtil.existsSync(pluginPath+'/Makefile')
-										spawnCommands.push('make compile')
-									else
-										spawnCommands.push('npm run compile')
-									spawnCommands.push('npm test')
-
-									# Spawn
-									safeps.spawnMultiple spawnCommands, options, (err,results) ->
-										# Output the test results for the plugin
-										if results.length is spawnCommands.length
-											testResult = results[spawnCommands.length-1]
-											err = testResult[0]
-											# args = testResult[1...]
-											if err
-												joeError = new Error("Testing #{pluginName} FAILED")
-												# me.log 'info', "Testing #{pluginName} FAILED"
-												# args.forEach (arg) -> me.log('info', arg)  if arg
-												done(joeError)
-											else
-												done()
-										else
-											done()
-
-										# All done
-										nextFile(err, true)
-
-						# Finish
-						next: done
+						})
 					})
 
-				test 'complete', -> next()
+					// Log
+					me.log('info', `Cloning ${repos.length} latest plugins`)
 
-		@runner.addTask('test complete callback', next)  if next
-		@
+					// Clone the repos
+					me.cloneRepos({ repos: cloneRepos }, complete)
+				})
+			})
+		})
 
-# -----------------
-# Helpers
+		if (next) this.runner.addTask('clone completion callback', next)
 
-# Handle CSV values
-splitCsvValue = (result) ->
-	result or= ''
-	result = result.split(',')  if result
-	result or= null
-	return result
+		return this
+	}
+
+	// Helper
+	cloneRepos(opts = {}, next) {
+		// Prepare
+		const me = this
+		const cloneTasks = new TaskGroup('clone repos').done(next)
+
+		// Clone each one
+		eachr(opts.repos, function (repo) {
+			// Prepare
+			const spawnCommands = []
+			const spawnOpts = {}
+			spawnOpts.cwd = repo.path
+
+			safefs.ensurePath(repo.path, function (err) {
+				if (err) return next(err)
+
+				// New
+				if (fsUtil.existsSync(repo.path + '/.git') === false) {
+					spawnCommands.push(['git', 'init'])
+					spawnCommands.push(['git', 'remote', 'add', 'origin', repo.url])
+				}
+
+				// Update
+				spawnCommands.push(['git', 'fetch', 'origin'])
+				spawnCommands.push(['git', 'checkout', repo.branch])
+				spawnCommands.push(['git', 'pull', 'origin', repo.branch])
+
+				// Re-link
+				spawnCommands.push(['npm', 'link', 'docpad'])
+
+				// Handle
+				cloneTasks.addTask(`init repo ${repo}`, function (next) {
+					me.log('info', `Fetching ${repo.name} / ${repo.branch}`)
+					safeps.spawnMultiple(spawnCommands, spawnOpts, function (err, ...args) {
+						if (err) {
+							me.log('info', `Fetching ${repo.name} FAILED`, err)
+							return next(err)
+						}
+						else {
+							me.log('info', `Fetched ${repo.name}`)
+						}
+						return next()
+					})
+				})
+			})
+		})
+
+		// Run
+		cloneTasks.run()
+	}
+
+	status(opts = {}, next) {
+		const me = this
+		const { pluginsPath } = this.config
+		const { skip, only } = opts
+
+		this.runner.addTask('status', function (next) {
+			// Scan Plugins
+			scandir({
+				// Path
+				path: pluginsPath,
+
+				// Skip files
+				fileAction: false,
+
+				// Handle directories
+				dirAction(pluginPath, pluginRelativePath, nextFile) {
+					// Prepare
+					const pluginName = pathUtil.basename(pluginRelativePath)
+
+					// Skip
+					if (skip && skip.indexOf(pluginName) !== -1) {
+						me.log('info', `Skipping ${pluginName}`)
+						return
+					}
+					if (only && only.indexOf(pluginName) === -1) {
+						me.log('info', `Skipping ${pluginName}`)
+						return
+					}
+
+					// Execute the plugin's tests
+					const options = { cwd: pluginPath, env: process.env }
+					safeps.spawnCommand('git', ['status'], options, function (err, stdout, stderr) {
+						// Log
+						if (stdout && stdout.indexOf('nothing to commit') === -1) {
+							if (stdout || stderr) {
+								me.log('info', pluginPath)
+								if (stdout) me.log('info', stdout)
+								if (stderr) me.log('info', stderr)
+							}
+						}
+
+						// Done
+						nextFile(err, true)
+					})
+				},
+
+				// Finish
+				next(err, list, tree) {
+					return next(err)
+				}
+			})
+		})
+
+		if (next) this.runner.addTask('status complete callback', next)
+		return this
+	}
+
+	outdated(opts = {}, next) {
+		const me = this
+		const { pluginsPath } = this.config
+		const { skip, only } = opts
+
+		this.runner.addTask('outdated', function (next) {
+			// Scan Plugins
+			scandir({
+				// Path
+				path: pluginsPath,
+
+				// Skip files
+				fileAction: false,
+
+				// Handle directories
+				dirAction(pluginPath, pluginRelativePath, nextFile) {
+					// Prepare
+					pluginName = pathUtil.basename(pluginRelativePath)
+
+					// Skip
+					if (skip && skip.indexOf(pluginName) !== -1) {
+						me.log('info', `Skipping ${pluginName}`)
+						return
+					}
+					if (only && only.indexOf(pluginName) === -1) {
+						me.log('info', `Skipping ${pluginName}`)
+						return
+					}
+
+					// Execute the plugin's tests
+					const options = { cwd: pluginPath }
+					safeps.spawnCommand('npm', 'outdated', options, function (err, stdout, stderr) {
+						// Log
+						// if ( stdout && stdout.indexOf('is specified') isnt -1 ) {
+						//   if ( stdout || stderr )  output = pluginPath
+						//   if ( stdout ) output += '\n'+stdout.replace(/^npm http .*/m, '')
+						//   if ( stderr ) output += '\n'+stderr
+						// }
+						me.log('info', stdout, stderr)
+
+						// Done
+						nextFile(err, true)
+					})
+				},
+
+				// Finish
+				next
+			})
+		})
+
+		if (next) this.runner.addTask('outdated complete callback', next)
+		return this
+	}
+
+	standardize(opts = {}, next) {
+		const me = this
+		const { pluginsPath } = this.config
+		const { skip, only } = opts
+
+		this.runner.addTask('standardize', function (next) {
+			const standardizeTasks = new TaskGroup({ concurrency: 1 }).done(next)
+
+			// Scan Plugins
+			scandir({
+				// Path
+				path: pluginsPath,
+
+				// Skip files
+				fileAction: false,
+
+				// Handle directories
+				dirAction(pluginPath, pluginRelativePath, nextFile) {
+					nextFile(null, true)
+					standardizeTasks.addTask(`standardize ${pluginPath}`, function (complete) {
+						// Prepare
+						const pluginName = pathUtil.basename(pluginRelativePath)
+						const cmdOpts = { cwd: pluginPath, output: true }
+
+						// Skip
+						if (skip && skip.indexOf(pluginName) !== -1) {
+							me.log('info', `Skipping ${pluginName}`)
+							return
+						}
+						if (only && only.indexOf(pluginName) === -1) {
+							me.log('info', `Skipping ${pluginName}`)
+							return
+						}
+
+						// Log
+						me.log('info', `Standardizing ${pluginName}`)
+						me.log('debug', `Standardize ${pluginName}: rename contributing`)
+						safeps.spawnCommand('git', ['mv', '-f', '-k', 'Contributing.md', 'CONTRIBUTING.md'], cmdOpts, function (err) {
+							if (err) return complete(err)
+
+							me.log('debug', `Standardize ${pluginName}: rename history`)
+							safeps.spawnCommand('git', ['mv', '-f', '-k', 'History.md', 'HISTORY.md'], cmdOpts, function (err) {
+								if (err) return complete(err)
+
+								me.log('debug', `Standardize ${pluginName}: download meta files`)
+								safeps.exec(pathUtil.join(__dirname, 'download-meta.bash'), cmdOpts, function (err) {
+									if (err) return complete(err)
+
+									// Update the package.json file
+									const pluginPackagePath = pluginPath + '/package.json'
+									const pluginPackageData = Object.assign({
+										engines: {},
+										dependencies: {},
+										peerDependencies: {},
+										devDependencies: {}
+									}, require(pluginPackagePath))
+									const { engines, dependencies, peerDependencies, devDependencies } = pluginPackageData
+
+									// if deps['taskgroup']
+									// 	deps['taskgroup'] = '~4.2.0'
+									// ^ can't do this, as it is a API change, so we have to manually update plugins using older taskgroups
+
+									if (engines.docpad) {
+										peerDependencies.docpad = engines.docpad
+										delete engines.docpad
+									}
+									peerDependencies.docpad = devDependencies.docpad = '6'
+
+									devDependencies.projectz = '^1.1.0'
+									if (devDependencies['coffee-script']) {
+										devDependencies['coffee-script'] = '^1.9.1'
+									}
+									if (devDependencies.joe) {
+										devDependencies.joe = '^1.6.0'
+									}
+
+									pluginPackageData.bugs.url = `https://github.com/docpad/docpad-plugin-${pluginName}/issues`
+									pluginPackageData.repository.url = `https://github.com/docpad/docpad-plugin-${pluginName}.git`
+									pluginPackageData.license = 'MIT'
+									pluginPackageData.badges = {
+										"list": [
+											"travisci",
+											"npmversion",
+											"npmdownloads",
+											"daviddm",
+											"daviddmdev",
+											"---",
+											"patreon",
+											"opencollective",
+											"gratipay",
+											"flattr",
+											"paypal",
+											"bitcoin",
+											"wishlist",
+											"---",
+											"slackin"
+										],
+										"config": {
+											"patreonUsername": "bevry",
+											"opencollectiveUsername": "bevry",
+											"gratipayUsername": "bevry",
+											"flattrUsername": "balupton",
+											"paypalURL": "https://bevry.me/paypal",
+											"bitcoinURL": "https://bevry.me/bitcoin",
+											"wishlistURL": "https://bevry.me/wishlist",
+											"slackinURL": "https://slack.bevry.me"
+										}
+									}
+									if (devDependencies['coffee-script']) {
+										pluginPackageData.cakeConfiguration = {
+											COFFEE_SRC_PATH: `src`
+										}
+									}
+
+									me.log('debug', `Standardize ${pluginName}: write package`)
+									pluginPackageDataString = JSON.stringify(pluginPackageData, null, '  ')
+									safefs.writeFile(pluginPackagePath, pluginPackageDataString, function (err) {
+										if (err) return complete(err)
+
+										me.log('debug', `Standardize ${pluginName}: install new deps`)
+										safeps.spawn(['npm', 'install'], { cwd: pluginPath, output: true, outputPrefix: '>	' }, function (err) {
+											if (err) return complete(err)
+
+											me.log('debug', `Standardize ${pluginName}: projectz`)
+											projectzPath = pathUtil.join(pluginPath, 'node_modules', '.bin', 'projectz')
+											safeps.spawn([projectzPath, 'compile'], { cwd: pluginPath, output: true, outputPrefix: '>	' }, function (err) {
+												if (err) return complete(err)
+
+												safeps.spawnCommand('git', ['commit', '-am', 'updated base files'], { cwd: pluginPath, output: true }, function (err, stdout) {
+													if (err && stdout.indexOf('nothing to commit') !== -1) return complete()
+													if (err) return complete(err)
+
+													safeps.spawnCommand('git', ['push', 'origin', 'master'], { cwd: pluginPath, output: true }, function (err) {
+														return complete(err)
+													})
+												})
+											})
+										})
+									})
+								})
+							})
+						})
+					})
+				},
+
+				// Finish
+				next(err) {
+					if (err) return next(err)
+					return standardizeTasks.run()
+				}
+			})
+		})
+
+		if (next) this.runner.addTask('standardize complete callback', next)
+		return this
+	}
+
+	exec(opts = {}, next) {
+		const me = this
+		const { pluginsPath } = this.config
+
+		this.runner.addTask('exec', function (next) {
+			// Scan Plugins
+			scandir({
+				// Path
+				path: pluginsPath,
+
+				// Skip files
+				fileAction: false,
+
+				// Handle directories
+				dirAction(pluginPath, pluginRelativePath, nextFile) {
+					// Prepare
+					const pluginName = pathUtil.basename(pluginRelativePath)
+
+					// Execute the command
+					safeps.exec(opts.command, { cwd: pluginPath, env: process.env }, function (err, stdout, stderr) {
+						me.log('info', `exec [${opts.command}] on: ${pluginPath}`)
+						if (err) process.stdout.write(stderr)
+						process.stdout.write(stdout)
+						me.log('info', '')
+						return nextFile(err, true)
+					})
+				},
+
+				// Finish
+				next: next
+			})
+		})
+
+		if (next) this.runner.addTask('exec complete callback', next)
+		return this
+	}
+
+	test(opts = {}, next) {
+		const me = this
+		const { pluginsPath } = this.config
+		const { skip, only, startFrom } = opts
+
+		this.runner.addTask('test', function (next) {
+			// Require Joe Testing Framework
+			const joe = require('joe')
+
+			// Start playing eye of the tiger
+			// require('open')('http://youtu.be/2WrEmJpV2ic')
+
+			// Exchange
+			joe.suite('docpad-extras', function (suite, test) {
+				test('exchange', function () {
+					const result = require('./exchange.json')
+				})
+
+				suite('plugins', function (suite, test, done) {
+					// Scan Plugins
+					scandir({
+						// Path
+						path: pluginsPath,
+
+						// Skip files
+						fileAction: false,
+
+						// Handle directories
+						dirAction(pluginPath, pluginRelativePath, nextFile) {
+							// Prepare
+							const pluginName = pathUtil.basename(pluginRelativePath)
+
+							// Skip
+							if (startFrom && startFrom > pluginName) {
+								me.log('info', `Skipping ${pluginName}`)
+								return
+							}
+							if (skip && skip.indexOf(pluginName) !== -1) {
+								me.log('info', `Skipping ${pluginName}`)
+								return
+							}
+							if (only && only.indexOf(pluginName) === -1) {
+								me.log('info', `Skipping ${pluginName}`)
+								return
+							}
+							if (fsUtil.existsSync(pluginPath + '/test') === false) {
+								me.log('info', `Skipping ${pluginName}`)
+								return
+							}
+
+							// Test the plugin
+							test(pluginName, function (done) {
+								const options = { output: true, cwd: pluginPath + '/test' }
+								safeps.spawn('npm link docpad', options, function (err) {
+									// Error
+									if (err) return nextFile(err)
+
+									// Prepare
+									const cmdOpts = { output: true, cwd: pluginPath }
+
+									// Commands
+									const spawnCommands = []
+									spawnCommands.push('npm link docpad')
+									spawnCommands.push('npm install')
+									if (fsUtil.existsSync(pluginPath + '/Cakefile')) {
+										spawnCommands.push('cake compile')
+									}
+									else if (fsUtil.existsSync(pluginPath + '/Makefile')) {
+										spawnCommands.push('make compile')
+									} else {
+										spawnCommands.push('npm run compile')
+									}
+									spawnCommands.push('npm test')
+
+									// Spawn
+									safeps.spawnMultiple(spawnCommands, cmdOpts, function (err, results) {
+										// Output the test results for the plugin
+										if (results.length === spawnCommands.length) {
+											testResult = results[spawnCommands.length - 1]
+											err = testResult[0]
+											// args = testResult[1...]
+											if (err) {
+												const joeError = new Error(`Testing ${pluginName} FAILED`)
+												// me.log('info', `Testing ${pluginName} FAILED`)
+												// if (arg) args.forEach(function (arg) { me.log('info', arg) })
+												done(joeError)
+											}
+											else {
+												done()
+											}
+										}
+										else {
+											done()
+										}
+
+										// All done
+										nextFile(err, true)
+									})
+								})
+							})
+						},
+						// Finish
+						next: done
+					})
+				})
+
+				test('complete', function () {
+					next()
+				})
+			})
+		})
+
+		if (next) this.runner.addTask('test complete callback', next)
+		return this
+	}
+}
+
+// -----------------
+// Helpers
+
+// Handle CSV values
+function splitCsvValue(result) {
+	return result && result.split(',') || null
+}
 
 
-# -----------------
-# Commands
+// -----------------
+// Commands
 
-## Commands
-
-# Use [Commander](https://github.com/visionmedia/commander.js/) for command and option parsing
+// Use [Commander](https://github.com/visionmedia/commander.js/) for command and option parsing
 cli = require('commander')
 
-# Extract out version out of our package and apply it to commander
+// Extract out version out of our package and apply it to commander
 cli.version(
 	require('./package.json').version
 )
 
-# Options
+// Options
 cli
 	.option('--only <only>', 'only run against these plugins (CSV)')
 	.option('--skip <skip>', 'skip these plugins (CSV)')
 	.option('--start <start>', 'start from this plugin name')
 	.option('-d, --debug', 'output debug messages')
 
-# exec
-cli.command('exec <command>').description('execute a command for each plugin').action (command) ->  process.nextTick ->
-	app.exec({command})
+// exec
+cli.command('exec <command>').description('execute a command for each plugin').action(function (command) {
+	process.nextTick(function () {
+		app.exec({ command })
+	})
+})
 
-# outdated
-cli.command('outdated').description('check which plugins have outdated dependencies')
-	.action ->  process.nextTick ->
+// outdated
+cli.command('outdated').description('check which plugins have outdated dependencies').action(function () {
+	process.nextTick(function () {
 		app.outdated({
-			only: splitCsvValue(cli.only)
-			skip: splitCsvValue(cli.skip) or defaultSkip
+			only: splitCsvValue(cli.only),
+			skip: splitCsvValue(cli.skip) || defaultSkip,
 			startFrom: cli.start
 		})
+	})
+})
 
-# standardize
-cli.command('standardize').description('ensure plugins live up to the latest standards').action ->  process.nextTick ->
-	app.standardize()
+// standardize
+cli.command('standardize').description('ensure plugins live up to the latest standards').action(function () {
+	process.nextTick(function () {
+		app.standardize()
+	})
+})
 
-# clone
-cli.command('clone').description('clone out new plugins and update the old').action ->  process.nextTick ->
-	app.clone()
+// clone
+cli.command('clone').description('clone out new plugins and update the old').action(function () {
+	process.nextTick(function () {
+		app.clone()
+	})
+})
 
-# status
-cli.command('status').description('check the git status of our plugins')
-	.action ->  process.nextTick ->
+// status
+cli.command('status').description('check the git status of our plugins').action(function () {
+	process.nextTick(function () {
 		app.status({
-			only: splitCsvValue(cli.only)
-			skip: splitCsvValue(cli.skip) or defaultSkip
+			only: splitCsvValue(cli.only),
+			skip: splitCsvValue(cli.skip) || defaultSkip,
 			startFrom: cli.start
 		})
+	})
+})
 
-# test
-cli.command('test').description('run the tests')
-	.action ->  process.nextTick ->
+// test
+cli.command('test').description('run the tests').action(function () {
+	process.nextTick(function () {
 		app.test({
-			only: splitCsvValue(cli.only)
-			skip: splitCsvValue(cli.skip) or defaultSkip
+			only: splitCsvValue(cli.only),
+			skip: splitCsvValue(cli.skip) || defaultSkip,
 			startFrom: cli.start
 		})
+	})
+})
 
-# Start the CLI
+// Start the CLI
 cli.parse(process.argv)
 
-# App
-app = new App({
-	pluginsPath: pathUtil.join(__dirname, 'plugins')
-	skeletonsPath: pathUtil.join(__dirname, 'skeletons')
+// App
+const app = new App({
+	pluginsPath: pathUtil.join(__dirname, 'plugins'),
+	skeletonsPath: pathUtil.join(__dirname, 'skeletons'),
 	debug: cli.debug
 }).ensure()
-defaultSkip = ['pygments','concatmin','iis','html2jade','html2coffee','robotskirt','tumblr','contenttypes']

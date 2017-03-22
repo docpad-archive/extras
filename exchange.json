@@ -1,0 +1,124 @@
+{
+  "skeletons": {
+    "h5bp": {
+      "name": "HTML5 Boilerplate (Supported)",
+      "branch": "docpad-6.x",
+      "repo": "https://github.com/docpad/docpad-skeleton-h5bp.git",
+      "description": "HTML5 Boilerplate skeleton for DocPad. Bare essentials for building a modern website with best practices"
+    },
+    "casper": {
+      "name": "Casper (Supported)",
+      "branch": "docpad-6.x",
+      "repo": "https://github.com/docpad/docpad-skeleton-casper.git",
+      "description": "A port of Casper, the default theme for Ghost, to DocPad"
+    },
+    "bootstrap": {
+      "name": "Twitter Bootstrap (Supported)",
+      "branch": "docpad-6.x",
+      "repo": "https://github.com/docpad/docpad-skeleton-bootstrap.git",
+      "description": "Simple and flexible HTML, CSS, and Javascript for popular user interface components and interactions"
+    },
+    "bootstrap-jade": {
+      "name": "Twitter Bootstrap with Jade (Supported)",
+      "branch": "docpad-6.x",
+      "repo": "https://github.com/docpad/docpad-skeleton-bootstrap-jade.git",
+      "description": "Twitter Bootstrap skeleton for DocPad developed using Jade (a HAML alternative for Node.js)"
+    },
+    "bevry": {
+      "name": "Bevry's Website (Supported)",
+      "branch": "master",
+      "repo": "https://github.com/bevry/website.git",
+      "description": "Bevry's website - a simple landing page website with some custom routes"
+    },
+    "balupton": {
+      "name": "Benjamin Lupton's Website (Supported)",
+      "branch": "2012+",
+      "repo": "https://github.com/balupton/website.git",
+      "description": "Benjamin Lupton's website - pulls in statistics, articles, videos, and projects from around the web"
+    },
+    "docpad": {
+      "name": "DocPad's Website (Supported)",
+      "branch": "master",
+      "repo": "https://github.com/docpad/website.git",
+      "description": "DocPad's website - a dynamic static website that pulls in a markdown documentation repository"
+    },
+    "bevry-learn": {
+      "name": "Bevry's Learning Centre (Supported)",
+      "branch": "master",
+      "repo": "https://github.com/bevry/learn.git",
+      "description": "Bevry's learning centre website - a dynamic static website that pulls in a markdown documentation repository"
+    },
+    "staticsitegenerators": {
+      "name": "Static Site Generators's Website (Supported)",
+      "branch": "master",
+      "repo": "https://github.com/bevry/staticsitegenerators.git",
+      "description": "The comparison website of all the different static site generators - pulls in a yaml file that is converted to json and rendered on changes via a web hook"
+    },
+    "h5bp-jade": {
+      "name": "HTML5 Boilerplate with Jade and LESS (Unsupported)",
+      "branch": "master",
+      "repo": "https://github.com/jh3y/html5-boilerplate-jade-less-livereload.docpad.git",
+      "description": "A skeleton that uses the HTML5 boilerplate with Jade and LESS. Also includes jQuery and the livereload plugin"
+    },
+    "slidepad": {
+      "name": "SlidePad (Unsupported)",
+      "branch": "master",
+      "repo": "https://github.com/georgeOsdDev/slidepad.git",
+      "description": "Create HTML5 Presentations easily with DocPad"
+    },
+    "slides": {
+      "name": "Slides (Unsupported)",
+      "branch": "master",
+      "repo": "https://gi,thub.com/jmyrland/Slides.git",
+      "description": "A simple DocPad solution for generating smashing html slides"
+    },
+    "reveal": {
+      "name": "Reveal.js (Unsupported)",
+      "branch": "master",
+      "repo": "https://gi,thub.com/DjebbZ/revealjs-docpad.git",
+      "description": "Create Reveal.js presentations easily with DocPad"
+    },
+    "meny": {
+      "name": "Meny (Unsupported)",
+      "branch": "master",
+      "repo": "https://gi,thub.com/TravelingTechGuy/Meny.docpad.git",
+      "description": "Create a simple page utilizing the Meny 3D menu"
+    },
+    "conf": {
+      "name": "Conference Boilerplate (Unsupported)",
+      "branch": "master",
+      "repo": "https://gi,thub.com/braziljs/conf-boilerplate.git",
+      "description": "A kickstart to create websites for conference/events"
+    },
+    "purecss": {
+      "name": "YUI PureCSS (Unsupported)",
+      "branch": "master",
+      "repo": "https://github.com/MassDistributionMedia/yui-purecss.docpad.git",
+      "description": "YUI PureCSS skeleton for DocPad by MDM"
+    },
+    "mdl": {
+      "name": "Material Design Lite Android Template (Unsupported)",
+      "branch": "master",
+      "repo": "https://gi,thub.com/MassDistributionMedia/mdl-android.docpad",
+      "description": "Material Design Lite Android Template by MDM"
+    },
+    "zurb": {
+      "name": "Zurb Foundation (Unsupported)",
+      "branch": "master",
+      "repo": "https://gi,thub.com/Clearskyabove/zurb-foundation.docpad.git",
+      "description": "A clean responsive template that contains a logical setup for a website + blog"
+    },
+    "zurb-sass": {
+      "name": "Zurb Foundation (Unsupported)",
+      "branch": "master",
+      "repo": "https://github.com/axyz/zurb-foundation.docpad.git",
+      "description": "A minimal Zurb Foundation skeleton with SASS and coffeescript"
+    },
+    "casteasoft": {
+      "name": "Casteasoft Foundation Simple Blog (Unsupported)",
+      "branch": "master",
+      "repo": "https://github.com/Casteasoft/zurb-foundation.docpad.git",
+      "description": "This skeleton supports blog posts, clean url, posts url using date-url based, pagination on blog posts listing, and more"
+    }
+  }
+}
