@@ -69,25 +69,25 @@
     "slides": {
       "name": "Slides (Unsupported)",
       "branch": "master",
-      "repo": "https://gi,thub.com/jmyrland/Slides.git",
+      "repo": "https://github.com/jmyrland/Slides.git",
       "description": "A simple DocPad solution for generating smashing html slides"
     },
     "reveal": {
       "name": "Reveal.js (Unsupported)",
       "branch": "master",
-      "repo": "https://gi,thub.com/DjebbZ/revealjs-docpad.git",
+      "repo": "https://github.com/DjebbZ/revealjs-docpad.git",
       "description": "Create Reveal.js presentations easily with DocPad"
     },
     "meny": {
       "name": "Meny (Unsupported)",
       "branch": "master",
-      "repo": "https://gi,thub.com/TravelingTechGuy/Meny.docpad.git",
+      "repo": "https://github.com/TravelingTechGuy/Meny.docpad.git",
       "description": "Create a simple page utilizing the Meny 3D menu"
     },
     "conf": {
       "name": "Conference Boilerplate (Unsupported)",
       "branch": "master",
-      "repo": "https://gi,thub.com/braziljs/conf-boilerplate.git",
+      "repo": "https://github.com/braziljs/conf-boilerplate.git",
       "description": "A kickstart to create websites for conference/events"
     },
     "purecss": {
@@ -99,13 +99,13 @@
     "mdl": {
       "name": "Material Design Lite Android Template (Unsupported)",
       "branch": "master",
-      "repo": "https://gi,thub.com/MassDistributionMedia/mdl-android.docpad",
+      "repo": "https://github.com/MassDistributionMedia/mdl-android.docpad",
       "description": "Material Design Lite Android Template by MDM"
     },
     "zurb": {
       "name": "Zurb Foundation (Unsupported)",
       "branch": "master",
-      "repo": "https://gi,thub.com/Clearskyabove/zurb-foundation.docpad.git",
+      "repo": "https://github.com/Clearskyabove/zurb-foundation.docpad.git",
       "description": "A clean responsive template that contains a logical setup for a website + blog"
     },
     "zurb-sass": {
