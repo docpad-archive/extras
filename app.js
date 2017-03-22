@@ -7,10 +7,24 @@ const safeps = require('safeps')
 const eachr = require('eachr')
 const commander = require('commander')
 const CSON = require('cson')
+const feedr = require('feedr').create()
 const { TaskGroup } = require('taskgroup')
 
 // Prepare
 const defaultSkip = ['pygments', 'concatmin', 'iis', 'html2jade', 'html2coffee', 'robotskirt', 'tumblr', 'contenttypes']
+
+function fetchTopic(topic, next) {
+	const feedOpts = {
+		requestOptions: {
+			headers: {
+				Accept: 'application/vnd.github.mercy-preview+json'
+			}
+		},
+		url: `https://api.github.com/search/repositories?page=1&per_page=100&q=topic%3A${topic}+org%3Adocpad`,
+		parse: 'json'
+	}
+	return feedr.readFeed(feedOpts, next)
+}
 
 // -----------------
 // App
@@ -71,13 +85,57 @@ class App {
 	clone(opts, next) {
 		const me = this
 		const { skeletonsPath, pluginsPath } = this.config
-		let exchange = null
+		let exchange = require('./exchange.json')
+		let unsupported = {}
 
 		this.runner.addTaskGroup('clone', function (addTaskGroup, addTask) {
-			// Exchange
-			addTask('exchange', function () {
-				const result = require('./exchange.json')
-				exchange = result
+			// Unsupported
+			addTask('unsupported', function (complete) {
+				me.log('info', `Fetching unsupported items`)
+				fetchTopic('unsupported', function (err, result) {
+					if (err) return next(err)
+					result.items.forEach(function (repo) {
+						unsupported[repo.name] = true
+					})
+					me.log('info', `Fetched ${result.items.length} unsupported items`)
+					complete()
+				})
+			})
+
+
+			// Plugins
+			addTask('plugins', function (complete) {
+				me.log('info', `Fetching latest plugins`)
+				fetchTopic('docpad-plugin', function (err, result) {
+					// Check
+					if (err) return next(err)
+					me.log('info', `Fetched ${result.items.length} plugins`)
+
+					// Add the ones we want
+					const cloneRepos = []
+					result.items.forEach(function (repo) {
+						// Unsupported
+						if (typeof unsupported[repo.name] !== 'undefined') {
+							me.log('debug', `Skipping unsupported plugin: ${repo.name}`)
+							return true
+						}
+
+						// Add to clone list
+						const shortname = repo.name.replace(/^docpad-plugin-/, '')
+						cloneRepos.push({
+							name: repo.name,
+							url: repo.clone_url,
+							path: `${pluginsPath}/${shortname}`,
+							branch: 'master'
+						})
+					})
+
+					// Log
+					me.log('info', `Cloning ${cloneRepos.length} plugins`)
+
+					// Clone the repos
+					me.cloneRepos({ repos: cloneRepos }, complete)
+				})
 			})
 
 			// Skeletons
@@ -86,16 +144,22 @@ class App {
 
 				const cloneRepos = []
 				eachr(exchange.skeletons, function (repo, key) {
-					const repoShortname = repo.repo.toLowerCase()
+					// Unsupported
+					if (typeof unsupported[repo.name] !== 'undefined') {
+						me.log('debug', `Skipping unsupported skeleton: ${repo.name}`)
+						return true
+					}
+
+					// Add to clone list
+					const shortname = repo.repo.toLowerCase()
 						.replace(/^.+\/(.+\/.+)\.git$/, '$1')
 						.replace('/', '-')
 						.replace('docpad-skeleton-', '')
 						.replace('.docpad', '')
-
 					cloneRepos.push({
 						name: key,
 						url: repo.repo,
-						path: `${skeletonsPath}/${repoShortname}`,
+						path: `${skeletonsPath}/${shortname}`,
 						branch: repo.branch
 					})
 				})
@@ -104,49 +168,6 @@ class App {
 				me.cloneRepos({ repos: cloneRepos }, complete)
 			})
 
-			// Plugins
-			addTask('plugins', function (complete) {
-				me.log('info', `Fetching latest plugins`)
-				const feedOpts = {
-					requestOptions: {
-						headers: {
-							Accept: 'application/vnd.github.mercy-preview+json'
-						}
-					},
-					url: 'https://api.github.com/search/repositories?page=1&per_page=100&q=topic%3Adocpad-plugin+org%3Adocpad',
-					parse: 'json'
-				}
-				require('feedr').create().readFeed(feedOpts, function (err, result) {
-					// Check
-					if (err) return next(err)
-
-					// Skip if not a plugin
-					const cloneRepos = []
-					result.items.forEach(function (repo) {
-						// Prepare
-						const repoShortname = repo.name.replace(/^docpad-plugin-/, '')
-
-						// Skip if expiremental or deprecated or is not a plugin
-						if (/^(EXPER|DEPR)/.test(repo.description) || repoShortname === repo.name) {
-							return
-						}
-
-						// Add the repo to the ones we want to clone
-						cloneRepos.push({
-							name: repo.name,
-							url: repo.clone_url,
-							path: `${pluginsPath}/${repoShortname}`,
-							branch: 'master'
-						})
-					})
-
-					// Log
-					me.log('info', `Cloning ${cloneRepos.length} latest plugins`)
-
-					// Clone the repos
-					me.cloneRepos({ repos: cloneRepos }, complete)
-				})
-			})
 		})
 
 		if (next) this.runner.addTask('clone completion callback', next)
