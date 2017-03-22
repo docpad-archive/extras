@@ -107,14 +107,22 @@ class App {
 			// Plugins
 			addTask('plugins', function (complete) {
 				me.log('info', `Fetching latest plugins`)
-				const feedOpts = { url: 'https://api.github.com/orgs/docpad/repos?page=1&per_page=100', parse: 'json' }
-				require('feedr').create({ cache: false }).readFeed(feedOpts, function (err, repos) {
+				const feedOpts = {
+					requestOptions: {
+						headers: {
+							Accept: 'application/vnd.github.mercy-preview+json'
+						}
+					},
+					url: 'https://api.github.com/search/repositories?page=1&per_page=100&q=topic%3Adocpad-plugin+org%3Adocpad',
+					parse: 'json'
+				}
+				require('feedr').create().readFeed(feedOpts, function (err, result) {
 					// Check
 					if (err) return next(err)
 
 					// Skip if not a plugin
 					const cloneRepos = []
-					repos.forEach(function (repo) {
+					result.items.forEach(function (repo) {
 						// Prepare
 						const repoShortname = repo.name.replace(/^docpad-plugin-/, '')
 
@@ -133,7 +141,7 @@ class App {
 					})
 
 					// Log
-					me.log('info', `Cloning ${repos.length} latest plugins`)
+					me.log('info', `Cloning ${cloneRepos.length} latest plugins`)
 
 					// Clone the repos
 					me.cloneRepos({ repos: cloneRepos }, complete)
@@ -155,29 +163,30 @@ class App {
 		// Clone each one
 		eachr(opts.repos, function (repo) {
 			// Prepare
-			const spawnCommands = []
-			const spawnOpts = {}
-			spawnOpts.cwd = repo.path
+			cloneTasks.addTask(`init repo ${repo}`, function (next) {
+				safefs.ensurePath(repo.path, function (err) {
+					if (err) return next(err)
 
-			safefs.ensurePath(repo.path, function (err) {
-				if (err) return next(err)
+					// Prepare
+					const spawnCommands = []
+					const spawnOpts = {}
+					spawnOpts.cwd = repo.path
 
-				// New
-				if (fsUtil.existsSync(repo.path + '/.git') === false) {
-					spawnCommands.push(['git', 'init'])
-					spawnCommands.push(['git', 'remote', 'add', 'origin', repo.url])
-				}
+					// New
+					if (fsUtil.existsSync(repo.path + '/.git') === false) {
+						spawnCommands.push(['git', 'init'])
+						spawnCommands.push(['git', 'remote', 'add', 'origin', repo.url])
+					}
 
-				// Update
-				spawnCommands.push(['git', 'fetch', 'origin'])
-				spawnCommands.push(['git', 'checkout', repo.branch])
-				spawnCommands.push(['git', 'pull', 'origin', repo.branch])
+					// Update
+					spawnCommands.push(['git', 'fetch', 'origin'])
+					spawnCommands.push(['git', 'checkout', repo.branch])
+					spawnCommands.push(['git', 'pull', 'origin', repo.branch])
 
-				// Re-link
-				spawnCommands.push(['npm', 'link', 'docpad'])
+					// Re-link
+					spawnCommands.push(['npm', 'link', 'docpad'])
 
-				// Handle
-				cloneTasks.addTask(`init repo ${repo}`, function (next) {
+					// Handle
 					me.log('info', `Fetching ${repo.name} / ${repo.branch}`)
 					safeps.spawnMultiple(spawnCommands, spawnOpts, function (err, ...args) {
 						if (err) {

@@ -99,14 +99,8 @@
     "mdl": {
       "name": "Material Design Lite Android Template (Unsupported)",
       "branch": "master",
-      "repo": "https://github.com/MassDistributionMedia/mdl-android.docpad",
+      "repo": "https://github.com/MassDistributionMedia/mdl-android.docpad.git",
       "description": "Material Design Lite Android Template by MDM"
-    },
-    "zurb": {
-      "name": "Zurb Foundation (Unsupported)",
-      "branch": "master",
-      "repo": "https://github.com/Clearskyabove/zurb-foundation.docpad.git",
-      "description": "A clean responsive template that contains a logical setup for a website + blog"
     },
     "zurb-sass": {
       "name": "Zurb Foundation (Unsupported)",

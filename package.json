@@ -71,6 +71,6 @@
   "scripts": {
     "info": "node --harmony ./app.js --help",
     "clone": "node --harmony ./app.js clone",
-    "test": "node --harmony ./app.js test"
+    "test": "node --harmony ./app.js test --joe-reporter=console"
   }
 }
