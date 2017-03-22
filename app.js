@@ -24,7 +24,7 @@ function readdir(path, next) {
 	}
 	readdirCluster(path, iterator, function (err) {
 		if (err) return next(err)
-		return next(null, paths)
+		return next(null, paths.sort((a, b) => a.basename > b.basename))
 	})
 }
 
