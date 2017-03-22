@@ -1,3 +1,5 @@
+'use strict'
+
 // Requires
 const pathUtil = require('path')
 const fsUtil = require('fs')
@@ -217,27 +219,27 @@ class App {
 					if (err) return next(err)
 
 					// Prepare
-					const spawnCommands = []
+					const commands = []
 					const spawnOpts = {}
 					spawnOpts.cwd = repo.path
 
 					// New
 					if (fsUtil.existsSync(repo.path + '/.git') === false) {
-						spawnCommands.push(['git', 'init'])
-						spawnCommands.push(['git', 'remote', 'add', 'origin', repo.url])
+						commands.push(['git', 'init'])
+						commands.push(['git', 'remote', 'add', 'origin', repo.url])
 					}
 
 					// Update
-					spawnCommands.push(['git', 'fetch', 'origin'])
-					spawnCommands.push(['git', 'checkout', repo.branch])
-					spawnCommands.push(['git', 'pull', 'origin', repo.branch])
+					commands.push(['git', 'fetch', 'origin'])
+					commands.push(['git', 'checkout', repo.branch])
+					commands.push(['git', 'pull', 'origin', repo.branch])
 
 					// Re-link
-					spawnCommands.push(['npm', 'link', 'docpad'])
+					commands.push(['npm', 'link', 'docpad'])
 
 					// Handle
 					me.log('info', `Fetching ${repo.name} / ${repo.branch}`)
-					safeps.spawnMultiple(spawnCommands, spawnOpts, function (err, ...args) {
+					safeps.spawnMultiple(commands, spawnOpts, function (err, ...args) {
 						if (err) {
 							me.log('info', `Fetching ${repo.name} FAILED`, err)
 							return next(err)
@@ -276,7 +278,7 @@ class App {
 
 				// Execute the plugin's tests
 				const options = { cwd: pluginPath, env: process.env }
-				safeps.spawnCommand('git', ['status'], options, function (err, stdout, stderr) {
+				safeps.spawn(['git', 'status'], options, function (err, stdout, stderr) {
 					// Log
 					if (stdout && stdout.indexOf('nothing to commit') === -1) {
 						if (stdout || stderr) {
@@ -317,7 +319,7 @@ class App {
 
 				// Execute the plugin's tests
 				const options = { cwd: pluginPath }
-				safeps.spawnCommand('npm', 'outdated', options, function (err, stdout, stderr) {
+				safeps.spawn(['npm', 'outdated'], options, function (err, stdout, stderr) {
 					// Log
 					// if ( stdout && stdout.indexOf('is specified') isnt -1 ) {
 					//   if ( stdout || stderr )  output = pluginPath
@@ -342,7 +344,7 @@ class App {
 		const { skip, only } = opts
 
 		this.runner.addTask('standardize', function (next) {
-			rundir(pluginsPath, function ({ fullPath, relativePath, basename }, next) {
+			rundir(pluginsPath, function ({ fullPath, relativePath, basename }, complete) {
 				const pluginName = basename, pluginPath = fullPath
 				const cmdOpts = { cwd: pluginPath, output: true }
 
@@ -359,11 +361,11 @@ class App {
 				// Log
 				me.log('info', `Standardizing ${pluginName}`)
 				me.log('debug', `Standardize ${pluginName}: rename contributing`)
-				safeps.spawnCommand('git', ['mv', '-f', '-k', 'Contributing.md', 'CONTRIBUTING.md'], cmdOpts, function (err) {
+				safeps.spawn(['git', 'mv', '-f', '-k', 'Contributing.md', 'CONTRIBUTING.md'], cmdOpts, function (err) {
 					if (err) return complete(err)
 
 					me.log('debug', `Standardize ${pluginName}: rename history`)
-					safeps.spawnCommand('git', ['mv', '-f', '-k', 'History.md', 'HISTORY.md'], cmdOpts, function (err) {
+					safeps.spawn(['git', 'mv', '-f', '-k', 'History.md', 'HISTORY.md'], cmdOpts, function (err) {
 						if (err) return complete(err)
 
 						me.log('debug', `Standardize ${pluginName}: download meta files`)
@@ -376,7 +378,8 @@ class App {
 								engines: {},
 								dependencies: {},
 								peerDependencies: {},
-								devDependencies: {}
+								devDependencies: {},
+								scripts: {}
 							}, require(pluginPackagePath))
 							const { engines, dependencies, peerDependencies, devDependencies } = pluginPackageData
 
@@ -431,13 +434,14 @@ class App {
 								}
 							}
 							if (devDependencies['coffee-script']) {
-								pluginPackageData.cakeConfiguration = {
-									COFFEE_SRC_PATH: `src`
-								}
+								pluginPackageData.scripts['our:compile'] = 'coffee -bco ./out ./src'
+							}
+							if (devDependencies.projectz) {
+								pluginPackageData.scripts['our:meta:projectz'] = 'projectz compile'
 							}
 
 							me.log('debug', `Standardize ${pluginName}: write package`)
-							pluginPackageDataString = JSON.stringify(pluginPackageData, null, '  ')
+							const pluginPackageDataString = JSON.stringify(pluginPackageData, null, '  ')
 							safefs.writeFile(pluginPackagePath, pluginPackageDataString, function (err) {
 								if (err) return complete(err)
 
@@ -446,15 +450,14 @@ class App {
 									if (err) return complete(err)
 
 									me.log('debug', `Standardize ${pluginName}: projectz`)
-									projectzPath = pathUtil.join(pluginPath, 'node_modules', '.bin', 'projectz')
-									safeps.spawn([projectzPath, 'compile'], { cwd: pluginPath, output: true, outputPrefix: '>	' }, function (err) {
+									safeps.spawn(['npm', 'run', 'our:meta:projectz'], { cwd: pluginPath, output: true, outputPrefix: '>	' }, function (err) {
 										if (err) return complete(err)
 
-										safeps.spawnCommand('git', ['commit', '-am', 'updated base files'], { cwd: pluginPath, output: true }, function (err, stdout) {
+										safeps.spawn(['git', 'commit', '-am', 'updated base files'], { cwd: pluginPath, output: true }, function (err, stdout) {
 											if (err && stdout.indexOf('nothing to commit') !== -1) return complete()
 											if (err) return complete(err)
 
-											safeps.spawnCommand('git', ['push', 'origin', 'master'], { cwd: pluginPath, output: true }, function (err) {
+											safeps.spawn(['git', 'push', 'origin', 'master'], { cwd: pluginPath, output: true }, function (err) {
 												return complete(err)
 											})
 										})
@@ -545,7 +548,7 @@ class App {
 						// Test the plugin
 						test(pluginName, function (done) {
 							const options = { output: true, cwd: pluginPath + '/test' }
-							safeps.spawn('npm link docpad', options, function (err) {
+							safeps.spawn(['npm', 'link', 'docpad'], options, function (err) {
 								// Error
 								if (err) return next(err)
 
@@ -553,24 +556,24 @@ class App {
 								const cmdOpts = { output: true, cwd: pluginPath }
 
 								// Commands
-								const spawnCommands = []
-								spawnCommands.push('npm link docpad')
-								spawnCommands.push('npm install')
+								const commands = []
+								commands.push('npm link docpad')
+								commands.push('npm install')
 								if (fsUtil.existsSync(pluginPath + '/Cakefile')) {
-									spawnCommands.push('cake compile')
+									commands.push('cake compile')
 								}
 								else if (fsUtil.existsSync(pluginPath + '/Makefile')) {
-									spawnCommands.push('make compile')
+									commands.push('make compile')
 								} else {
-									spawnCommands.push('npm run compile')
+									commands.push('npm run compile')
 								}
-								spawnCommands.push('npm test')
+								commands.push('npm test')
 
 								// Spawn
-								safeps.spawnMultiple(spawnCommands, cmdOpts, function (err, results) {
+								safeps.spawnMultiple(commands, cmdOpts, function (err, results) {
 									// Output the test results for the plugin
-									if (results.length === spawnCommands.length) {
-										testResult = results[spawnCommands.length - 1]
+									if (results.length === commands.length) {
+										testResult = results[commands.length - 1]
 										err = testResult[0]
 										// args = testResult[1...]
 										if (err) {

@@ -67,6 +67,7 @@
   },
   "scripts": {
     "info": "node --harmony ./app.js --help",
+    "standardize": "node --harmony ./app.js standardize",
     "clone": "node --harmony ./app.js clone",
     "test": "node --harmony ./app.js test"
   }
