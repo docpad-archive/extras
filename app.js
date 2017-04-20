@@ -2,22 +2,17 @@
 
 // Requires
 const pathUtil = require('path')
-const fsUtil = require('fs')
 const readdirCluster = require('readdir-cluster')
 const safefs = require('safefs')
 const safeps = require('safeps')
 const eachr = require('eachr')
 const commander = require('commander')
-const CSON = require('cson')
 const feedr = require('feedr').create()
 const { TaskGroup } = require('taskgroup')
 
-// Prepare
-const defaultSkip = ['pygments', 'concatmin', 'iis', 'html2jade', 'html2coffee', 'robotskirt', 'tumblr', 'contenttypes']
-
-function readdir(path, next) {
+function readdir (path, next) {
 	const paths = []
-	function iterator(fullPath, relativePath, statObject) {
+	function iterator (fullPath, relativePath, statObject) {
 		if (statObject.directory) {
 			const basename = pathUtil.basename(relativePath)
 			paths.push({ fullPath, relativePath, basename })
@@ -30,7 +25,7 @@ function readdir(path, next) {
 	})
 }
 
-function rundir(path, iterator, next) {
+function rundir (path, iterator, next) {
 	readdir(path, function (err, paths) {
 		if ( err )  return next(err)
 		const tasks = new TaskGroup('rundir').done(next)
@@ -43,7 +38,7 @@ function rundir(path, iterator, next) {
 	})
 }
 
-function fetchTopic(topic, next) {
+function fetchTopic (topic, next) {
 	const feedOpts = {
 		requestOptions: {
 			headers: {
@@ -56,18 +51,23 @@ function fetchTopic(topic, next) {
 	return feedr.readFeed(feedOpts, next)
 }
 
+function splitCsvValue (result) {
+	return (result && result.split(',')) || null
+}
+
+
 // -----------------
 // App
 
 class App {
-	constructor(opts) {
+	constructor (opts) {
 		// Prepare
 		this.runner = null
 		this.logger = null
 		this.config = opts
 
 		// Logger
-		const level = this.config.debug ? 7 : 6
+		const level = 6
 		this.logger = require('caterpillar').create({ level })
 		this.logger
 			.pipe(require('caterpillar-filter').create())
@@ -89,12 +89,12 @@ class App {
 	}
 
 	// Log alias
-	log(...args) {
+	log (...args) {
 		this.logger.log(...args)
 	}
 
 	// Action
-	ensure(opts, next) {
+	ensure (opts, next) {
 		const { skeletonsPath, pluginsPath } = this.config
 
 		this.runner.addTaskGroup('ensure', function (addTaskGroup, addTask) {
@@ -112,16 +112,16 @@ class App {
 	}
 
 	// Action
-	clone(opts, next) {
+	clone (opts, next) {
 		const me = this
 		const { skeletonsPath, pluginsPath } = this.config
-		let exchange = require('./exchange.json')
-		let unsupported = {}
+		const exchange = require('./exchange.json')
+		const unsupported = {}
 
 		this.runner.addTaskGroup('clone', function (addTaskGroup, addTask) {
 			// Unsupported
 			addTask('unsupported', function (complete) {
-				me.log('info', `Fetching unsupported items`)
+				me.log('info', 'Fetching unsupported items')
 				fetchTopic('unsupported', function (err, result) {
 					if (err) return next(err)
 					result.items.forEach(function (repo) {
@@ -135,7 +135,7 @@ class App {
 
 			// Plugins
 			addTask('plugins', function (complete) {
-				me.log('info', `Fetching latest plugins`)
+				me.log('info', 'Fetching latest plugins')
 				fetchTopic('docpad-plugin', function (err, result) {
 					// Check
 					if (err) return next(err)
@@ -170,7 +170,7 @@ class App {
 
 			// Skeletons
 			addTask('skeletons', function (complete) {
-				me.log('info', `Cloning latest skeletons`)
+				me.log('info', 'Cloning latest skeletons')
 
 				const cloneRepos = []
 				eachr(exchange.skeletons, function (repo, key) {
@@ -206,7 +206,7 @@ class App {
 	}
 
 	// Helper
-	cloneRepos(opts = {}, next) {
+	cloneRepos (opts = {}, next) {
 		// Prepare
 		const me = this
 		const cloneTasks = new TaskGroup('clone repos').done(next)
@@ -219,27 +219,15 @@ class App {
 					if (err) return next(err)
 
 					// Prepare
-					const commands = []
-					const spawnOpts = {}
-					spawnOpts.cwd = repo.path
-
-					// New
-					if (fsUtil.existsSync(repo.path + '/.git') === false) {
-						commands.push(['git', 'init'])
-						commands.push(['git', 'remote', 'add', 'origin', repo.url])
+					const repoOpts = {
+						cwd: repo.path,
+						branch: repo.branch,
+						url: repo.url,
+						remote: 'origin'
 					}
 
-					// Update
-					commands.push(['git', 'fetch', 'origin'])
-					commands.push(['git', 'checkout', repo.branch])
-					commands.push(['git', 'pull', 'origin', repo.branch])
-
-					// Re-link
-					commands.push(['npm', 'link', 'docpad'])
-
-					// Handle
-					me.log('info', `Fetching ${repo.name} / ${repo.branch}`)
-					safeps.spawnMultiple(commands, spawnOpts, function (err, ...args) {
+					// Prepare
+					safeps.initGitRepo(repoOpts, function (err) {
 						if (err) {
 							me.log('info', `Fetching ${repo.name} FAILED`, err)
 							return next(err)
@@ -257,39 +245,33 @@ class App {
 		cloneTasks.run()
 	}
 
-	status(opts = {}, next) {
+	status (opts = {}, next) {
 		const me = this
 		const { pluginsPath } = this.config
-		const { skip, only } = opts
+		const { only } = opts
 
 		this.runner.addTask('status', function (next) {
 			rundir(pluginsPath, function ({ fullPath, relativePath, basename }, next) {
 				const pluginName = basename, pluginPath = fullPath
 
 				// Skip
-				if (skip && skip.indexOf(pluginName) !== -1) {
-					me.log('info', `Skipping ${pluginName}`)
-					return
-				}
 				if (only && only.indexOf(pluginName) === -1) {
-					me.log('info', `Skipping ${pluginName}`)
+					me.log('info', `Skipping ${pluginName} - not only`)
 					return
 				}
 
 				// Execute the plugin's tests
-				const options = { cwd: pluginPath, env: process.env }
+				const options = { cwd: pluginPath }
 				safeps.spawn(['git', 'status'], options, function (err, stdout, stderr) {
 					// Log
-					if (stdout && stdout.indexOf('nothing to commit') === -1) {
-						if (stdout || stderr) {
-							me.log('info', pluginPath)
-							if (stdout) me.log('info', stdout)
-							if (stderr) me.log('info', stderr)
-						}
+					if ( !stdout || stdout.toString().indexOf('nothing to commit') === -1) {
+						me.log('info', pluginPath)
+						if (stdout) process.stdout.write(stdout)
+						if (stderr) process.stderr.write(stderr)
 					}
 
 					// Done
-					next(err, true)
+					next(err)
 				})
 			}, next)
 		})
@@ -298,39 +280,26 @@ class App {
 		return this
 	}
 
-	outdated(opts = {}, next) {
+	outdated (opts = {}, next) {
 		const me = this
 		const { pluginsPath } = this.config
-		const { skip, only } = opts
+		const { only } = opts
 
 		this.runner.addTask('outdated', function (next) {
 			rundir(pluginsPath, function ({ fullPath, relativePath, basename }, next) {
 				const pluginName = basename, pluginPath = fullPath
 
 				// Skip
-				if (skip && skip.indexOf(pluginName) !== -1) {
-					me.log('info', `Skipping ${pluginName}`)
-					return
-				}
 				if (only && only.indexOf(pluginName) === -1) {
-					me.log('info', `Skipping ${pluginName}`)
+					me.log('info', `Skipping ${pluginName} - not only`)
 					return
 				}
 
 				// Execute the plugin's tests
-				const options = { cwd: pluginPath }
-				safeps.spawn(['npm', 'outdated'], options, function (err, stdout, stderr) {
-					// Log
-					// if ( stdout && stdout.indexOf('is specified') isnt -1 ) {
-					//   if ( stdout || stderr )  output = pluginPath
-					//   if ( stdout ) output += '\n'+stdout.replace(/^npm http .*/m, '')
-					//   if ( stderr ) output += '\n'+stderr
-					// }
-					me.log('info', stdout, stderr)
-
-					// Done
-					next(err, true)
-				})
+				me.log('info', pluginPath)
+				const nodeVersion = require(pathUtil.join(pluginPath, 'package.json')).engines.node
+				me.log('info', `Plugin ${basename} supports node ${nodeVersion}`)
+				safeps.spawn(['npm', 'outdated'], { cwd: pluginPath, stdio: 'inherit' }, () => next())
 			}, next)
 		})
 
@@ -338,135 +307,25 @@ class App {
 		return this
 	}
 
-	standardize(opts = {}, next) {
+	standardize (opts = {}, next) {
 		const me = this
 		const { pluginsPath } = this.config
-		const { skip, only } = opts
+		const { only } = opts
 
 		this.runner.addTask('standardize', function (next) {
 			rundir(pluginsPath, function ({ fullPath, relativePath, basename }, complete) {
 				const pluginName = basename, pluginPath = fullPath
-				const cmdOpts = { cwd: pluginPath, output: true }
+				const cmdOpts = { cwd: pluginPath, stdio: 'inherit' }
 
 				// Skip
-				if (skip && skip.indexOf(pluginName) !== -1) {
-					me.log('info', `Skipping ${pluginName}`)
-					return
-				}
 				if (only && only.indexOf(pluginName) === -1) {
-					me.log('info', `Skipping ${pluginName}`)
+					me.log('info', `Skipping ${pluginName} - not only`)
 					return
 				}
 
 				// Log
-				me.log('info', `Standardizing ${pluginName}`)
-				me.log('debug', `Standardize ${pluginName}: rename contributing`)
-				safeps.spawn(['git', 'mv', '-f', '-k', 'Contributing.md', 'CONTRIBUTING.md'], cmdOpts, function (err) {
-					if (err) return complete(err)
-
-					me.log('debug', `Standardize ${pluginName}: rename history`)
-					safeps.spawn(['git', 'mv', '-f', '-k', 'History.md', 'HISTORY.md'], cmdOpts, function (err) {
-						if (err) return complete(err)
-
-						me.log('debug', `Standardize ${pluginName}: download meta files`)
-						safeps.exec(pathUtil.join(__dirname, 'download-meta.bash'), cmdOpts, function (err) {
-							if (err) return complete(err)
-
-							// Update the package.json file
-							const pluginPackagePath = pluginPath + '/package.json'
-							const pluginPackageData = Object.assign({
-								engines: {},
-								dependencies: {},
-								peerDependencies: {},
-								devDependencies: {},
-								scripts: {}
-							}, require(pluginPackagePath))
-							const { engines, dependencies, peerDependencies, devDependencies } = pluginPackageData
-
-							// if deps['taskgroup']
-							// 	deps['taskgroup'] = '~4.2.0'
-							// ^ can't do this, as it is a API change, so we have to manually update plugins using older taskgroups
-
-							if (engines.docpad) {
-								peerDependencies.docpad = engines.docpad
-								delete engines.docpad
-							}
-							peerDependencies.docpad = devDependencies.docpad = '6'
-
-							devDependencies.projectz = '^1.1.0'
-							if (devDependencies['coffee-script']) {
-								devDependencies['coffee-script'] = '^1.9.1'
-							}
-							if (devDependencies.joe) {
-								devDependencies.joe = '^1.6.0'
-							}
-
-							pluginPackageData.bugs.url = `https://github.com/docpad/docpad-plugin-${pluginName}/issues`
-							pluginPackageData.repository.url = `https://github.com/docpad/docpad-plugin-${pluginName}.git`
-							pluginPackageData.license = 'MIT'
-							pluginPackageData.badges = {
-								"list": [
-									"travisci",
-									"npmversion",
-									"npmdownloads",
-									"daviddm",
-									"daviddmdev",
-									"---",
-									"patreon",
-									"opencollective",
-									"gratipay",
-									"flattr",
-									"paypal",
-									"bitcoin",
-									"wishlist",
-									"---",
-									"slackin"
-								],
-								"config": {
-									"patreonUsername": "bevry",
-									"opencollectiveUsername": "bevry",
-									"gratipayUsername": "bevry",
-									"flattrUsername": "balupton",
-									"paypalURL": "https://bevry.me/paypal",
-									"bitcoinURL": "https://bevry.me/bitcoin",
-									"wishlistURL": "https://bevry.me/wishlist",
-									"slackinURL": "https://slack.bevry.me"
-								}
-							}
-							if (devDependencies['coffee-script']) {
-								pluginPackageData.scripts['our:compile'] = 'coffee -bco ./out ./src'
-							}
-							if (devDependencies.projectz) {
-								pluginPackageData.scripts['our:meta:projectz'] = 'projectz compile'
-							}
-
-							me.log('debug', `Standardize ${pluginName}: write package`)
-							const pluginPackageDataString = JSON.stringify(pluginPackageData, null, '  ')
-							safefs.writeFile(pluginPackagePath, pluginPackageDataString, function (err) {
-								if (err) return complete(err)
-
-								me.log('debug', `Standardize ${pluginName}: install new deps`)
-								safeps.spawn(['npm', 'install'], { cwd: pluginPath, output: true, outputPrefix: '>	' }, function (err) {
-									if (err) return complete(err)
-
-									me.log('debug', `Standardize ${pluginName}: projectz`)
-									safeps.spawn(['npm', 'run', 'our:meta:projectz'], { cwd: pluginPath, output: true, outputPrefix: '>	' }, function (err) {
-										if (err) return complete(err)
-
-										safeps.spawn(['git', 'commit', '-am', 'updated base files'], { cwd: pluginPath, output: true }, function (err, stdout) {
-											if (err && stdout.indexOf('nothing to commit') !== -1) return complete()
-											if (err) return complete(err)
-
-											safeps.spawn(['git', 'push', 'origin', 'master'], { cwd: pluginPath, output: true }, function (err) {
-												return complete(err)
-											})
-										})
-									})
-								})
-							})
-						})
-					})
-				})
+				me.log('info', `Standardizing ${pluginName} - commit the changes manually`)
+				safeps.spawn(['bevry-base'], cmdOpts, next)
 			}, next)
 		})
 
@@ -474,20 +333,15 @@ class App {
 		return this
 	}
 
-	exec(opts = {}, next) {
+	exec (opts = {}, next) {
 		const me = this
 		const { pluginsPath } = this.config
 
 		this.runner.addTask('exec', function (next) {
 			rundir(pluginsPath, function ({ fullPath, relativePath }, next) {
 				const pluginPath = fullPath
-				safeps.exec(opts.command, { cwd: pluginPath, env: process.env }, function (err, stdout, stderr) {
-					me.log('info', `exec [${opts.command}] on: ${pluginPath}`)
-					if (err) process.stdout.write(stderr)
-					process.stdout.write(stdout)
-					me.log('info', '')
-					return next(err)
-				})
+				me.log('info', `exec [${opts.command}] on: ${pluginPath}`)
+				safeps.exec(opts.command, { cwd: pluginPath, stdio: 'inherit' }, next)
 			}, next)
 		})
 
@@ -495,10 +349,10 @@ class App {
 		return this
 	}
 
-	test(opts = {}, next) {
+	test (opts = {}, next) {
 		const me = this
 		const { pluginsPath } = this.config
-		const { skip, only, startFrom } = opts
+		const { only, startFrom } = opts
 
 		this.runner.addTask('test', function (next) {
 			// Require Joe Testing Framework
@@ -512,7 +366,7 @@ class App {
 			// Exchange
 			joe.suite('docpad-extras', function (suite, test) {
 				test('exchange', function () {
-					const result = require('./exchange.json')
+					require('./exchange.json')
 				})
 
 				test('paths', function (complete) {
@@ -524,76 +378,36 @@ class App {
 				})
 
 				suite('plugins', function (suite, test) {
-					pluginPaths.forEach(function ({ fullPath, relativePath, basename }) {
+					pluginPaths.forEach(function ({ fullPath, basename }) {
 						const pluginName = basename, pluginPath = fullPath
 
 						// Skip
 						if (startFrom && startFrom > pluginName) {
-							me.log('info', `Skipping ${pluginName}`)
-							return
-						}
-						if (skip && skip.indexOf(pluginName) !== -1) {
-							me.log('info', `Skipping ${pluginName}`)
+							me.log('info', `Skipping ${pluginName} - before start`)
 							return
 						}
 						if (only && only.indexOf(pluginName) === -1) {
-							me.log('info', `Skipping ${pluginName}`)
-							return
-						}
-						if (fsUtil.existsSync(pluginPath + '/test') === false) {
-							me.log('info', `Skipping ${pluginName}`)
+							me.log('info', `Skipping ${pluginName} - not only`)
 							return
 						}
 
 						// Test the plugin
-						test(pluginName, function (done) {
-							const options = { output: true, cwd: pluginPath + '/test' }
-							safeps.spawn(['npm', 'link', 'docpad'], options, function (err) {
-								// Error
-								if (err) return next(err)
+						test(pluginName, function (next) {
+							// Prepare
+							const cmdOpts = { stdio: 'inherit', cwd: pluginPath }
 
-								// Prepare
-								const cmdOpts = { output: true, cwd: pluginPath }
+							// Commands
+							const commands = [
+								['rm', '-Rf', 'node_modules', 'yarn.lock'],
+								['npm', 'link', 'docpad'],
+								['npm', 'install'],
+								['npm', 'run', 'our:compile'],
+								['npm', 'test'],
+								['testen', '-s']
+							]
 
-								// Commands
-								const commands = []
-								commands.push('npm link docpad')
-								commands.push('npm install')
-								if (fsUtil.existsSync(pluginPath + '/Cakefile')) {
-									commands.push('cake compile')
-								}
-								else if (fsUtil.existsSync(pluginPath + '/Makefile')) {
-									commands.push('make compile')
-								} else {
-									commands.push('npm run compile')
-								}
-								commands.push('npm test')
-
-								// Spawn
-								safeps.spawnMultiple(commands, cmdOpts, function (err, results) {
-									// Output the test results for the plugin
-									if (results.length === commands.length) {
-										testResult = results[commands.length - 1]
-										err = testResult[0]
-										// args = testResult[1...]
-										if (err) {
-											const joeError = new Error(`Testing ${pluginName} FAILED`)
-											// me.log('info', `Testing ${pluginName} FAILED`)
-											// if (arg) args.forEach(function (arg) { me.log('info', arg) })
-											done(joeError)
-										}
-										else {
-											done()
-										}
-									}
-									else {
-										done()
-									}
-
-									// All done
-									next(err)
-								})
-							})
+							// Spawn
+							safeps.spawnMultiple(commands, cmdOpts, next)
 						})
 					})
 				})
@@ -607,95 +421,71 @@ class App {
 		if (next) this.runner.addTask('test complete callback', next)
 		return this
 	}
+
+	cli () {
+		// Use [Commander](https://github.com/visionmedia/commander.js/) for command and option parsing
+		const app = this
+		const cli = commander
+
+		// Extract out version out of our package and apply it to commander
+		cli.version(
+			require('./package.json').version
+		)
+
+		// Options
+		cli
+			.option('--only <only>', 'only run against these plugins (CSV)')
+			.option('--start <start>', 'start from this plugin name')
+
+		// exec
+		cli.command('exec <command>').description('execute a command for each plugin').action(function (command) {
+			app.exec({ command })
+		})
+
+		// outdated
+		cli.command('outdated').description('check which plugins have outdated dependencies').action(function () {
+			app.outdated({
+				only: splitCsvValue(cli.only),
+				startFrom: cli.start
+			})
+		})
+
+		// standardize
+		cli.command('standardize').description('ensure plugins live up to the latest standards').action(function () {
+			app.standardize()
+		})
+
+		// clone
+		cli.command('clone').description('clone out new plugins and update the old').action(function () {
+			app.clone()
+		})
+
+		// status
+		cli.command('status').description('check the git status of our plugins').action(function () {
+			app.status({
+				only: splitCsvValue(cli.only),
+				startFrom: cli.start
+			})
+		})
+
+		// test
+		cli.command('test').description('run the tests').action(function () {
+			app.test({
+				only: splitCsvValue(cli.only),
+				startFrom: cli.start
+			})
+		})
+
+		// Start the CLI
+		cli.parse(process.argv)
+	}
 }
 
 // -----------------
 // Helpers
 
-// Handle CSV values
-function splitCsvValue(result) {
-	return result && result.split(',') || null
-}
-
-
-// -----------------
-// Commands
-
-// Use [Commander](https://github.com/visionmedia/commander.js/) for command and option parsing
-cli = require('commander')
-
-// Extract out version out of our package and apply it to commander
-cli.version(
-	require('./package.json').version
-)
-
-// Options
-cli
-	.option('--only <only>', 'only run against these plugins (CSV)')
-	.option('--skip <skip>', 'skip these plugins (CSV)')
-	.option('--start <start>', 'start from this plugin name')
-	.option('-d, --debug', 'output debug messages')
-
-// exec
-cli.command('exec <command>').description('execute a command for each plugin').action(function (command) {
-	process.nextTick(function () {
-		app.exec({ command })
-	})
-})
-
-// outdated
-cli.command('outdated').description('check which plugins have outdated dependencies').action(function () {
-	process.nextTick(function () {
-		app.outdated({
-			only: splitCsvValue(cli.only),
-			skip: splitCsvValue(cli.skip) || defaultSkip,
-			startFrom: cli.start
-		})
-	})
-})
-
-// standardize
-cli.command('standardize').description('ensure plugins live up to the latest standards').action(function () {
-	process.nextTick(function () {
-		app.standardize()
-	})
-})
-
-// clone
-cli.command('clone').description('clone out new plugins and update the old').action(function () {
-	process.nextTick(function () {
-		app.clone()
-	})
-})
-
-// status
-cli.command('status').description('check the git status of our plugins').action(function () {
-	process.nextTick(function () {
-		app.status({
-			only: splitCsvValue(cli.only),
-			skip: splitCsvValue(cli.skip) || defaultSkip,
-			startFrom: cli.start
-		})
-	})
-})
-
-// test
-cli.command('test').description('run the tests').action(function () {
-	process.nextTick(function () {
-		app.test({
-			only: splitCsvValue(cli.only),
-			skip: splitCsvValue(cli.skip) || defaultSkip,
-			startFrom: cli.start
-		})
-	})
-})
-
-// Start the CLI
-cli.parse(process.argv)
-
 // App
-const app = new App({
+new App({
 	pluginsPath: pathUtil.join(__dirname, 'plugins'),
-	skeletonsPath: pathUtil.join(__dirname, 'skeletons'),
-	debug: cli.debug
-}).ensure()
+	skeletonsPath: pathUtil.join(__dirname, 'skeletons')
+}).ensure().cli()
