@@ -27,7 +27,7 @@ function readdir (path, next) {
 
 function rundir (path, iterator, next) {
 	readdir(path, function (err, paths) {
-		if ( err )  return next(err)
+		if (err) return next(err)
 		const tasks = new TaskGroup('rundir').done(next)
 		paths.forEach(function (path) {
 			tasks.addTask(`rundir ${path.fullPath}`, function (complete) {
@@ -60,7 +60,7 @@ function splitCsvValue (result) {
 // App
 
 class App {
-	constructor (opts) {
+	constructor(opts) {
 		// Prepare
 		this.runner = null
 		this.logger = null
@@ -264,7 +264,7 @@ class App {
 				const options = { cwd: pluginPath }
 				safeps.spawn(['git', 'status'], options, function (err, stdout, stderr) {
 					// Log
-					if ( !stdout || stdout.toString().indexOf('nothing to commit') === -1) {
+					if (!stdout || stdout.toString().indexOf('nothing to commit') === -1) {
 						me.log('info', pluginPath)
 						if (stdout) process.stdout.write(stdout)
 						if (stderr) process.stderr.write(stderr)
@@ -398,7 +398,7 @@ class App {
 
 							// Commands
 							const commands = [
-								['rm', '-Rf', 'node_modules', 'yarn.lock'],
+								['rm', '-Rf', 'node_modules', 'yarn.lock', 'package-lock.json'],
 								['npm', 'link', 'docpad'],
 								['npm', 'install'],
 								['npm', 'run', 'our:compile'],
